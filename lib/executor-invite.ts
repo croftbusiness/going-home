@@ -17,7 +17,11 @@ export async function sendExecutorInvitation(data: ExecutorInvitationData): Prom
     return false;
   }
 
-  const invitationUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/executor/invite/accept?token=${data.invitationToken}`;
+  // Use VERCEL_URL in production, fallback to NEXT_PUBLIC_APP_URL, then localhost for dev
+  const baseUrl = process.env.VERCEL_URL 
+    ? `https://${process.env.VERCEL_URL}`
+    : process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+  const invitationUrl = `${baseUrl}/executor/invite/accept?token=${data.invitationToken}`;
 
   const emailHtml = `
 <!DOCTYPE html>
