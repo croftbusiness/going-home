@@ -154,7 +154,7 @@ export default function AssetsPage() {
               </button>
             </div>
             <AssetForm
-              asset={{}}
+              asset={{ assetType: '', name: '' }}
               onSave={handleSave}
               onCancel={() => setShowAddForm(false)}
               saving={saving}

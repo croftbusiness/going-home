@@ -162,7 +162,7 @@ export default function DigitalAccountsPage() {
               </button>
             </div>
             <AccountForm
-              account={{}}
+              account={{ accountType: '', accountName: '' }}
               onSave={handleSave}
               onCancel={() => setShowAddForm(false)}
               saving={saving}

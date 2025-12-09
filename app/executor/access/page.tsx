@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Lock, ArrowRight } from 'lucide-react';
 
-export default function ExecutorAccessPage() {
+function ExecutorAccessContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const accountUserId = searchParams.get('account');
@@ -126,6 +126,18 @@ export default function ExecutorAccessPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ExecutorAccessPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-[#FAF9F7] flex items-center justify-center">
+        <div className="text-[#2C2A29]">Loading...</div>
+      </div>
+    }>
+      <ExecutorAccessContent />
+    </Suspense>
   );
 }
 

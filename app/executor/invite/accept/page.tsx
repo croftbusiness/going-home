@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase-browser';
 import { CheckCircle, XCircle, Loader } from 'lucide-react';
 
-export default function ExecutorInviteAcceptPage() {
+function ExecutorInviteAcceptContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
@@ -143,6 +143,18 @@ export default function ExecutorInviteAcceptPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ExecutorInviteAcceptPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-[#FAF9F7]">
+        <Loader className="w-16 h-16 text-[#A5B99A] animate-spin" />
+      </div>
+    }>
+      <ExecutorInviteAcceptContent />
+    </Suspense>
   );
 }
 

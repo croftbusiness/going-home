@@ -40,8 +40,8 @@ export async function GET() {
 
     // Transform data
     const accounts = (executorAccounts || []).map((account: any) => {
-      const details = personalDetails?.find((pd: any) => pd.user_id === account.account_user_id);
-      const userEmail = userEmails?.find((ue: any) => ue.id === account.account_user_id)?.email;
+      const details = account.personal_details;
+      const userEmail = account.users?.email;
       
       const accountOwnerName = details?.preferred_name || 
                                details?.full_name || 

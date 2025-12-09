@@ -153,7 +153,7 @@ export default function InsuranceFinancialPage() {
               </button>
             </div>
             <ContactForm
-              contact={{}}
+              contact={{ contactType: '' }}
               onSave={handleSave}
               onCancel={() => setShowAddForm(false)}
               saving={saving}

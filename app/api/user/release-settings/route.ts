@@ -55,7 +55,7 @@ export async function POST(request: Request) {
     // Check if record exists
     const { data: existing } = await supabase
       .from('release_settings')
-      .select('id')
+      .select('id, executor_contact_id')
       .eq('user_id', auth.userId)
       .single();
 

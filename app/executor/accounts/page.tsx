@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { Users, Lock, ArrowRight } from 'lucide-react';
 
 interface ExecutorAccount {
@@ -14,7 +14,6 @@ interface ExecutorAccount {
 
 export default function ExecutorAccountsPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [loading, setLoading] = useState(true);
   const [accounts, setAccounts] = useState<ExecutorAccount[]>([]);
   const [error, setError] = useState('');

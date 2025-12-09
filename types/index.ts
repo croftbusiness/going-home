@@ -177,3 +177,9 @@ export interface TrustedContactFormData {
   contact_phone: string
   contact_email: string
 }
+
+// Location Types
+export interface Location {
+  lat: number
+  lng: number
+}

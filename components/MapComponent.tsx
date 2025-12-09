@@ -1,7 +1,5 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
-import { Loader } from '@googlemaps/js-api-loader'
 import { Location } from '@/types'
 
 interface MapComponentProps {
@@ -17,13 +15,10 @@ export default function MapComponent({
   tripPath = [],
   onMapClick,
 }: MapComponentProps) {
-  const mapRef = useRef<HTMLDivElement>(null)
-  const [map, setMap] = useState<google.maps.Map | null>(null)
-  const [markers, setMarkers] = useState<{
-    current: google.maps.Marker | null
-    home: google.maps.Marker | null
-  }>({ current: null, home: null })
-  const [pathLine, setPathLine] = useState<google.maps.Polyline | null>(null)
-
-  // Initialize map
-  useEffect(() => {
+  // TODO: Implement map component with Google Maps
+  return (
+    <div className="w-full h-64 bg-gray-200 rounded-lg flex items-center justify-center">
+      <p className="text-gray-500">Map component coming soon</p>
+    </div>
+  )
+}
