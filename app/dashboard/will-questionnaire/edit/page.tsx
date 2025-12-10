@@ -119,7 +119,7 @@ export default function WillQuestionnaireEditPage() {
         return { ...prev, notes: value };
       }
       
-      // Handle each object section explicitly
+      // Handle each object section explicitly (fixed TypeScript spread type error)
       if (section === 'personalInfo') {
         return {
           ...prev,
