@@ -116,24 +116,38 @@ export default function WillQuestionnaireEditPage() {
     setFormData((prev) => {
       // Handle notes separately since it's a string, not an object
       if (section === 'notes') {
-        return {
-          ...prev,
-          notes: value,
-        };
+        return { ...prev, notes: value };
       }
       
-      // Type-safe handling for object sections
-      const sectionKey = section as keyof typeof prev;
-      const sectionValue = prev[sectionKey];
-      
-      // Ensure it's an object before spreading
-      if (sectionValue && typeof sectionValue === 'object' && !Array.isArray(sectionValue)) {
+      // Handle each object section explicitly
+      if (section === 'personalInfo') {
         return {
           ...prev,
-          [section]: {
-            ...(sectionValue as Record<string, any>),
-            [field]: value,
-          },
+          personalInfo: { ...prev.personalInfo, [field]: value },
+        };
+      }
+      if (section === 'executor') {
+        return {
+          ...prev,
+          executor: { ...prev.executor, [field]: value },
+        };
+      }
+      if (section === 'guardians') {
+        return {
+          ...prev,
+          guardians: { ...prev.guardians, [field]: value },
+        };
+      }
+      if (section === 'bequests') {
+        return {
+          ...prev,
+          bequests: { ...prev.bequests, [field]: value },
+        };
+      }
+      if (section === 'digitalAssets') {
+        return {
+          ...prev,
+          digitalAssets: { ...prev.digitalAssets, [field]: value },
         };
       }
       
