@@ -25,20 +25,42 @@ export async function POST(request: Request) {
 
     // Save to database
     const supabase = createServerClient();
-    const { data, error } = await supabase
+    
+    // Check if playlist exists
+    const { data: existing } = await supabase
       .from('funeral_playlists')
-      .upsert({
-        user_id: auth.userId,
-        ceremony_music: aiOutput.ceremonyMusic || null,
-        slideshow_songs: aiOutput.slideshowSongs || null,
-        reception_playlist: aiOutput.receptionPlaylist || null,
-        personalized_explanations: aiOutput.explanations || null,
-        updated_at: new Date().toISOString(),
-      }, {
-        onConflict: 'user_id',
-      })
-      .select()
-      .single();
+      .select('id')
+      .eq('user_id', auth.userId)
+      .maybeSingle();
+
+    const playlistData = {
+      user_id: auth.userId,
+      ceremony_music: aiOutput.ceremonyMusic || null,
+      slideshow_songs: aiOutput.slideshowSongs || null,
+      reception_playlist: aiOutput.receptionPlaylist || null,
+      personalized_explanations: aiOutput.explanations || null,
+      updated_at: new Date().toISOString(),
+    };
+
+    let data, error;
+    if (existing) {
+      const result = await supabase
+        .from('funeral_playlists')
+        .update(playlistData)
+        .eq('id', existing.id)
+        .select()
+        .single();
+      data = result.data;
+      error = result.error;
+    } else {
+      const result = await supabase
+        .from('funeral_playlists')
+        .insert(playlistData)
+        .select()
+        .single();
+      data = result.data;
+      error = result.error;
+    }
 
     if (error) {
       console.error('Database error:', error);

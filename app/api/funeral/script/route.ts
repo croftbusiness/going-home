@@ -25,23 +25,45 @@ export async function POST(request: Request) {
 
     // Save to database
     const supabase = createServerClient();
-    const { data, error } = await supabase
+    
+    // Check if script exists
+    const { data: existing } = await supabase
       .from('funeral_scripts')
-      .upsert({
-        user_id: auth.userId,
-        tone_variation: validatedInput.tone,
-        opening_words: aiOutput.openingWords,
-        closing_blessing: aiOutput.closingBlessing,
-        prayers: aiOutput.prayers || null,
-        readings: aiOutput.readings || null,
-        transitions: aiOutput.transitions || null,
-        full_script: aiOutput.fullScript,
-        updated_at: new Date().toISOString(),
-      }, {
-        onConflict: 'user_id',
-      })
-      .select()
-      .single();
+      .select('id')
+      .eq('user_id', auth.userId)
+      .maybeSingle();
+
+    const scriptData = {
+      user_id: auth.userId,
+      tone_variation: validatedInput.tone,
+      opening_words: aiOutput.openingWords,
+      closing_blessing: aiOutput.closingBlessing,
+      prayers: aiOutput.prayers || null,
+      readings: aiOutput.readings || null,
+      transitions: aiOutput.transitions || null,
+      full_script: aiOutput.fullScript,
+      updated_at: new Date().toISOString(),
+    };
+
+    let data, error;
+    if (existing) {
+      const result = await supabase
+        .from('funeral_scripts')
+        .update(scriptData)
+        .eq('id', existing.id)
+        .select()
+        .single();
+      data = result.data;
+      error = result.error;
+    } else {
+      const result = await supabase
+        .from('funeral_scripts')
+        .insert(scriptData)
+        .select()
+        .single();
+      data = result.data;
+      error = result.error;
+    }
 
     if (error) {
       console.error('Database error:', error);

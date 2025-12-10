@@ -6,7 +6,7 @@
 -- Funeral Stories (Core feature - ceremony planning)
 CREATE TABLE IF NOT EXISTS funeral_stories (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  user_id UUID REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE NOT NULL UNIQUE,
   atmosphere TEXT,
   music_choices JSONB,
   tone_theme TEXT,
@@ -34,7 +34,7 @@ CREATE TRIGGER update_funeral_stories_updated_at
 -- Funeral Moodboards
 CREATE TABLE IF NOT EXISTS funeral_moodboards (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  user_id UUID REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE NOT NULL UNIQUE,
   colors JSONB,
   flowers JSONB,
   clothing_preferences TEXT,
@@ -59,7 +59,7 @@ CREATE TRIGGER update_funeral_moodboards_updated_at
 -- Funeral Scripts (ceremony scripts)
 CREATE TABLE IF NOT EXISTS funeral_scripts (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  user_id UUID REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE NOT NULL UNIQUE,
   opening_words TEXT,
   closing_blessing TEXT,
   prayers JSONB,
@@ -82,7 +82,7 @@ CREATE TRIGGER update_funeral_scripts_updated_at
 -- Funeral Playlists
 CREATE TABLE IF NOT EXISTS funeral_playlists (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  user_id UUID REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE NOT NULL UNIQUE,
   ceremony_music JSONB,
   slideshow_songs JSONB,
   reception_playlist JSONB,
@@ -144,7 +144,7 @@ CREATE TRIGGER update_funeral_slideshows_updated_at
 -- Life Themes
 CREATE TABLE IF NOT EXISTS life_themes (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  user_id UUID REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE NOT NULL UNIQUE,
   key_memories JSONB,
   core_values JSONB,
   tone_themes JSONB,

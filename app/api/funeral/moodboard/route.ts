@@ -26,25 +26,47 @@ export async function POST(request: Request) {
 
     // Save to database
     const supabase = createServerClient();
-    const { data, error } = await supabase
+    
+    // Check if moodboard exists
+    const { data: existing } = await supabase
       .from('funeral_moodboards')
-      .upsert({
-        user_id: auth.userId,
-        colors: validatedInput.colors || null,
-        flowers: validatedInput.flowers || null,
-        clothing_preferences: validatedInput.clothingPreferences,
-        aesthetic_style: validatedInput.aestheticStyle,
-        venue_type: validatedInput.venueType,
-        vibe_guide: aiOutput.vibeGuide,
-        decor_suggestions: aiOutput.decorSuggestions || null,
-        invitation_wording: aiOutput.invitationWording,
-        moodboard_layout: aiOutput.moodboardLayout || null,
-        updated_at: new Date().toISOString(),
-      }, {
-        onConflict: 'user_id',
-      })
-      .select()
-      .single();
+      .select('id')
+      .eq('user_id', auth.userId)
+      .maybeSingle();
+
+    const moodboardData = {
+      user_id: auth.userId,
+      colors: validatedInput.colors || null,
+      flowers: validatedInput.flowers || null,
+      clothing_preferences: validatedInput.clothingPreferences,
+      aesthetic_style: validatedInput.aestheticStyle,
+      venue_type: validatedInput.venueType,
+      vibe_guide: aiOutput.vibeGuide,
+      decor_suggestions: aiOutput.decorSuggestions || null,
+      invitation_wording: aiOutput.invitationWording,
+      moodboard_layout: aiOutput.moodboardLayout || null,
+      updated_at: new Date().toISOString(),
+    };
+
+    let data, error;
+    if (existing) {
+      const result = await supabase
+        .from('funeral_moodboards')
+        .update(moodboardData)
+        .eq('id', existing.id)
+        .select()
+        .single();
+      data = result.data;
+      error = result.error;
+    } else {
+      const result = await supabase
+        .from('funeral_moodboards')
+        .insert(moodboardData)
+        .select()
+        .single();
+      data = result.data;
+      error = result.error;
+    }
 
     if (error) {
       console.error('Database error:', error);

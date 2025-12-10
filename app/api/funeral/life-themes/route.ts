@@ -24,21 +24,43 @@ export async function POST(request: Request) {
 
     // Save to database
     const supabase = createServerClient();
-    const { data, error } = await supabase
+    
+    // Check if themes exist
+    const { data: existing } = await supabase
       .from('life_themes')
-      .upsert({
-        user_id: auth.userId,
-        key_memories: validatedInput.keyMemories,
-        core_values: aiOutput.coreValues || null,
-        tone_themes: aiOutput.toneThemes || null,
-        life_lessons: aiOutput.lifeLessons || null,
-        identity_motifs: aiOutput.identityMotifs || null,
-        updated_at: new Date().toISOString(),
-      }, {
-        onConflict: 'user_id',
-      })
-      .select()
-      .single();
+      .select('id')
+      .eq('user_id', auth.userId)
+      .maybeSingle();
+
+    const themeData = {
+      user_id: auth.userId,
+      key_memories: validatedInput.keyMemories,
+      core_values: aiOutput.coreValues || null,
+      tone_themes: aiOutput.toneThemes || null,
+      life_lessons: aiOutput.lifeLessons || null,
+      identity_motifs: aiOutput.identityMotifs || null,
+      updated_at: new Date().toISOString(),
+    };
+
+    let data, error;
+    if (existing) {
+      const result = await supabase
+        .from('life_themes')
+        .update(themeData)
+        .eq('id', existing.id)
+        .select()
+        .single();
+      data = result.data;
+      error = result.error;
+    } else {
+      const result = await supabase
+        .from('life_themes')
+        .insert(themeData)
+        .select()
+        .single();
+      data = result.data;
+      error = result.error;
+    }
 
     if (error) {
       console.error('Database error:', error);

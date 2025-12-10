@@ -28,28 +28,52 @@ export async function POST(request: Request) {
 
     // Save to database
     const supabase = createServerClient();
-    const { data, error } = await supabase
+    
+    // Check if story exists
+    const { data: existing } = await supabase
       .from('funeral_stories')
-      .upsert({
-        user_id: auth.userId,
-        atmosphere: validatedInput.atmosphere,
-        music_choices: validatedInput.musicChoices || null,
-        tone_theme: validatedInput.toneTheme,
-        readings_scriptures: validatedInput.readingsScriptures || null,
-        eulogy_notes: validatedInput.eulogyNotes,
-        messages_to_audience: validatedInput.messagesToAudience,
-        desired_feeling: validatedInput.desiredFeeling,
-        ceremony_script: aiOutput.ceremonyScript,
-        memorial_narrative: aiOutput.memorialNarrative,
-        playlist_suggestions: aiOutput.playlistSuggestions || null,
-        slideshow_captions: aiOutput.slideshowCaptions || null,
-        mood_description: aiOutput.moodDescription,
-        updated_at: new Date().toISOString(),
-      }, {
-        onConflict: 'user_id',
-      })
-      .select()
-      .single();
+      .select('id')
+      .eq('user_id', auth.userId)
+      .maybeSingle();
+
+    const storyData = {
+      user_id: auth.userId,
+      atmosphere: validatedInput.atmosphere,
+      music_choices: validatedInput.musicChoices || null,
+      tone_theme: validatedInput.toneTheme,
+      readings_scriptures: validatedInput.readingsScriptures || null,
+      eulogy_notes: validatedInput.eulogyNotes,
+      messages_to_audience: validatedInput.messagesToAudience,
+      desired_feeling: validatedInput.desiredFeeling,
+      ceremony_script: aiOutput.ceremonyScript,
+      memorial_narrative: aiOutput.memorialNarrative,
+      playlist_suggestions: aiOutput.playlistSuggestions || null,
+      slideshow_captions: aiOutput.slideshowCaptions || null,
+      mood_description: aiOutput.moodDescription,
+      updated_at: new Date().toISOString(),
+    };
+
+    let data, error;
+    if (existing) {
+      // Update existing
+      const result = await supabase
+        .from('funeral_stories')
+        .update(storyData)
+        .eq('id', existing.id)
+        .select()
+        .single();
+      data = result.data;
+      error = result.error;
+    } else {
+      // Insert new
+      const result = await supabase
+        .from('funeral_stories')
+        .insert(storyData)
+        .select()
+        .single();
+      data = result.data;
+      error = result.error;
+    }
 
     if (error) {
       console.error('Database error:', error);
