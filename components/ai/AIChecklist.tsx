@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { CheckCircle2, Circle, AlertCircle, Loader2, RefreshCw } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import type { ChecklistResponse } from '@/types/ai';
 
 export default function AIChecklist() {
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [checklist, setChecklist] = useState<ChecklistResponse | null>(null);
@@ -64,10 +66,10 @@ export default function AIChecklist() {
 
   if (loading && !checklist) {
     return (
-      <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-200">
-        <div className="flex items-center justify-center">
-          <Loader2 className="w-6 h-6 animate-spin text-[#93B0C8]" />
-          <span className="ml-3 text-[#2C2A29]">Loading your personalized checklist...</span>
+      <div className="bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-gray-200">
+        <div className="flex items-center justify-center py-8">
+          <Loader2 className="w-5 h-5 sm:w-6 sm:h-6 animate-spin text-[#93B0C8]" />
+          <span className="ml-3 text-sm sm:text-base text-[#2C2A29]">Loading your personalized checklist...</span>
         </div>
       </div>
     );
@@ -155,17 +157,20 @@ export default function AIChecklist() {
                   </div>
                 </div>
                 {item.description && (
-                  <p className="text-xs sm:text-sm text-[#2C2A29] opacity-70 mb-2 break-words">
+                  <p className="text-xs sm:text-sm text-[#2C2A29] opacity-70 mb-2 break-words whitespace-normal">
                     {item.description}
                   </p>
                 )}
                 {item.actionUrl && (
-                  <a
-                    href={item.actionUrl}
-                    className="text-xs sm:text-sm text-[#93B0C8] hover:underline mt-2 inline-block"
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      router.push(item.actionUrl!);
+                    }}
+                    className="text-xs sm:text-sm text-[#93B0C8] hover:text-[#A5B99A] hover:underline mt-2 inline-block font-medium transition-colors text-left"
                   >
                     Take action →
-                  </a>
+                  </button>
                 )}
               </div>
             </div>

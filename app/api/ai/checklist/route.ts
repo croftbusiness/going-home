@@ -1,7 +1,12 @@
 import { NextResponse } from 'next/server';
 import { requireAuth, createServerClient } from '@/lib/auth';
 import { generateAIResponse } from '@/lib/utils/ai';
+import OpenAI from 'openai';
 import type { ChecklistRequest, ChecklistResponse } from '@/types/ai';
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
 /**
  * AI Checklist Builder
@@ -66,94 +71,140 @@ Digital Accounts: ${digitalAccounts.data?.length || 0}
 Insurance/Financial: ${insuranceFinancial.data?.length || 0}
 `;
 
-    const systemPrompt = `You are analyzing a user's end-of-life planning profile to suggest what they might want to add or complete.
-Be gentle, supportive, and specific. Focus on what would bring peace of mind, not what's required.
-Prioritize by importance and emotional value.`;
+    // Use OpenAI directly with JSON mode for faster, structured responses
+    const systemPrompt = `You are analyzing a user's end-of-life planning profile. Return ONLY a valid JSON array.
+Each item: {"title":"max 100 chars","description":"max 200 chars","priority":"high|medium|low","category":"personal_info|documents|letters|contacts|preferences"}.
+Be gentle, supportive, specific. Focus on peace of mind. Return max 8 items.`;
 
-    const userPrompt = `Based on this user's profile completeness, suggest:
-1. Missing information they might want to add (prioritize high/medium/low)
-2. Documents they might want to upload
-3. Letters they might want to write to loved ones
-4. Other reminders or suggestions
-
-Current Profile:
+    const userPrompt = `User profile:
 ${dataSummary}
 
-Provide specific, actionable suggestions organized by category (personal_info, documents, letters, contacts, preferences).
-For each suggestion, indicate priority (high/medium/low) and why it might be helpful.`;
+Generate actionable suggestions as JSON array only.`;
 
-    const suggestionsText = await generateAIResponse(
-      systemPrompt,
-      userPrompt,
-      'gpt-4.1-mini',
-      0.6,
-      2500
-    );
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt },
+      ],
+      temperature: 0.7,
+      max_tokens: 600, // Reduced for faster response
+      response_format: { type: 'json_object' }, // Force JSON mode
+    });
 
-    // Parse suggestions into structured format
-    const items: ChecklistResponse['items'] = [];
+    let suggestionsText = completion.choices[0]?.message?.content || '{}';
     
-    // Extract items from response
-    const categoryMatches = suggestionsText.matchAll(
-      /(?:personal_info|documents|letters|contacts|preferences)[:\-]?\s*((?:.+\n)+?)(?=\n\n|personal_info|documents|letters|contacts|preferences|$)/gi
-    );
-
-    let itemId = 1;
-    const categories: Record<string, ChecklistResponse['items'][0]['category']> = {
-      'personal_info': 'personal_info',
-      'documents': 'documents',
-      'letters': 'letters',
-      'contacts': 'contacts',
-      'preferences': 'personal_info',
-    };
-
-    for (const match of categoryMatches) {
-      const categoryText = match[0].split(/[:\-]/)[0].toLowerCase().replace(/s$/, '');
-      const category = categories[categoryText] || 'personal_info';
-      const content = match[1];
-
-      // Extract individual items with priorities
-      const itemMatches = content.matchAll(/(?:high|medium|low) priority[:\-]?\s*(.+?)(?=\n\n|\n(?:high|medium|low)|$)/gi);
-      
-      for (const itemMatch of itemMatches) {
-        const priorityText = itemMatch[0].split(/[:\-]/)[0].toLowerCase().trim();
-        const priority = (priorityText === 'high' || priorityText === 'medium' || priorityText === 'low')
-          ? priorityText
-          : 'medium';
-        
-        const description = itemMatch[1].trim();
-        const titleMatch = description.match(/^(.+?)[:\-]/);
-        const title = titleMatch ? titleMatch[1].trim() : description.substring(0, 60);
-        const desc = titleMatch ? description.substring(titleMatch[0].length).trim() : '';
-
-        items.push({
-          id: `item-${itemId++}`,
-          category,
-          priority,
-          title: title.length > 80 ? title.substring(0, 77) + '...' : title,
-          description: desc || description,
-        });
+    // Handle JSON object wrapper (OpenAI JSON mode returns { "items": [...] })
+    let suggestionsData: any = {};
+    try {
+      suggestionsData = JSON.parse(suggestionsText);
+      if (suggestionsData.items && Array.isArray(suggestionsData.items)) {
+        suggestionsText = JSON.stringify(suggestionsData.items);
+      } else if (suggestionsData.suggestions && Array.isArray(suggestionsData.suggestions)) {
+        suggestionsText = JSON.stringify(suggestionsData.suggestions);
       }
+    } catch (e) {
+      // Fall through to parsing logic below
     }
 
-    // Fallback: parse as simple list if structured parsing fails
-    if (items.length === 0) {
-      const lines = suggestionsText
-        .split('\n')
-        .filter(line => line.trim().length > 15 && !line.toLowerCase().includes('category'))
-        .slice(0, 10);
-
-      lines.forEach((line, idx) => {
-        const priority = idx < 3 ? 'high' : idx < 6 ? 'medium' : 'low';
-        const title = line.replace(/^[•\-\d+\.]\s*/, '').trim();
-        items.push({
-          id: `item-${idx + 1}`,
-          category: 'personal_info',
-          priority,
-          title: title.length > 80 ? title.substring(0, 77) + '...' : title,
-          description: '',
+    // Parse JSON response
+    const items: ChecklistResponse['items'] = [];
+    
+    try {
+      // Try to extract JSON from response (handle markdown code blocks)
+      let jsonText = suggestionsText.trim();
+      const jsonMatch = jsonText.match(/\[[\s\S]*\]/);
+      if (jsonMatch) {
+        jsonText = jsonMatch[0];
+      }
+      
+      const parsedItems = JSON.parse(jsonText);
+      
+      if (Array.isArray(parsedItems)) {
+        parsedItems.slice(0, 10).forEach((item: any, idx: number) => {
+          const categoryMap: Record<string, ChecklistResponse['items'][0]['category']> = {
+            'personal_info': 'personal_info',
+            'documents': 'documents',
+            'letters': 'letters',
+            'contacts': 'contacts',
+            'preferences': 'preferences',
+          };
+          
+          const category = categoryMap[item.category] || 'personal_info';
+          const priority = ['high', 'medium', 'low'].includes(item.priority) ? item.priority : 'medium';
+          
+          // Map category to action URL
+          const actionUrlMap: Record<string, string> = {
+            'personal_info': '/dashboard/personal-details',
+            'documents': '/dashboard/documents',
+            'letters': '/dashboard/letters',
+            'contacts': '/dashboard/trusted-contacts',
+            'preferences': '/dashboard/funeral-preferences',
+          };
+          
+          items.push({
+            id: `item-${idx + 1}`,
+            category,
+            priority,
+            title: (item.title || '').trim().substring(0, 100), // Allow longer titles
+            description: (item.description || '').trim().substring(0, 200), // Allow longer descriptions
+            actionUrl: actionUrlMap[category] || '/dashboard',
+          });
         });
-      });
+      }
+    } catch (parseError) {
+      console.error('Failed to parse AI response as JSON:', parseError);
+      // Fallback: generate simple suggestions based on missing data
+      if (!personalDetails.data) {
+        items.push({
+          id: 'item-1',
+          category: 'personal_info',
+          priority: 'high',
+          title: 'Complete your personal details',
+          description: 'Add your full name, date of birth, and contact information',
+          actionUrl: '/dashboard/personal-details',
+        });
+      }
+      if (!funeralPreferences.data) {
+        items.push({
+          id: 'item-2',
+          category: 'preferences',
+          priority: 'medium',
+          title: 'Add your funeral preferences',
+          description: 'Share your wishes for services and ceremonies',
+          actionUrl: '/dashboard/funeral-preferences',
+        });
+      }
+      if (!documents.data || documents.data.length === 0) {
+        items.push({
+          id: 'item-3',
+          category: 'documents',
+          priority: 'high',
+          title: 'Upload important documents',
+          description: 'Store wills, IDs, insurance, and other essential paperwork',
+          actionUrl: '/dashboard/documents',
+        });
+      }
+      if (!letters.data || letters.data.length === 0) {
+        items.push({
+          id: 'item-4',
+          category: 'letters',
+          priority: 'medium',
+          title: 'Write a letter to a loved one',
+          description: 'Create personal messages for family and friends',
+          actionUrl: '/dashboard/letters',
+        });
+      }
+      if (!trustedContacts.data || trustedContacts.data.length === 0) {
+        items.push({
+          id: 'item-5',
+          category: 'contacts',
+          priority: 'high',
+          title: 'Add trusted contacts',
+          description: 'Grant access to trusted family or friends',
+          actionUrl: '/dashboard/trusted-contacts',
+        });
+      }
     }
 
     // Calculate completion percentage (rough estimate)
