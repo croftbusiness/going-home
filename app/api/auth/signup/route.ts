@@ -32,8 +32,41 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Failed to create user' }, { status: 500 });
     }
 
-    // Create session directly after signup
+    // Create user record in custom users table (required for foreign key constraints)
     const dbClient = createServerClient();
+    
+    // Check if user already exists (might happen if signup is called twice)
+    const { data: existingUser } = await dbClient
+      .from('users')
+      .select('id')
+      .eq('id', data.user.id)
+      .single();
+
+    if (!existingUser) {
+      // Create user record
+      // Note: password_hash is required but password is stored in Supabase Auth
+      // Using a placeholder to indicate password is managed by Supabase Auth
+      const { error: userError } = await dbClient
+        .from('users')
+        .insert([
+          {
+            id: data.user.id,
+            email: data.user.email || email,
+            password_hash: 'supabase_auth', // Placeholder - password managed by Supabase Auth
+            phone: phone || null,
+          },
+        ]);
+
+      if (userError) {
+        console.error('Error creating user record:', userError);
+        return NextResponse.json(
+          { error: 'Failed to create user record: ' + userError.message },
+          { status: 500 }
+        );
+      }
+    }
+
+    // Create session in our custom sessions table
     const sessionId = crypto.randomUUID();
     const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
 
@@ -48,8 +81,9 @@ export async function POST(request: Request) {
       ]);
 
     if (sessionError) {
+      console.error('Error creating session:', sessionError);
       return NextResponse.json(
-        { error: 'Failed to create session' },
+        { error: 'Failed to create session: ' + sessionError.message },
         { status: 500 }
       );
     }
