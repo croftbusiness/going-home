@@ -63,6 +63,7 @@ export default function ProfilePictureUpload({
         // Still show the image even if there was a warning
       }
       onUploadComplete(data.url);
+      setUploading(false);
     } catch (err: any) {
       setError(err.message || 'Failed to upload profile picture');
       setUploading(false);
