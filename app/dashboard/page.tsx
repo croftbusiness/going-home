@@ -24,12 +24,14 @@ import {
   Home as HomeIcon,
   Baby,
   FileCheck,
+  Scale,
 } from 'lucide-react';
 
 interface SectionStatus {
   personalDetails: boolean;
   medicalContacts: boolean;
   funeralPreferences: boolean;
+  willQuestionnaire: boolean;
   documents: boolean;
   letters: boolean;
   trustedContacts: boolean;
@@ -52,6 +54,7 @@ export default function DashboardPage() {
     personalDetails: false,
     medicalContacts: false,
     funeralPreferences: false,
+    willQuestionnaire: false,
     documents: false,
     letters: false,
     trustedContacts: false,
@@ -121,13 +124,22 @@ export default function DashboardPage() {
       bgColor: 'bg-[#A5B99A] bg-opacity-5',
     },
     {
+      title: 'Will Questionnaire',
+      description: 'Planning questionnaire for your attorney',
+      icon: Scale,
+      href: '/dashboard/will-questionnaire',
+      completed: status.willQuestionnaire,
+      color: 'bg-[#93B0C8]',
+      bgColor: 'bg-[#93B0C8] bg-opacity-5',
+    },
+    {
       title: 'Documents',
       description: 'Upload essential paperwork',
       icon: Upload,
       href: '/dashboard/documents',
       completed: status.documents,
-      color: 'bg-[#93B0C8]',
-      bgColor: 'bg-[#93B0C8] bg-opacity-5',
+      color: 'bg-[#A5B99A]',
+      bgColor: 'bg-[#A5B99A] bg-opacity-5',
     },
     {
       title: 'Letters',

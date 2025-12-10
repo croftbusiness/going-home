@@ -19,13 +19,14 @@ export async function GET() {
 
     // Check completion status of each section
     const [
-      personalDetails, medicalContacts, funeralPrefs, documents, letters, 
+      personalDetails, medicalContacts, funeralPrefs, willQuestionnaire, documents, letters, 
       trustedContacts, releaseSettings, digitalAccounts, assets, legacyMessages,
       endOfLifeChecklist, biography, insuranceFinancial, household, childrenWishes
     ] = await Promise.all([
       supabase.from('personal_details').select('id').eq('user_id', auth.userId).single(),
       supabase.from('medical_contacts').select('id').eq('user_id', auth.userId).single(),
       supabase.from('funeral_preferences').select('id').eq('user_id', auth.userId).single(),
+      supabase.from('will_questionnaires').select('id').eq('user_id', auth.userId).single(),
       supabase.from('documents').select('id').eq('user_id', auth.userId).limit(1).single(),
       supabase.from('letters').select('id').eq('user_id', auth.userId).limit(1).single(),
       supabase.from('trusted_contacts').select('id').eq('user_id', auth.userId).limit(1).single(),
@@ -44,6 +45,7 @@ export async function GET() {
       personalDetails: !!personalDetails.data,
       medicalContacts: !!medicalContacts.data,
       funeralPreferences: !!funeralPrefs.data,
+      willQuestionnaire: !!willQuestionnaire.data,
       documents: !!documents.data,
       letters: !!letters.data,
       trustedContacts: !!trustedContacts.data,
