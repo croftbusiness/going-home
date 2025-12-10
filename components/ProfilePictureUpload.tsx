@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { User, Camera, X, Loader2 } from 'lucide-react';
+import { User, Camera, X, Loader2, Trash2 } from 'lucide-react';
 
 interface ProfilePictureUploadProps {
   currentUrl: string | null;
@@ -111,7 +111,7 @@ export default function ProfilePictureUpload({
                 target.style.display = 'none';
               }}
             />
-            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all flex flex-col items-center justify-center gap-1">
+            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all flex flex-col items-center justify-center gap-1.5">
               <Camera className="w-5 h-5 sm:w-6 sm:h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
               <span className="text-xs text-white opacity-0 group-hover:opacity-100 transition-opacity font-medium">
                 Update
@@ -134,6 +134,21 @@ export default function ProfilePictureUpload({
         )}
       </div>
       
+      {/* Delete Button - Premium Design */}
+      {currentUrl && !uploading && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            handleDelete();
+          }}
+          className="mt-3 flex items-center space-x-1.5 px-3 py-1.5 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-full transition-all duration-200 hover:shadow-sm border border-red-200 hover:border-red-300 group/delete"
+          title="Remove profile picture"
+        >
+          <Trash2 className="w-3.5 h-3.5 group-hover/delete:scale-110 transition-transform" />
+          <span>Remove Photo</span>
+        </button>
+      )}
+      
       {!currentUrl && (
         <p className="mt-2 text-xs text-[#2C2A29] opacity-70 text-center max-w-[120px]">
           Add your profile here
@@ -141,8 +156,8 @@ export default function ProfilePictureUpload({
       )}
       
       {currentUrl && (
-        <p className="mt-2 text-xs text-[#2C2A29] opacity-70 text-center max-w-[120px]">
-          Click to update or remove
+        <p className="mt-2 text-xs text-[#2C2A29] opacity-70 text-center max-w-[140px]">
+          Click to update photo
         </p>
       )}
 
