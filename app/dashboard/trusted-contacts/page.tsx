@@ -28,6 +28,7 @@ export default function TrustedContactsPage() {
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showPermissions, setShowPermissions] = useState(false);
+  const [personalDetails, setPersonalDetails] = useState<any>(null);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -43,7 +44,43 @@ export default function TrustedContactsPage() {
 
   useEffect(() => {
     loadContacts();
+    loadPersonalDetails(); // Load personal details for auto-population
   }, []);
+
+  const loadPersonalDetails = async () => {
+    try {
+      const response = await fetch('/api/user/personal-details');
+      if (response.ok) {
+        const data = await response.json();
+        if (data.personalDetails) {
+          setPersonalDetails(data.personalDetails);
+        }
+      }
+    } catch (error) {
+      // Silently fail - not critical
+    }
+  };
+
+  const handleAddContact = () => {
+    // Pre-fill with emergency contact if available
+    if (personalDetails?.emergencyContactName && !editingId) {
+      setFormData({
+        name: personalDetails.emergencyContactName || '',
+        email: '',
+        phone: personalDetails.emergencyContactPhone || '',
+        relationship: personalDetails.emergencyContactRelationship || '',
+        accessLevel: 'view',
+        canViewPersonalDetails: false,
+        canViewMedicalContacts: false,
+        canViewFuneralPreferences: false,
+        canViewDocuments: false,
+        canViewLetters: false,
+      });
+    } else {
+      resetForm();
+    }
+    setShowForm(true);
+  };
 
   const loadContacts = async () => {
     try {
@@ -152,7 +189,7 @@ export default function TrustedContactsPage() {
               </div>
             </div>
             <button
-              onClick={() => setShowForm(!showForm)}
+              onClick={handleAddContact}
               className="px-4 py-2 bg-[#A5B99A] text-white rounded-lg hover:bg-[#93B0C8] transition-colors flex items-center space-x-2"
             >
               <Plus className="w-4 h-4" />
@@ -169,9 +206,15 @@ export default function TrustedContactsPage() {
 
         {showForm && (
           <div className="bg-[#FCFAF7] rounded-lg p-6 shadow-sm mb-6">
-            <h2 className="text-lg font-medium text-[#2C2A29] mb-4">
+            <h2 className="text-lg font-medium text-[#2C2A29] mb-2">
               {editingId ? 'Edit Contact' : 'Add New Contact'}
             </h2>
+            {!editingId && personalDetails?.emergencyContactName && formData.name === personalDetails.emergencyContactName && (
+              <p className="text-sm text-[#93B0C8] mb-4 flex items-center">
+                <span className="mr-2">✨</span>
+                Pre-filled from your emergency contact. You can edit any fields as needed.
+              </p>
+            )}
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
