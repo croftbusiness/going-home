@@ -1,5 +1,5 @@
 -- ============================================================================
--- GOING HOME APP – COMPLETE MASTER DATABASE SCHEMA
+-- GOING HOME APP – COMPLETE MASTER DATABASE SCHEMA (UPDATED WITH PROFILE PICTURE)
 -- ============================================================================
 -- This is the FULL, complete schema with ALL tables, triggers, policies, and storage
 -- Safe to run multiple times - uses IF NOT EXISTS and DROP IF EXISTS patterns
@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS two_factor_codes (
 CREATE INDEX IF NOT EXISTS idx_2fa_user_id ON two_factor_codes(user_id);
 CREATE INDEX IF NOT EXISTS idx_2fa_expires_at ON two_factor_codes(expires_at);
 
--- Personal details
+-- Personal details (UPDATED: Added profile_picture_url field)
 CREATE TABLE IF NOT EXISTS personal_details (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID REFERENCES users(id) ON DELETE CASCADE UNIQUE NOT NULL,
@@ -72,6 +72,12 @@ CREATE TABLE IF NOT EXISTS personal_details (
 );
 
 CREATE INDEX IF NOT EXISTS idx_personal_details_user_id ON personal_details(user_id);
+
+-- Add profile_picture_url column if it doesn't exist (for existing databases)
+ALTER TABLE personal_details 
+ADD COLUMN IF NOT EXISTS profile_picture_url TEXT;
+
+COMMENT ON COLUMN personal_details.profile_picture_url IS 'URL to user profile picture stored in Supabase Storage';
 
 -- Medical contacts
 CREATE TABLE IF NOT EXISTS medical_contacts (
