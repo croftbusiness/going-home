@@ -114,7 +114,6 @@ export default function WillQuestionnaireEditPage() {
 
   const handleChange = (section: string, field: string, value: any) => {
     setFormData((prev) => {
-      const sectionValue = prev[section as keyof typeof prev];
       // Handle notes separately since it's a string, not an object
       if (section === 'notes') {
         return {
@@ -122,8 +121,13 @@ export default function WillQuestionnaireEditPage() {
           notes: value,
         };
       }
-      // For object sections, spread the existing object
-      if (typeof sectionValue === 'object' && sectionValue !== null) {
+      
+      // Type-safe handling for object sections
+      const sectionKey = section as keyof typeof prev;
+      const sectionValue = prev[sectionKey];
+      
+      // Ensure it's an object before spreading
+      if (sectionValue && typeof sectionValue === 'object' && !Array.isArray(sectionValue)) {
         return {
           ...prev,
           [section]: {
@@ -132,6 +136,7 @@ export default function WillQuestionnaireEditPage() {
           },
         };
       }
+      
       return prev;
     });
   };
