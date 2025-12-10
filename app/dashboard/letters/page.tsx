@@ -65,7 +65,9 @@ export default function LettersPage() {
       const contactsData = await contactsRes.json();
       
       setLetters(lettersData.letters || []);
-      setContacts(contactsData.contacts || []);
+      // Handle both possible response structures
+      const contactsList = contactsData.contacts || contactsData.trustedContacts || [];
+      setContacts(contactsList);
     } catch (error) {
       setError('Failed to load letters');
     } finally {
