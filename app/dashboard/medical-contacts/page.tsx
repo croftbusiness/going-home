@@ -101,19 +101,19 @@ export default function MedicalContactsPage() {
     <div className="min-h-screen bg-[#FAF9F7]">
       {/* Header */}
       <header className="bg-[#FCFAF7] border-b border-gray-200">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center space-x-4">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+          <div className="flex items-center space-x-3 sm:space-x-4">
             <Link
               href="/dashboard"
-              className="p-2 hover:bg-white rounded-lg transition-colors"
+              className="p-2 hover:bg-white rounded-lg transition-colors flex-shrink-0 touch-target"
             >
               <ArrowLeft className="w-5 h-5 text-[#2C2A29]" />
             </Link>
-            <div>
-              <h1 className="text-2xl font-semibold text-[#2C2A29]">
+            <div className="min-w-0 flex-1">
+              <h1 className="text-xl sm:text-2xl font-semibold text-[#2C2A29]">
                 Medical & Legal Contacts
               </h1>
-              <p className="text-sm text-[#2C2A29] opacity-70 mt-1">
+              <p className="text-xs sm:text-sm text-[#2C2A29] opacity-70 mt-1">
                 Information about your physicians and attorneys
               </p>
             </div>
@@ -122,7 +122,7 @@ export default function MedicalContactsPage() {
       </header>
 
       {/* Form */}
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Primary Physician */}
           <div className="bg-[#FCFAF7] rounded-lg p-6 shadow-sm">

@@ -92,21 +92,21 @@ export default function AIChecklist() {
   if (!checklist) return null;
 
   return (
-    <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h2 className="text-2xl font-semibold text-[#2C2A29] mb-2">
+    <div className="bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-gray-200">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6 gap-4">
+        <div className="flex-1 min-w-0">
+          <h2 className="text-lg sm:text-xl lg:text-2xl font-semibold text-[#2C2A29] mb-2 sm:mb-3">
             Your Suggested To-Do List
           </h2>
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-2">
-              <div className="w-32 bg-gray-200 rounded-full h-2">
+          <div className="flex items-center space-x-2 sm:space-x-4">
+            <div className="flex items-center space-x-2 flex-1 min-w-0">
+              <div className="w-24 sm:w-32 bg-gray-200 rounded-full h-2 flex-shrink-0">
                 <div
                   className="bg-[#A5B99A] h-2 rounded-full transition-all"
                   style={{ width: `${checklist.completionPercentage}%` }}
                 />
               </div>
-              <span className="text-sm text-[#2C2A29] opacity-70">
+              <span className="text-xs sm:text-sm text-[#2C2A29] opacity-70 whitespace-nowrap">
                 {checklist.completionPercentage}% Complete
               </span>
             </div>
@@ -115,7 +115,7 @@ export default function AIChecklist() {
         <button
           onClick={loadChecklist}
           disabled={loading}
-          className="p-2 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50"
+          className="p-2 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 flex-shrink-0 self-start sm:self-auto"
         >
           <RefreshCw className={`w-5 h-5 text-[#93B0C8] ${loading ? 'animate-spin' : ''}`} />
         </button>
@@ -129,18 +129,18 @@ export default function AIChecklist() {
           </p>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           {checklist.items.map((item) => (
             <div
               key={item.id}
-              className="flex items-start space-x-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+              className="flex items-start space-x-3 sm:space-x-4 p-3 sm:p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
             >
-              <div className="pt-1 flex-shrink-0">
-                <Circle className="w-5 h-5 text-gray-400" />
+              <div className="pt-0.5 sm:pt-1 flex-shrink-0">
+                <Circle className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
               </div>
               <div className="flex-1 min-w-0">
-                <div className="flex items-start flex-wrap gap-2 mb-2">
-                  <h3 className="font-medium text-[#2C2A29] flex-1 min-w-0 break-words">
+                <div className="flex flex-col sm:flex-row sm:items-start sm:flex-wrap gap-2 mb-2">
+                  <h3 className="font-medium text-[#2C2A29] flex-1 min-w-0 break-words text-sm sm:text-base">
                     {item.title}
                   </h3>
                   <div className="flex items-center gap-2 flex-shrink-0">
@@ -149,20 +149,20 @@ export default function AIChecklist() {
                     >
                       {item.priority}
                     </span>
-                    <span className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full text-xs whitespace-nowrap">
+                    <span className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full text-xs whitespace-nowrap hidden sm:inline">
                       {getCategoryLabel(item.category)}
                     </span>
                   </div>
                 </div>
                 {item.description && (
-                  <p className="text-sm text-[#2C2A29] opacity-70 mb-2 break-words">
+                  <p className="text-xs sm:text-sm text-[#2C2A29] opacity-70 mb-2 break-words">
                     {item.description}
                   </p>
                 )}
                 {item.actionUrl && (
                   <a
                     href={item.actionUrl}
-                    className="text-sm text-[#93B0C8] hover:underline mt-2 inline-block"
+                    className="text-xs sm:text-sm text-[#93B0C8] hover:underline mt-2 inline-block"
                   >
                     Take action →
                   </a>

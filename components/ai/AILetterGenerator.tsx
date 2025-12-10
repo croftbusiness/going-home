@@ -82,18 +82,18 @@ export default function AILetterGenerator({ onSave, onClose }: AILetterGenerator
   };
 
   return (
-    <div className="bg-white rounded-xl p-6 shadow-lg max-w-3xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center space-x-3">
-          <div className="p-2 bg-[#93B0C8] bg-opacity-10 rounded-lg">
-            <Sparkles className="w-5 h-5 text-[#93B0C8]" />
+    <div className="bg-white rounded-xl p-4 sm:p-6 shadow-lg max-w-3xl mx-auto">
+      <div className="flex items-center justify-between mb-4 sm:mb-6 gap-3">
+        <div className="flex items-center space-x-2 sm:space-x-3 min-w-0 flex-1">
+          <div className="p-2 bg-[#93B0C8] bg-opacity-10 rounded-lg flex-shrink-0">
+            <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-[#93B0C8]" />
           </div>
-          <h2 className="text-2xl font-semibold text-[#2C2A29]">AI Letter Generator</h2>
+          <h2 className="text-lg sm:text-xl lg:text-2xl font-semibold text-[#2C2A29] truncate">AI Letter Generator</h2>
         </div>
         {onClose && (
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors flex-shrink-0"
           >
             <X className="w-5 h-5 text-gray-500" />
           </button>
@@ -118,7 +118,7 @@ export default function AILetterGenerator({ onSave, onClose }: AILetterGenerator
                 type="text"
                 value={formData.recipientName}
                 onChange={(e) => setFormData({ ...formData, recipientName: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent"
+                className="w-full px-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent touch-target"
                 placeholder="e.g., Sarah"
               />
             </div>
@@ -131,7 +131,7 @@ export default function AILetterGenerator({ onSave, onClose }: AILetterGenerator
                 type="text"
                 value={formData.relationship}
                 onChange={(e) => setFormData({ ...formData, relationship: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent"
+                className="w-full px-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent touch-target"
                 placeholder="e.g., Daughter, Friend, Spouse"
               />
             </div>
@@ -144,7 +144,7 @@ export default function AILetterGenerator({ onSave, onClose }: AILetterGenerator
             <select
               value={formData.tone}
               onChange={(e) => setFormData({ ...formData, tone: e.target.value as any })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent"
+              className="w-full px-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent touch-target"
             >
               <option value="heartfelt">Heartfelt</option>
               <option value="spiritual">Spiritual</option>
@@ -202,7 +202,7 @@ export default function AILetterGenerator({ onSave, onClose }: AILetterGenerator
           <button
             onClick={handleGenerate}
             disabled={loading}
-            className="w-full px-6 py-3 bg-[#A5B99A] text-white rounded-lg hover:bg-[#93B0C8] transition-colors flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full px-6 py-3 min-h-[48px] text-base bg-[#A5B99A] text-white rounded-lg hover:bg-[#93B0C8] transition-colors flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed touch-target"
           >
             {loading ? (
               <>

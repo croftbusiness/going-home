@@ -265,33 +265,33 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-[#FAF9F7]">
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
         {/* Welcome Section */}
-        <div className="mb-10">
-          <h1 className="text-4xl font-semibold text-[#2C2A29] mb-3">
+        <div className="mb-6 sm:mb-10">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-[#2C2A29] mb-2 sm:mb-3">
             Welcome back, {userName || 'there'}
           </h1>
-          <p className="text-lg text-[#2C2A29] opacity-70">
+          <p className="text-sm sm:text-base lg:text-lg text-[#2C2A29] opacity-70">
             Continue organizing your information and preferences
           </p>
         </div>
 
         {/* Progress Overview Card */}
-        <div className="bg-gradient-to-br from-white via-[#FCFAF7] to-white rounded-xl p-8 shadow-md border border-gray-100 mb-10">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
-            <div className="flex items-center space-x-4">
-              <div className="p-4 bg-gradient-to-br from-[#A5B99A] to-[#93B0C8] bg-opacity-10 rounded-xl">
-                <TrendingUp className="w-7 h-7 text-[#A5B99A]" />
+        <div className="bg-gradient-to-br from-white via-[#FCFAF7] to-white rounded-xl p-4 sm:p-6 lg:p-8 shadow-md border border-gray-100 mb-6 sm:mb-10">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6 gap-4">
+            <div className="flex items-center space-x-3 sm:space-x-4">
+              <div className="p-2 sm:p-3 lg:p-4 bg-gradient-to-br from-[#A5B99A] to-[#93B0C8] bg-opacity-10 rounded-xl flex-shrink-0">
+                <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 text-[#A5B99A]" />
               </div>
-              <div>
-                <h2 className="text-2xl font-semibold text-[#2C2A29] mb-1">Your Progress</h2>
-                <p className="text-sm text-[#2C2A29] opacity-60">
+              <div className="min-w-0 flex-1">
+                <h2 className="text-lg sm:text-xl lg:text-2xl font-semibold text-[#2C2A29] mb-1">Your Progress</h2>
+                <p className="text-xs sm:text-sm text-[#2C2A29] opacity-60">
                   {completedSections} of {totalSections} sections completed
                 </p>
               </div>
             </div>
-            <div className="text-center md:text-right">
-              <div className="text-4xl font-bold text-[#A5B99A] mb-1">{Math.round(progress)}%</div>
+            <div className="text-center sm:text-right flex-shrink-0">
+              <div className="text-3xl sm:text-4xl font-bold text-[#A5B99A] mb-1">{Math.round(progress)}%</div>
               <div className="text-xs text-[#2C2A29] opacity-60 uppercase tracking-wide">Complete</div>
             </div>
           </div>
@@ -313,30 +313,30 @@ export default function DashboardPage() {
 
         {/* Quick Actions / Next Steps */}
         {incompleteSections.length > 0 && (
-          <div className="mb-10">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-semibold text-[#2C2A29]">Next Steps</h2>
-              <span className="text-sm text-[#2C2A29] opacity-60">
+          <div className="mb-6 sm:mb-10">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6 gap-2">
+              <h2 className="text-xl sm:text-2xl font-semibold text-[#2C2A29]">Next Steps</h2>
+              <span className="text-xs sm:text-sm text-[#2C2A29] opacity-60">
                 {incompleteSections.length} remaining
               </span>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
               {incompleteSections.slice(0, 3).map((section) => {
                 const Icon = section.icon;
                 return (
                   <Link
                     key={section.href}
                     href={section.href}
-                    className="group bg-white rounded-xl p-6 border border-gray-200 hover:border-[#A5B99A] hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
+                    className="group bg-white rounded-xl p-4 sm:p-6 border border-gray-200 hover:border-[#A5B99A] hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
                   >
-                    <div className="flex items-start justify-between mb-4">
-                      <div className={`p-3 ${section.bgColor} rounded-xl`}>
-                        <Icon className={`w-6 h-6 ${section.color.replace('bg-', 'text-')}`} />
+                    <div className="flex items-start justify-between mb-3 sm:mb-4">
+                      <div className={`p-2 sm:p-3 ${section.bgColor} rounded-xl flex-shrink-0`}>
+                        <Icon className={`w-5 h-5 sm:w-6 sm:h-6 ${section.color.replace('bg-', 'text-')}`} />
                       </div>
-                      <ArrowRight className="w-5 h-5 text-[#2C2A29] opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                      <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 text-[#2C2A29] opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all flex-shrink-0" />
                     </div>
-                    <h3 className="font-semibold text-[#2C2A29] mb-2 text-lg">{section.title}</h3>
-                    <p className="text-sm text-[#2C2A29] opacity-70">{section.description}</p>
+                    <h3 className="font-semibold text-[#2C2A29] mb-2 text-base sm:text-lg">{section.title}</h3>
+                    <p className="text-xs sm:text-sm text-[#2C2A29] opacity-70">{section.description}</p>
                   </Link>
                 );
               })}
@@ -346,8 +346,8 @@ export default function DashboardPage() {
 
         {/* All Sections */}
         <div>
-          <h2 className="text-2xl font-semibold text-[#2C2A29] mb-6">All Sections</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <h2 className="text-xl sm:text-2xl font-semibold text-[#2C2A29] mb-4 sm:mb-6">All Sections</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
             {sections.map((section) => {
               const Icon = section.icon;
               return (

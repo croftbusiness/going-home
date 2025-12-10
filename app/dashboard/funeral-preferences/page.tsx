@@ -175,29 +175,31 @@ export default function FuneralPreferencesPage() {
   return (
     <div className="min-h-screen bg-[#FAF9F7]">
       <header className="bg-[#FCFAF7] border-b border-gray-200">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center space-x-4">
-            <Link href="/dashboard" className="p-2 hover:bg-white rounded-lg transition-colors">
-              <ArrowLeft className="w-5 h-5 text-[#2C2A29]" />
-            </Link>
-            <div>
-              <h1 className="text-2xl font-semibold text-[#2C2A29]">Funeral Preferences</h1>
-              <p className="text-sm text-[#2C2A29] opacity-70 mt-1">
-                Your wishes for services and ceremonies
-              </p>
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex items-center space-x-3 sm:space-x-4 min-w-0 flex-1">
+              <Link href="/dashboard" className="p-2 hover:bg-white rounded-lg transition-colors flex-shrink-0 touch-target">
+                <ArrowLeft className="w-5 h-5 text-[#2C2A29]" />
+              </Link>
+              <div className="min-w-0 flex-1">
+                <h1 className="text-xl sm:text-2xl font-semibold text-[#2C2A29]">Funeral Preferences</h1>
+                <p className="text-xs sm:text-sm text-[#2C2A29] opacity-70 mt-1">
+                  Your wishes for services and ceremonies
+                </p>
+              </div>
             </div>
+            <button
+              onClick={() => setShowAIGenerator(!showAIGenerator)}
+              className="w-full sm:w-auto px-4 py-2.5 min-h-[48px] text-base bg-[#93B0C8] text-white rounded-lg hover:bg-[#A5B99A] transition-colors flex items-center justify-center space-x-2 touch-target"
+            >
+              <Sparkles className="w-4 h-4" />
+              <span>AI Generate Preferences</span>
+            </button>
           </div>
-          <button
-            onClick={() => setShowAIGenerator(!showAIGenerator)}
-            className="px-4 py-2 bg-[#93B0C8] text-white rounded-lg hover:bg-[#A5B99A] transition-colors flex items-center space-x-2"
-          >
-            <Sparkles className="w-4 h-4" />
-            <span>AI Generate Preferences</span>
-          </button>
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
         {showAIGenerator && (
           <div className="mb-6">
             <FuneralPreferenceGenerator

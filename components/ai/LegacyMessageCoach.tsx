@@ -81,7 +81,7 @@ export default function LegacyMessageCoach({ initialText = '', onSave }: LegacyM
           value={messageText}
           onChange={(e) => setMessageText(e.target.value)}
           placeholder="Type or paste your legacy message here..."
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent min-h-[200px] resize-y"
+          className="w-full px-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent min-h-[200px] resize-y touch-target"
         />
 
         {error && (
@@ -94,7 +94,7 @@ export default function LegacyMessageCoach({ initialText = '', onSave }: LegacyM
           <button
             onClick={() => handleAction('improve')}
             disabled={loading || !messageText.trim()}
-            className="flex-1 px-4 py-2 bg-[#A5B99A] text-white rounded-lg hover:bg-[#93B0C8] transition-colors flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 px-4 py-3 min-h-[48px] text-base bg-[#A5B99A] text-white rounded-lg hover:bg-[#93B0C8] transition-colors flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed touch-target"
           >
             {loading && action === 'improve' ? (
               <>
@@ -112,7 +112,7 @@ export default function LegacyMessageCoach({ initialText = '', onSave }: LegacyM
           <button
             onClick={() => handleAction('suggest')}
             disabled={loading || !messageText.trim()}
-            className="flex-1 px-4 py-2 border border-gray-300 text-[#2C2A29] rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 px-4 py-3 min-h-[48px] text-base border border-gray-300 text-[#2C2A29] rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed touch-target"
           >
             {loading && action === 'suggest' ? (
               <>

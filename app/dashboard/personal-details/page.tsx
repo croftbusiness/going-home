@@ -163,7 +163,7 @@ export default function PersonalDetailsPage() {
                   required
                   value={formData.fullName}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 bg-white border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-[#2C2A29]"
+                  className="w-full px-4 py-3 text-base bg-white border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-[#2C2A29] touch-target"
                   placeholder="John Michael Doe"
                 />
               </div>
@@ -178,7 +178,7 @@ export default function PersonalDetailsPage() {
                   name="preferredName"
                   value={formData.preferredName}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 bg-white border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-[#2C2A29]"
+                  className="w-full px-4 py-3 text-base bg-white border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-[#2C2A29] touch-target"
                   placeholder="Mike"
                 />
               </div>
@@ -194,7 +194,7 @@ export default function PersonalDetailsPage() {
                   required
                   value={formData.dateOfBirth}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 bg-white border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-[#2C2A29]"
+                  className="w-full px-4 py-3 text-base bg-white border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-[#2C2A29] touch-target"
                 />
               </div>
 
@@ -209,7 +209,7 @@ export default function PersonalDetailsPage() {
                   required
                   value={formData.phone}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 bg-white border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-[#2C2A29]"
+                  className="w-full px-4 py-3 text-base bg-white border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-[#2C2A29] touch-target"
                   placeholder="+1 (555) 123-4567"
                 />
               </div>
@@ -225,7 +225,7 @@ export default function PersonalDetailsPage() {
                   required
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 bg-white border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-[#2C2A29]"
+                  className="w-full px-4 py-3 text-base bg-white border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-[#2C2A29] touch-target"
                   placeholder="john@example.com"
                 />
               </div>
@@ -249,7 +249,7 @@ export default function PersonalDetailsPage() {
                   required
                   value={formData.address}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 bg-white border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-[#2C2A29]"
+                  className="w-full px-4 py-3 text-base bg-white border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-[#2C2A29] touch-target"
                   placeholder="123 Main Street"
                 />
               </div>
@@ -265,7 +265,7 @@ export default function PersonalDetailsPage() {
                   required
                   value={formData.city}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 bg-white border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-[#2C2A29]"
+                  className="w-full px-4 py-3 text-base bg-white border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-[#2C2A29] touch-target"
                   placeholder="Knoxville"
                 />
               </div>
@@ -281,7 +281,7 @@ export default function PersonalDetailsPage() {
                   required
                   value={formData.state}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 bg-white border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-[#2C2A29]"
+                  className="w-full px-4 py-3 text-base bg-white border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-[#2C2A29] touch-target"
                   placeholder="TN"
                 />
               </div>
@@ -297,7 +297,7 @@ export default function PersonalDetailsPage() {
                   required
                   value={formData.zipCode}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 bg-white border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-[#2C2A29]"
+                  className="w-full px-4 py-3 text-base bg-white border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-[#2C2A29] touch-target"
                   placeholder="37920"
                 />
               </div>
@@ -321,7 +321,7 @@ export default function PersonalDetailsPage() {
                   required
                   value={formData.emergencyContactName}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 bg-white border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-[#2C2A29]"
+                  className="w-full px-4 py-3 text-base bg-white border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-[#2C2A29] touch-target"
                   placeholder="Jane Doe"
                 />
               </div>
@@ -337,7 +337,7 @@ export default function PersonalDetailsPage() {
                   required
                   value={formData.emergencyContactPhone}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 bg-white border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-[#2C2A29]"
+                  className="w-full px-4 py-3 text-base bg-white border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-[#2C2A29] touch-target"
                   placeholder="+1 (555) 987-6543"
                 />
               </div>
@@ -353,7 +353,7 @@ export default function PersonalDetailsPage() {
                   required
                   value={formData.emergencyContactRelationship}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 bg-white border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-[#2C2A29]"
+                  className="w-full px-4 py-3 text-base bg-white border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-[#2C2A29] touch-target"
                   placeholder="Spouse, Child, Sibling, etc."
                 />
               </div>

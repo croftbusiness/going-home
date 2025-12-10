@@ -175,22 +175,22 @@ export default function TrustedContactsPage() {
   return (
     <div className="min-h-screen bg-[#FAF9F7]">
       <header className="bg-[#FCFAF7] border-b border-gray-200">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <Link href="/dashboard" className="p-2 hover:bg-white rounded-lg transition-colors">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex items-center space-x-3 sm:space-x-4 min-w-0 flex-1">
+              <Link href="/dashboard" className="p-2 hover:bg-white rounded-lg transition-colors flex-shrink-0 touch-target">
                 <ArrowLeft className="w-5 h-5 text-[#2C2A29]" />
               </Link>
-              <div>
-                <h1 className="text-2xl font-semibold text-[#2C2A29]">Trusted Contacts</h1>
-                <p className="text-sm text-[#2C2A29] opacity-70 mt-1">
+              <div className="min-w-0 flex-1">
+                <h1 className="text-xl sm:text-2xl font-semibold text-[#2C2A29]">Trusted Contacts</h1>
+                <p className="text-xs sm:text-sm text-[#2C2A29] opacity-70 mt-1">
                   Manage who can access your information
                 </p>
               </div>
             </div>
             <button
               onClick={handleAddContact}
-              className="px-4 py-2 bg-[#A5B99A] text-white rounded-lg hover:bg-[#93B0C8] transition-colors flex items-center space-x-2"
+              className="w-full sm:w-auto px-4 py-2.5 min-h-[48px] text-base bg-[#A5B99A] text-white rounded-lg hover:bg-[#93B0C8] transition-colors flex items-center justify-center space-x-2 touch-target"
             >
               <Plus className="w-4 h-4" />
               <span>Add Contact</span>
@@ -199,7 +199,7 @@ export default function TrustedContactsPage() {
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
         {error && (
           <div className="bg-red-50 text-red-700 px-4 py-3 rounded-lg mb-6">{error}</div>
         )}
@@ -216,7 +216,7 @@ export default function TrustedContactsPage() {
               </p>
             )}
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium text-[#2C2A29] mb-1">
                     Full Name *
@@ -227,7 +227,7 @@ export default function TrustedContactsPage() {
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     required
-                    className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent"
+                    className="w-full px-4 py-3 text-base bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent touch-target"
                   />
                 </div>
                 <div>
@@ -241,7 +241,7 @@ export default function TrustedContactsPage() {
                     onChange={(e) => setFormData({ ...formData, relationship: e.target.value })}
                     required
                     placeholder="e.g., Spouse, Child, Friend"
-                    className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent"
+                    className="w-full px-4 py-3 text-base bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent touch-target"
                   />
                 </div>
               </div>
@@ -257,7 +257,7 @@ export default function TrustedContactsPage() {
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     required
-                    className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent"
+                    className="w-full px-4 py-3 text-base bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent touch-target"
                   />
                 </div>
                 <div>
@@ -270,7 +270,7 @@ export default function TrustedContactsPage() {
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     required
-                    className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent"
+                    className="w-full px-4 py-3 text-base bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent touch-target"
                   />
                 </div>
               </div>

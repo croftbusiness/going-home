@@ -2,61 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  body {
-    @apply bg-warm-white text-deep-charcoal;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  }
-  
-  h1 {
-    @apply text-page-title;
-  }
-  
-  h2 {
-    @apply text-section-header;
-  }
-  
-  p, label, input, textarea {
-    @apply text-body;
-  }
-  
-  input, textarea {
-    @apply bg-white;
-  }
-}
-
-@layer components {
-  .card {
-    @apply bg-soft-ivory rounded-lg p-6 shadow-sm;
-  }
-  
-  .btn-primary {
-    @apply bg-muted-sage text-white px-6 py-3 rounded-lg text-button transition-all duration-300 hover:opacity-90;
-  }
-  
-  .btn-secondary {
-    @apply bg-dusty-blue text-white px-6 py-3 rounded-lg text-button transition-all duration-300 hover:opacity-90;
-  }
-  
-  .input-field {
-    @apply w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-dusty-blue transition-colors;
-  }
-  
-  .form-label {
-    @apply block mb-2 text-deep-charcoal font-medium;
-  }
-  
-  .success-message {
-    @apply bg-faint-gold text-deep-charcoal p-4 rounded-lg;
-  }
-}
-
+/* Mobile-first optimizations */
 @layer utilities {
-  .container-spacing {
-    @apply px-6 py-8;
+  /* Ensure minimum touch target size (44x44px recommended by Apple/Google) */
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
   }
   
-  .section-spacing {
-    @apply mb-8;
+  /* Mobile-friendly inputs */
+  .input-mobile {
+    @apply px-4 py-3 text-base;
+    /* Prevents zoom on iOS when focusing inputs */
+    font-size: 16px !important;
+  }
+  
+  /* Mobile-friendly buttons */
+  .btn-mobile {
+    @apply px-4 py-2.5 min-h-[44px] text-base;
   }
 }
