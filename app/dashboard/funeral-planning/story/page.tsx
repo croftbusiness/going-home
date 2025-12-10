@@ -141,8 +141,8 @@ export default function FuneralStoryPage() {
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
         {/* Progress Bar */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-2">
+        <div className="mb-6 sm:mb-8">
+          <div className="hidden sm:flex items-center justify-between mb-2">
             {steps.map((step) => (
               <div key={step.number} className="flex items-center flex-1">
                 <div className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium ${
@@ -160,20 +160,25 @@ export default function FuneralStoryPage() {
               </div>
             ))}
           </div>
-          <div className="w-full bg-gray-100 rounded-full h-2">
+          <div className="sm:hidden mb-2">
+            <div className="text-xs text-[#2C2A29] opacity-70 mb-1">
+              Step {currentStep} of {steps.length}: {steps[currentStep - 1]?.title}
+            </div>
+          </div>
+          <div className="w-full bg-gray-100 rounded-full h-2 sm:h-3">
             <div
-              className="bg-gradient-to-r from-[#A5B99A] to-[#93B0C8] h-2 rounded-full transition-all duration-300"
+              className="bg-gradient-to-r from-[#A5B99A] to-[#93B0C8] h-2 sm:h-3 rounded-full transition-all duration-300"
               style={{ width: `${progress}%` }}
             />
           </div>
         </div>
 
         {error && (
-          <div className="bg-red-50 text-red-700 px-4 py-3 rounded-lg mb-6">{error}</div>
+          <div className="bg-red-50 text-red-700 px-4 py-3 rounded-lg mb-4 sm:mb-6 text-sm sm:text-base">{error}</div>
         )}
 
         {success && (
-          <div className="bg-green-50 text-green-700 px-4 py-3 rounded-lg mb-6">
+          <div className="bg-green-50 text-green-700 px-4 py-3 rounded-lg mb-4 sm:mb-6 text-sm sm:text-base">
             Your funeral story has been generated successfully!
           </div>
         )}
@@ -181,7 +186,7 @@ export default function FuneralStoryPage() {
         {/* Step 1: Atmosphere & Feeling */}
         {currentStep === 1 && (
           <div className="bg-white rounded-xl p-6 sm:p-8 shadow-sm border border-gray-200">
-            <h2 className="text-xl font-semibold text-[#2C2A29] mb-6">
+            <h2 className="text-lg sm:text-xl font-semibold text-[#2C2A29] mb-4 sm:mb-6">
               Step 1: Atmosphere & Feeling
             </h2>
             <div className="space-y-6">
@@ -237,7 +242,7 @@ export default function FuneralStoryPage() {
         {/* Step 2: Music & Readings */}
         {currentStep === 2 && (
           <div className="bg-white rounded-xl p-6 sm:p-8 shadow-sm border border-gray-200">
-            <h2 className="text-xl font-semibold text-[#2C2A29] mb-6">
+            <h2 className="text-lg sm:text-xl font-semibold text-[#2C2A29] mb-4 sm:mb-6">
               Step 2: Music & Readings
             </h2>
             <div className="space-y-6">
@@ -340,7 +345,7 @@ export default function FuneralStoryPage() {
         {/* Step 3: Your Message */}
         {currentStep === 3 && (
           <div className="bg-white rounded-xl p-6 sm:p-8 shadow-sm border border-gray-200">
-            <h2 className="text-xl font-semibold text-[#2C2A29] mb-6">
+            <h2 className="text-lg sm:text-xl font-semibold text-[#2C2A29] mb-4 sm:mb-6">
               Step 3: Your Message
             </h2>
             <div className="space-y-6">

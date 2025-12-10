@@ -52,15 +52,15 @@ export default function FinalSummaryPage() {
 
   return (
     <div className="min-h-screen bg-[#FAF9F7]">
-      <div className="max-w-6xl mx-auto px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <div className="flex items-center space-x-3 mb-4">
-            <div className="p-3 bg-[#A5B99A] bg-opacity-10 rounded-xl">
-              <FileCheck className="w-6 h-6 text-[#A5B99A]" />
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+        <div className="mb-6 sm:mb-8">
+          <div className="flex items-start space-x-3 sm:space-x-4 mb-4">
+            <div className="p-2 sm:p-3 bg-[#A5B99A] bg-opacity-10 rounded-xl flex-shrink-0">
+              <FileCheck className="w-5 h-5 sm:w-6 sm:h-6 text-[#A5B99A]" />
             </div>
-            <div>
-              <h1 className="text-3xl font-semibold text-[#2C2A29]">Final Arrangements Summary</h1>
-              <p className="text-[#2C2A29] opacity-70 mt-1">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-semibold text-[#2C2A29]">Final Arrangements Summary</h1>
+              <p className="text-xs sm:text-sm text-[#2C2A29] opacity-70 mt-1">
                 Complete overview of all your information and preferences
               </p>
             </div>
@@ -75,22 +75,22 @@ export default function FinalSummaryPage() {
               title="Personal Details"
               color="bg-[#A5B99A]"
             >
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-xs sm:text-sm">
+                <div className="break-words">
                   <span className="font-medium">Full Name:</span> {summary.personalDetails.full_name}
                 </div>
                 {summary.personalDetails.preferred_name && (
-                  <div>
+                  <div className="break-words">
                     <span className="font-medium">Preferred Name:</span> {summary.personalDetails.preferred_name}
                   </div>
                 )}
-                <div>
+                <div className="break-words">
                   <span className="font-medium">Date of Birth:</span> {summary.personalDetails.date_of_birth}
                 </div>
-                <div>
+                <div className="break-words">
                   <span className="font-medium">Phone:</span> {summary.personalDetails.phone}
                 </div>
-                <div className="col-span-2">
+                <div className="col-span-1 sm:col-span-2 break-words">
                   <span className="font-medium">Address:</span> {summary.personalDetails.address}, {summary.personalDetails.city}, {summary.personalDetails.state} {summary.personalDetails.zip_code}
                 </div>
               </div>
@@ -423,12 +423,12 @@ function SectionCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-      <div className="flex items-center space-x-3 mb-4">
-        <div className={`p-2 ${color} bg-opacity-10 rounded-lg`}>
-          <Icon className={`w-5 h-5 ${color.replace('bg-', 'text-')}`} />
+    <div className="bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-gray-200">
+      <div className="flex items-center space-x-3 mb-3 sm:mb-4">
+        <div className={`p-2 ${color} bg-opacity-10 rounded-lg flex-shrink-0`}>
+          <Icon className={`w-4 h-4 sm:w-5 sm:h-5 ${color.replace('bg-', 'text-')}`} />
         </div>
-        <h2 className="text-xl font-semibold text-[#2C2A29]">{title}</h2>
+        <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-[#2C2A29]">{title}</h2>
       </div>
       <div className="text-[#2C2A29]">
         {children}
