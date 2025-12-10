@@ -183,7 +183,7 @@ export default function OnboardingAssistant({ onComplete, onSkip }: OnboardingAs
               <div className="flex space-x-3">
                 <button
                   type="submit"
-                  disabled={submitting || (step.fieldName && !userResponse.trim())}
+                  disabled={submitting || (!!step.fieldName && !userResponse.trim())}
                   className="flex-1 px-6 py-3 bg-[#A5B99A] text-white rounded-lg hover:bg-[#93B0C8] transition-colors flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {submitting ? (
