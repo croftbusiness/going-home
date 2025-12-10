@@ -71,16 +71,28 @@ export default function DashboardLayout({
         fetch('/api/user/personal-details'),
       ]);
       
-      if (statusRes.ok) {
-        const statusData = await statusRes.json();
-        setUserName(statusData.userName);
-      }
-      
+      // Prioritize personal details for name display
       if (personalRes.ok) {
         const personalData = await personalRes.json();
-        if (personalData.personalDetails?.profilePictureUrl) {
-          setProfilePictureUrl(personalData.personalDetails.profilePictureUrl);
+        if (personalData.personalDetails) {
+          // Use preferred name if available, otherwise full name
+          const displayName = personalData.personalDetails.preferredName || 
+                             personalData.personalDetails.fullName || 
+                             'User';
+          setUserName(displayName);
+          
+          if (personalData.personalDetails.profilePictureUrl) {
+            setProfilePictureUrl(personalData.personalDetails.profilePictureUrl);
+          }
+        } else if (statusRes.ok) {
+          // Fallback to email-based username if no personal details
+          const statusData = await statusRes.json();
+          setUserName(statusData.userName || 'User');
         }
+      } else if (statusRes.ok) {
+        // Fallback to email-based username if personal details fetch fails
+        const statusData = await statusRes.json();
+        setUserName(statusData.userName || 'User');
       }
     } catch (error) {
       // Ignore errors

@@ -89,14 +89,28 @@ export default function DashboardPage() {
       }
 
       const statusData = await statusRes.json();
-      setUserName(statusData.userName);
       setStatus(statusData.status);
       
       if (personalRes.ok) {
         const personalData = await personalRes.json();
-        if (personalData.personalDetails?.profilePictureUrl) {
-          setProfilePictureUrl(personalData.personalDetails.profilePictureUrl);
+        if (personalData.personalDetails) {
+          // Use preferred name if available, otherwise full name, otherwise fallback
+          const displayName = personalData.personalDetails.preferredName || 
+                             personalData.personalDetails.fullName || 
+                             statusData.userName || 
+                             'there';
+          setUserName(displayName);
+          
+          if (personalData.personalDetails.profilePictureUrl) {
+            setProfilePictureUrl(personalData.personalDetails.profilePictureUrl);
+          }
+        } else {
+          // Fallback to email-based username if no personal details
+          setUserName(statusData.userName || 'there');
         }
+      } else {
+        // Fallback to email-based username if personal details fetch fails
+        setUserName(statusData.userName || 'there');
       }
     } catch (error) {
       router.push('/auth/login');
