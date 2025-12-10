@@ -165,7 +165,7 @@ CREATE TABLE IF NOT EXISTS activity_log (
 CREATE INDEX IF NOT EXISTS idx_activity_log_user_id ON activity_log(user_id);
 CREATE INDEX IF NOT EXISTS idx_activity_log_created_at ON activity_log(created_at);
 
--- Function to update updated_at timestamp
+-- Function to update updated_at timestamp (safe to replace)
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -174,27 +174,48 @@ BEGIN
 END;
 $$ language 'plpgsql';
 
--- Triggers for updated_at
-CREATE TRIGGER update_users_updated_at BEFORE UPDATE ON users
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+-- Triggers for updated_at (safe: drop if exists before creating)
+DROP TRIGGER IF EXISTS update_users_updated_at ON users;
+CREATE TRIGGER update_users_updated_at 
+    BEFORE UPDATE ON users
+    FOR EACH ROW 
+    EXECUTE FUNCTION update_updated_at_column();
 
-CREATE TRIGGER update_personal_details_updated_at BEFORE UPDATE ON personal_details
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+DROP TRIGGER IF EXISTS update_personal_details_updated_at ON personal_details;
+CREATE TRIGGER update_personal_details_updated_at 
+    BEFORE UPDATE ON personal_details
+    FOR EACH ROW 
+    EXECUTE FUNCTION update_updated_at_column();
 
-CREATE TRIGGER update_medical_contacts_updated_at BEFORE UPDATE ON medical_contacts
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+DROP TRIGGER IF EXISTS update_medical_contacts_updated_at ON medical_contacts;
+CREATE TRIGGER update_medical_contacts_updated_at 
+    BEFORE UPDATE ON medical_contacts
+    FOR EACH ROW 
+    EXECUTE FUNCTION update_updated_at_column();
 
-CREATE TRIGGER update_funeral_preferences_updated_at BEFORE UPDATE ON funeral_preferences
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+DROP TRIGGER IF EXISTS update_funeral_preferences_updated_at ON funeral_preferences;
+CREATE TRIGGER update_funeral_preferences_updated_at 
+    BEFORE UPDATE ON funeral_preferences
+    FOR EACH ROW 
+    EXECUTE FUNCTION update_updated_at_column();
 
-CREATE TRIGGER update_trusted_contacts_updated_at BEFORE UPDATE ON trusted_contacts
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+DROP TRIGGER IF EXISTS update_trusted_contacts_updated_at ON trusted_contacts;
+CREATE TRIGGER update_trusted_contacts_updated_at 
+    BEFORE UPDATE ON trusted_contacts
+    FOR EACH ROW 
+    EXECUTE FUNCTION update_updated_at_column();
 
-CREATE TRIGGER update_letters_updated_at BEFORE UPDATE ON letters
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+DROP TRIGGER IF EXISTS update_letters_updated_at ON letters;
+CREATE TRIGGER update_letters_updated_at 
+    BEFORE UPDATE ON letters
+    FOR EACH ROW 
+    EXECUTE FUNCTION update_updated_at_column();
 
-CREATE TRIGGER update_release_settings_updated_at BEFORE UPDATE ON release_settings
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+DROP TRIGGER IF EXISTS update_release_settings_updated_at ON release_settings;
+CREATE TRIGGER update_release_settings_updated_at 
+    BEFORE UPDATE ON release_settings
+    FOR EACH ROW 
+    EXECUTE FUNCTION update_updated_at_column();
 
 -- Row Level Security (RLS) Policies
 -- NOTE: These policies use auth.uid() which requires Supabase Auth to be enabled
