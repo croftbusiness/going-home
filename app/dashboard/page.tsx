@@ -288,14 +288,23 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-[#FAF9F7]">
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
-        {/* Welcome Section */}
+        {/* Welcome Section with Profile Picture */}
         <div className="mb-6 sm:mb-10">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-[#2C2A29] mb-2 sm:mb-3">
-            Welcome back, {userName || 'there'}
-          </h1>
-          <p className="text-sm sm:text-base lg:text-lg text-[#2C2A29] opacity-70">
-            Continue organizing your information and preferences
-          </p>
+          <div className="flex items-center space-x-4 sm:space-x-6">
+            <ProfilePictureUpload
+              currentUrl={profilePictureUrl}
+              onUploadComplete={(url) => setProfilePictureUrl(url)}
+              size="lg"
+            />
+            <div className="flex-1 min-w-0">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-[#2C2A29] mb-2 sm:mb-3">
+                Welcome back, {userName || 'there'}
+              </h1>
+              <p className="text-sm sm:text-base lg:text-lg text-[#2C2A29] opacity-70">
+                Continue organizing your information and preferences
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Progress Overview Card */}
