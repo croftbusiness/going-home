@@ -306,6 +306,11 @@ export default function DashboardPage() {
           </div>
         </div>
 
+        {/* AI Checklist */}
+        <div className="mb-10">
+          <AIChecklist />
+        </div>
+
         {/* Quick Actions / Next Steps */}
         {incompleteSections.length > 0 && (
           <div className="mb-10">
