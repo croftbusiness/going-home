@@ -7,10 +7,14 @@
 
 import OpenAI from 'openai';
 
-// Initialize OpenAI client (will use OPENAI_API_KEY from environment)
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// Lazy initialization function to avoid build-time errors
+function getOpenAIClient(): OpenAI {
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) {
+    throw new Error('OPENAI_API_KEY is not configured');
+  }
+  return new OpenAI({ apiKey });
+}
 
 /**
  * Base system prompt that ensures all AI outputs are:
@@ -45,6 +49,7 @@ export async function generateAIResponse(
       throw new Error('OpenAI API key not configured');
     }
 
+    const openai = getOpenAIClient();
     const response = await openai.chat.completions.create({
       model: model === 'gpt-4.1' ? 'gpt-4-turbo-preview' : 'gpt-4o-mini', // Using available models
       messages: [
@@ -121,6 +126,7 @@ export async function extractTextFromFile(
       const buffer = Buffer.from(arrayBuffer);
       const base64 = buffer.toString('base64');
 
+      const openai = getOpenAIClient();
       const visionResponse = await openai.chat.completions.create({
         model: 'gpt-4o',
         messages: [

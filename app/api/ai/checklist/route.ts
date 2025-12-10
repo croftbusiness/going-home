@@ -1,12 +1,7 @@
 import { NextResponse } from 'next/server';
 import { requireAuth, createServerClient } from '@/lib/auth';
-import { generateAIResponse } from '@/lib/utils/ai';
-import OpenAI from 'openai';
+import { generateAIJSON } from '@/lib/utils/ai';
 import type { ChecklistRequest, ChecklistResponse } from '@/types/ai';
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
 
 /**
  * AI Checklist Builder
@@ -87,25 +82,18 @@ Each item: {"title":"max 100 chars","description":"max 200 chars","priority":"hi
 Be gentle, supportive, specific. Focus on peace of mind. Return max 8 items.
 Format: {"items": [{"title":"...","description":"...","priority":"high","category":"documents"},...]}`;
 
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
-      messages: [
-        { role: 'system', content: jsonSystemPrompt },
-        { role: 'user', content: userPrompt },
-      ],
-      temperature: 0.7,
-      max_tokens: 600, // Reduced for faster response
-      response_format: { type: 'json_object' }, // Force JSON mode
-    });
-
-    const suggestionsText = completion.choices[0]?.message?.content || '{"items":[]}';
     let parsedItems: any[] = [];
     
     try {
-      const suggestionsData = JSON.parse(suggestionsText);
+      const suggestionsData = await generateAIJSON<{ items?: any[]; suggestions?: any[] }>(
+        jsonSystemPrompt,
+        userPrompt,
+        'gpt-4.1-mini',
+        0.7
+      );
       parsedItems = suggestionsData.items || suggestionsData.suggestions || [];
     } catch (e) {
-      console.error('Failed to parse AI JSON response:', e);
+      console.error('Failed to generate or parse AI JSON response:', e);
     }
 
     // Parse JSON response into structured items

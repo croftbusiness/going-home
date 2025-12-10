@@ -5,9 +5,14 @@
 
 import OpenAI from 'openai';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// Lazy initialization function to avoid build-time errors
+function getOpenAIClient(): OpenAI {
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) {
+    throw new Error('OPENAI_API_KEY is not configured');
+  }
+  return new OpenAI({ apiKey });
+}
 
 /**
  * Base system prompt for all funeral AI features
@@ -54,6 +59,7 @@ Return as JSON with these keys: ceremonyScript, memorialNarrative, playlistSugge
 
 Keep everything gentle, warm, and focused on celebrating life and love.`;
 
+  const openai = getOpenAIClient();
   const completion = await openai.chat.completions.create({
     model: 'gpt-4o-mini',
     messages: [
@@ -92,6 +98,7 @@ Return as JSON with keys: vibeGuide, decorSuggestions (array), invitationWording
 
 Keep the tone warm, beautiful, and respectful.`;
 
+  const openai = getOpenAIClient();
   const completion = await openai.chat.completions.create({
     model: 'gpt-4o-mini',
     messages: [
@@ -132,6 +139,7 @@ Return as JSON with keys: fullDraft, shortVersion (if applicable), mediumVersion
 
 Write with warmth, respect, and celebration of their life.`;
 
+  const openai = getOpenAIClient();
   const completion = await openai.chat.completions.create({
     model: 'gpt-4o-mini',
     messages: [
@@ -174,6 +182,7 @@ Return as JSON with keys: openingWords, closingBlessing, prayers (array, if appl
 
 Keep everything gentle, warm, and comforting.`;
 
+  const openai = getOpenAIClient();
   const completion = await openai.chat.completions.create({
     model: 'gpt-4o-mini',
     messages: [
@@ -222,6 +231,7 @@ Return as JSON with keys: draft, suggestions (optional array of improvement idea
 
 Write with deep warmth and care.`;
 
+  const openai = getOpenAIClient();
   const completion = await openai.chat.completions.create({
     model: 'gpt-4o-mini',
     messages: [
@@ -263,6 +273,7 @@ Return as JSON with keys: coreValues (array), toneThemes (array), lifeLessons (a
 
 Be thoughtful and insightful.`;
 
+  const openai = getOpenAIClient();
   const completion = await openai.chat.completions.create({
     model: 'gpt-4o-mini',
     messages: [
@@ -302,6 +313,7 @@ Return as JSON with keys: ceremonyMusic (array), slideshowSongs (array), recepti
 
 Include personalized explanations for why each song fits.`;
 
+  const openai = getOpenAIClient();
   const completion = await openai.chat.completions.create({
     model: 'gpt-4o-mini',
     messages: [
@@ -340,6 +352,7 @@ Return as JSON with keys: photoOrder (array), captions (array), groupings (array
 
 Make it tell a beautiful story of their life.`;
 
+  const openai = getOpenAIClient();
   const completion = await openai.chat.completions.create({
     model: 'gpt-4o-mini',
     messages: [
