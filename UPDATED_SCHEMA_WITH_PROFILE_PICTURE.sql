@@ -1,5 +1,5 @@
 -- ============================================================================
--- GOING HOME APP – COMPLETE MASTER DATABASE SCHEMA (UPDATED WITH PROFILE PICTURE)
+-- GOING HOME APP – COMPLETE MASTER DATABASE SCHEMA
 -- ============================================================================
 -- This is the FULL, complete schema with ALL tables, triggers, policies, and storage
 -- Safe to run multiple times - uses IF NOT EXISTS and DROP IF EXISTS patterns
@@ -740,4 +740,3 @@ USING (
 -- ============================================================================
 -- END OF SCHEMA
 -- ============================================================================
-
