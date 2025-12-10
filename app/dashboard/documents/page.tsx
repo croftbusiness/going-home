@@ -24,6 +24,7 @@ export default function DocumentsPage() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const [showUploadForm, setShowUploadForm] = useState(false);
+  const [analyzingDocId, setAnalyzingDocId] = useState<string | null>(null);
   const [uploadData, setUploadData] = useState({
     documentType: '',
     note: '',
