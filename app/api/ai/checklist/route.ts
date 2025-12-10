@@ -81,10 +81,16 @@ ${dataSummary}
 
 Generate actionable suggestions as JSON array only.`;
 
+    // Update prompt to request JSON object with items array (required for JSON mode)
+    const jsonSystemPrompt = `You are analyzing a user's end-of-life planning profile. Return a JSON object with an "items" array.
+Each item: {"title":"max 100 chars","description":"max 200 chars","priority":"high|medium|low","category":"personal_info|documents|letters|contacts|preferences"}.
+Be gentle, supportive, specific. Focus on peace of mind. Return max 8 items.
+Format: {"items": [{"title":"...","description":"...","priority":"high","category":"documents"},...]}`;
+
     const completion = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
-        { role: 'system', content: systemPrompt },
+        { role: 'system', content: jsonSystemPrompt },
         { role: 'user', content: userPrompt },
       ],
       temperature: 0.7,
@@ -92,36 +98,21 @@ Generate actionable suggestions as JSON array only.`;
       response_format: { type: 'json_object' }, // Force JSON mode
     });
 
-    let suggestionsText = completion.choices[0]?.message?.content || '{}';
+    const suggestionsText = completion.choices[0]?.message?.content || '{"items":[]}';
+    let parsedItems: any[] = [];
     
-    // Handle JSON object wrapper (OpenAI JSON mode returns { "items": [...] })
-    let suggestionsData: any = {};
     try {
-      suggestionsData = JSON.parse(suggestionsText);
-      if (suggestionsData.items && Array.isArray(suggestionsData.items)) {
-        suggestionsText = JSON.stringify(suggestionsData.items);
-      } else if (suggestionsData.suggestions && Array.isArray(suggestionsData.suggestions)) {
-        suggestionsText = JSON.stringify(suggestionsData.suggestions);
-      }
+      const suggestionsData = JSON.parse(suggestionsText);
+      parsedItems = suggestionsData.items || suggestionsData.suggestions || [];
     } catch (e) {
-      // Fall through to parsing logic below
+      console.error('Failed to parse AI JSON response:', e);
     }
 
-    // Parse JSON response
+    // Parse JSON response into structured items
     const items: ChecklistResponse['items'] = [];
     
-    try {
-      // Try to extract JSON from response (handle markdown code blocks)
-      let jsonText = suggestionsText.trim();
-      const jsonMatch = jsonText.match(/\[[\s\S]*\]/);
-      if (jsonMatch) {
-        jsonText = jsonMatch[0];
-      }
-      
-      const parsedItems = JSON.parse(jsonText);
-      
-      if (Array.isArray(parsedItems)) {
-        parsedItems.slice(0, 10).forEach((item: any, idx: number) => {
+    if (parsedItems && Array.isArray(parsedItems)) {
+      parsedItems.slice(0, 10).forEach((item: any, idx: number) => {
           const categoryMap: Record<string, ChecklistResponse['items'][0]['category']> = {
             'personal_info': 'personal_info',
             'documents': 'documents',
@@ -151,9 +142,7 @@ Generate actionable suggestions as JSON array only.`;
             actionUrl: actionUrlMap[category] || '/dashboard',
           });
         });
-      }
-    } catch (parseError) {
-      console.error('Failed to parse AI response as JSON:', parseError);
+    } else {
       // Fallback: generate simple suggestions based on missing data
       if (!personalDetails.data) {
         items.push({
