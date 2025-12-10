@@ -116,13 +116,22 @@ export default function DashboardPage() {
       bgColor: 'bg-[#93B0C8] bg-opacity-5',
     },
     {
-      title: 'Funeral Preferences',
-      description: 'Your wishes for services',
+      title: 'Funeral Planning',
+      description: 'AI-guided comprehensive ceremony planning',
+      icon: Heart,
+      href: '/dashboard/funeral-planning',
+      completed: false, // Complex section, show as always available
+      color: 'bg-[#A5B99A]',
+      bgColor: 'bg-[#A5B99A] bg-opacity-5',
+    },
+    {
+      title: 'Basic Funeral Preferences',
+      description: 'Quick entry for burial/cremation and service basics',
       icon: FileText,
       href: '/dashboard/funeral-preferences',
       completed: status.funeralPreferences,
-      color: 'bg-[#A5B99A]',
-      bgColor: 'bg-[#A5B99A] bg-opacity-5',
+      color: 'bg-[#93B0C8]',
+      bgColor: 'bg-[#93B0C8] bg-opacity-5',
     },
     {
       title: 'Will Questionnaire',
@@ -143,8 +152,8 @@ export default function DashboardPage() {
       bgColor: 'bg-[#A5B99A] bg-opacity-5',
     },
     {
-      title: 'Letters',
-      description: 'Personal messages for family',
+      title: 'Personal Letters',
+      description: 'Messages for trusted contacts',
       icon: Mail,
       href: '/dashboard/letters',
       completed: status.letters,

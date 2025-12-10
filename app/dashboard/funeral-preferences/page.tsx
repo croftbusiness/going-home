@@ -200,6 +200,25 @@ export default function FuneralPreferencesPage() {
       </header>
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+        {/* Link to Comprehensive Planning */}
+        <div className="bg-gradient-to-r from-[#A5B99A] to-[#93B0C8] rounded-xl p-4 sm:p-6 mb-6 text-white">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex-1">
+              <h3 className="text-lg font-semibold mb-2">Want a More Comprehensive Funeral Plan?</h3>
+              <p className="text-sm opacity-90">
+                Our AI-guided Funeral Planning section helps you create detailed ceremony scripts, eulogies, playlists, 
+                moodboards, and more. It's perfect for creating a truly personalized and meaningful service.
+              </p>
+            </div>
+            <Link
+              href="/dashboard/funeral-planning"
+              className="px-6 py-3 bg-white text-[#2C2A29] rounded-lg hover:bg-gray-100 transition-colors font-medium whitespace-nowrap touch-target"
+            >
+              Explore Funeral Planning →
+            </Link>
+          </div>
+        </div>
+
         {showAIGenerator && (
           <div className="mb-6">
             <FuneralPreferenceGenerator

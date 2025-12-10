@@ -153,9 +153,9 @@ export default function LettersPage() {
                 <ArrowLeft className="w-5 h-5 text-[#2C2A29]" />
               </Link>
               <div className="min-w-0 flex-1">
-                <h1 className="text-xl sm:text-2xl font-semibold text-[#2C2A29]">Letters to Loved Ones</h1>
+                <h1 className="text-xl sm:text-2xl font-semibold text-[#2C2A29]">Personal Letters</h1>
                 <p className="text-xs sm:text-sm text-[#2C2A29] opacity-70 mt-1">
-                  Personal messages for family and friends
+                  Messages for your trusted contacts (separate from funeral ceremony letters)
                 </p>
               </div>
             </div>
@@ -165,9 +165,16 @@ export default function LettersPage() {
                 className="w-full sm:w-auto px-4 py-2.5 bg-[#93B0C8] text-white rounded-lg hover:bg-[#A5B99A] transition-colors flex items-center justify-center space-x-2 text-sm sm:text-base"
               >
                 <Sparkles className="w-4 h-4" />
-                <span>AI Generate</span>
-              </button>
-              <button
+                  <span>AI Generate</span>
+                </button>
+                <Link
+                  href="/dashboard/funeral-planning/letters"
+                  className="w-full sm:w-auto px-4 py-2.5 bg-[#EBD9B5] text-[#2C2A29] rounded-lg hover:bg-[#D4C19A] transition-colors flex items-center justify-center space-x-2 text-sm sm:text-base touch-target"
+                >
+                  <Mail className="w-4 h-4" />
+                  <span>Funeral Ceremony Letters →</span>
+                </Link>
+                <button
                 onClick={() => {
                   setShowForm(true);
                   setEditingId(null);
