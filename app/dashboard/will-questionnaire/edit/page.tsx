@@ -113,13 +113,27 @@ export default function WillQuestionnaireEditPage() {
   };
 
   const handleChange = (section: string, field: string, value: any) => {
-    setFormData((prev) => ({
-      ...prev,
-      [section]: {
-        ...prev[section as keyof typeof prev],
-        [field]: value,
-      },
-    }));
+    setFormData((prev) => {
+      const sectionValue = prev[section as keyof typeof prev];
+      // Handle notes separately since it's a string, not an object
+      if (section === 'notes') {
+        return {
+          ...prev,
+          notes: value,
+        };
+      }
+      // For object sections, spread the existing object
+      if (typeof sectionValue === 'object' && sectionValue !== null) {
+        return {
+          ...prev,
+          [section]: {
+            ...(sectionValue as Record<string, any>),
+            [field]: value,
+          },
+        };
+      }
+      return prev;
+    });
   };
 
   const addSpecificGift = () => {
