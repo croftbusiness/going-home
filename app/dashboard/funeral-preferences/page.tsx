@@ -26,6 +26,7 @@ export default function FuneralPreferencesPage() {
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [showAIGenerator, setShowAIGenerator] = useState(false);
   const [formData, setFormData] = useState<FuneralPreferences>({
     burialOrCremation: '',
     funeralHome: '',
