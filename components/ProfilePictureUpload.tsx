@@ -98,8 +98,8 @@ export default function ProfilePictureUpload({
   };
 
   return (
-    <div className="relative">
-      <div className={`${sizeClasses[size]} relative rounded-full overflow-hidden border-2 border-[#A5B99A] bg-[#A5B99A] bg-opacity-10 flex items-center justify-center group cursor-pointer`}>
+    <div className="relative flex flex-col items-center">
+      <div className={`${sizeClasses[size]} relative rounded-full overflow-hidden border-2 border-[#A5B99A] bg-[#A5B99A] bg-opacity-10 flex items-center justify-center group cursor-pointer transition-all hover:border-[#93B0C8] hover:shadow-lg`}>
         {currentUrl ? (
           <>
             <img
@@ -111,25 +111,48 @@ export default function ProfilePictureUpload({
                 target.style.display = 'none';
               }}
             />
-            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all flex items-center justify-center">
+            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all flex flex-col items-center justify-center gap-1">
               <Camera className="w-5 h-5 sm:w-6 sm:h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+              <span className="text-xs text-white opacity-0 group-hover:opacity-100 transition-opacity font-medium">
+                Update
+              </span>
             </div>
           </>
         ) : (
-          <User className="w-8 h-8 sm:w-10 sm:h-10 text-[#A5B99A]" />
+          <>
+            <User className="w-8 h-8 sm:w-10 sm:h-10 text-[#A5B99A] group-hover:text-[#93B0C8] transition-colors" />
+            <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+              <Camera className="w-5 h-5 sm:w-6 sm:h-6 text-[#93B0C8] mb-1" />
+            </div>
+          </>
         )}
         
         {uploading && (
-          <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center">
             <Loader2 className="w-5 h-5 sm:w-6 sm:h-6 text-white animate-spin" />
           </div>
         )}
       </div>
+      
+      {!currentUrl && (
+        <p className="mt-2 text-xs text-[#2C2A29] opacity-70 text-center max-w-[120px]">
+          Add your profile here
+        </p>
+      )}
+      
+      {currentUrl && (
+        <p className="mt-2 text-xs text-[#2C2A29] opacity-70 text-center max-w-[120px]">
+          Click to update or remove
+        </p>
+      )}
 
       {currentUrl && !uploading && (
         <button
-          onClick={handleDelete}
-          className="absolute -top-1 -right-1 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors touch-target"
+          onClick={(e) => {
+            e.stopPropagation();
+            handleDelete();
+          }}
+          className="absolute -top-1 -right-1 p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors touch-target shadow-md z-10"
           title="Remove profile picture"
         >
           <X className="w-3 h-3 sm:w-4 sm:h-4" />
