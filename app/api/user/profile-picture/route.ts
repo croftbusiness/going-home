@@ -148,12 +148,14 @@ export async function POST(request: Request) {
 
     if (updateError) {
       console.error('Could not save profile picture URL to database:', updateError);
-      // Still return the URL so the user can see it, but log the error
+      console.error('Error details:', JSON.stringify(updateError, null, 2));
+      // Return error with details so frontend can show it
       return NextResponse.json({ 
         url: photoApiUrl,
         filePath: fileName,
-        warning: 'Photo uploaded but may not be saved. Please refresh the page.'
-      });
+        error: `Failed to save profile picture: ${updateError.message || 'Unknown error'}. Make sure you have run the SQL migration to add the profile_picture_url column.`,
+        warning: true
+      }, { status: 500 });
     }
 
     return NextResponse.json({ 

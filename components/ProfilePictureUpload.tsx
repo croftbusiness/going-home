@@ -58,11 +58,17 @@ export default function ProfilePictureUpload({
       }
 
       const data = await response.json();
-      if (data.warning) {
-        console.warn(data.warning);
-        // Still show the image even if there was a warning
+      
+      // Check if there was an error saving to database
+      if (data.error || data.warning) {
+        setError(data.error || data.warning || 'Photo uploaded but may not be saved permanently.');
+        console.error('Upload warning/error:', data.error || data.warning);
       }
-      onUploadComplete(data.url);
+      
+      // Still update the UI even if there was a warning
+      if (data.url) {
+        onUploadComplete(data.url);
+      }
       setUploading(false);
     } catch (err: any) {
       setError(err.message || 'Failed to upload profile picture');
