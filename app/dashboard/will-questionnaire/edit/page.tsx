@@ -66,18 +66,39 @@ export default function WillQuestionnaireEditPage() {
 
   const loadQuestionnaire = async () => {
     try {
-      const data = await getWillQuestionnaire();
-      if (data) {
-        setQuestionnaire(data);
-        setFormData({
-          personalInfo: data.personalInfo || formData.personalInfo,
-          executor: data.executor || formData.executor,
-          guardians: data.guardians || formData.guardians,
-          bequests: data.bequests || formData.bequests,
-          digitalAssets: data.digitalAssets || formData.digitalAssets,
-          notes: data.notes || '',
-        });
+      // Load both questionnaire and personal details in parallel
+      const [questionnaireData, personalDetailsResponse] = await Promise.all([
+        getWillQuestionnaire().catch(() => null),
+        fetch('/api/user/personal-details').then(r => r.ok ? r.json() : null).catch(() => null),
+      ]);
+
+      // Get personal details if available
+      const personalDetails = personalDetailsResponse?.personalDetails;
+
+      // Merge personal details with existing questionnaire data
+      const mergedPersonalInfo = questionnaireData?.personalInfo || {};
+      if (personalDetails) {
+        // Pre-populate from personal_details table if available
+        mergedPersonalInfo.fullLegalName = mergedPersonalInfo.fullLegalName || personalDetails.fullName || '';
+        mergedPersonalInfo.dateOfBirth = mergedPersonalInfo.dateOfBirth || personalDetails.dateOfBirth || '';
+        mergedPersonalInfo.address = mergedPersonalInfo.address || personalDetails.address || '';
+        mergedPersonalInfo.city = mergedPersonalInfo.city || personalDetails.city || '';
+        mergedPersonalInfo.state = mergedPersonalInfo.state || personalDetails.state || '';
+        mergedPersonalInfo.zipCode = mergedPersonalInfo.zipCode || personalDetails.zipCode || '';
       }
+
+      if (questionnaireData) {
+        setQuestionnaire(questionnaireData);
+      }
+
+      setFormData({
+        personalInfo: mergedPersonalInfo,
+        executor: questionnaireData?.executor || formData.executor,
+        guardians: questionnaireData?.guardians || formData.guardians,
+        bequests: questionnaireData?.bequests || formData.bequests,
+        digitalAssets: questionnaireData?.digitalAssets || formData.digitalAssets,
+        notes: questionnaireData?.notes || '',
+      });
     } catch (err) {
       console.error('Error loading questionnaire:', err);
     } finally {
@@ -256,7 +277,12 @@ export default function WillQuestionnaireEditPage() {
           {/* Step 1: Personal Information */}
           {currentStep === 1 && (
             <div className="space-y-6">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-6">Personal Information</h2>
+              <div>
+                <h2 className="text-2xl font-semibold text-gray-900 mb-2">Personal Information</h2>
+                <p className="text-sm text-gray-600 mb-6">
+                  Your information has been pre-filled from your Personal Details profile. You can update any fields as needed.
+                </p>
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
