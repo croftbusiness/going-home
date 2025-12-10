@@ -32,6 +32,7 @@ const navigation = [
   { name: 'Personal Details', href: '/dashboard/personal-details', icon: User },
   { name: 'Medical & Legal', href: '/dashboard/medical-contacts', icon: Heart },
   { name: 'Funeral Preferences', href: '/dashboard/funeral-preferences', icon: FileText },
+  { name: 'Funeral Planning', href: '/dashboard/funeral-planning', icon: Heart },
   { name: 'Will Questionnaire', href: '/dashboard/will-questionnaire', icon: Scale },
   { name: 'Documents', href: '/dashboard/documents', icon: Upload },
   { name: 'Letters', href: '/dashboard/letters', icon: Mail },
