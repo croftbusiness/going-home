@@ -59,16 +59,16 @@ export async function POST(request: Request) {
     }
 
     // Delete old profile picture if exists
-    const { data: existingDetails } = await supabase
+    const { data: oldDetails } = await supabase
       .from('personal_details')
       .select('profile_picture_url')
       .eq('user_id', auth.userId)
       .maybeSingle();
 
-    if (existingDetails?.profile_picture_url) {
+    if (oldDetails?.profile_picture_url) {
       try {
         // Extract file path from URL
-        const oldUrl = existingDetails.profile_picture_url;
+        const oldUrl = oldDetails.profile_picture_url;
         let oldFilePath: string;
         
         if (oldUrl.includes('/api/user/photo?path=')) {
