@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Plus, Mail, Edit, Trash2, Sparkles } from 'lucide-react';
+import { ArrowLeft, Plus, Mail, Edit, Trash2, Sparkles, Wand2 } from 'lucide-react';
 import Link from 'next/link';
 import AILetterGenerator from '@/components/ai/AILetterGenerator';
+import LegacyMessageCoach from '@/components/ai/LegacyMessageCoach';
 
 interface Letter {
   id: string;
@@ -31,6 +32,7 @@ export default function LettersPage() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [showAIGenerator, setShowAIGenerator] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     recipientId: '',
@@ -155,23 +157,32 @@ export default function LettersPage() {
                 </p>
               </div>
             </div>
-            <button
-              onClick={() => {
-                setShowForm(true);
-                setEditingId(null);
-                setFormData({
-                  recipientId: '',
-                  recipientRelationship: '',
-                  title: '',
-                  messageText: '',
-                  visibleAfterDeath: true,
-                });
-              }}
-              className="px-4 py-2 bg-[#A5B99A] text-white rounded-lg hover:bg-[#93B0C8] transition-colors flex items-center space-x-2"
-            >
-              <Plus className="w-4 h-4" />
-              <span>New Letter</span>
-            </button>
+            <div className="flex space-x-2">
+              <button
+                onClick={() => setShowAIGenerator(true)}
+                className="px-4 py-2 bg-[#93B0C8] text-white rounded-lg hover:bg-[#A5B99A] transition-colors flex items-center space-x-2"
+              >
+                <Sparkles className="w-4 h-4" />
+                <span>AI Generate</span>
+              </button>
+              <button
+                onClick={() => {
+                  setShowForm(true);
+                  setEditingId(null);
+                  setFormData({
+                    recipientId: '',
+                    recipientRelationship: '',
+                    title: '',
+                    messageText: '',
+                    visibleAfterDeath: true,
+                  });
+                }}
+                className="px-4 py-2 bg-[#A5B99A] text-white rounded-lg hover:bg-[#93B0C8] transition-colors flex items-center space-x-2"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Write Letter</span>
+              </button>
+            </div>
           </div>
         </div>
       </header>
@@ -186,7 +197,23 @@ export default function LettersPage() {
           </div>
         )}
 
-        {contacts.length === 0 && !showForm && (
+        {showAIGenerator && (
+          <div className="mb-6">
+            <AILetterGenerator
+              onSave={(draftText) => {
+                setFormData({
+                  ...formData,
+                  messageText: draftText,
+                });
+                setShowAIGenerator(false);
+                setShowForm(true);
+              }}
+              onClose={() => setShowAIGenerator(false)}
+            />
+          </div>
+        )}
+
+        {contacts.length === 0 && !showForm && !showAIGenerator && (
           <div className="bg-[#FCFAF7] rounded-lg p-6 shadow-sm mb-6">
             <p className="text-[#2C2A29] opacity-70">
               You need to add trusted contacts before creating letters. 

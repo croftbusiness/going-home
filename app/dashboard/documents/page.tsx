@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Upload, FileText, Trash2, Eye } from 'lucide-react';
+import { ArrowLeft, Upload, FileText, Trash2, Eye, Sparkles } from 'lucide-react';
 import Link from 'next/link';
+import DocumentAnalyzer from '@/components/ai/DocumentAnalyzer';
 
 interface Document {
   id: string;
@@ -227,40 +228,64 @@ export default function DocumentsPage() {
         ) : (
           <div className="space-y-4">
             {documents.map((doc) => (
-              <div key={doc.id} className="bg-[#FCFAF7] rounded-lg p-6 shadow-sm">
-                <div className="flex items-start justify-between">
-                  <div className="flex items-start space-x-4 flex-1">
-                    <FileText className="w-6 h-6 text-[#A5B99A] mt-1" />
-                    <div className="flex-1">
-                      <h3 className="font-medium text-[#2C2A29]">{doc.fileName}</h3>
-                      <p className="text-sm text-[#2C2A29] opacity-70 mt-1 capitalize">
-                        {doc.documentType.replace('_', ' ')}
-                      </p>
-                      {doc.note && (
-                        <p className="text-sm text-[#2C2A29] opacity-70 mt-2">{doc.note}</p>
-                      )}
-                      <p className="text-xs text-[#2C2A29] opacity-50 mt-2">
-                        {new Date(doc.createdAt).toLocaleDateString()} • {(doc.fileSize / 1024).toFixed(1)} KB
-                      </p>
+              <div key={doc.id} className="space-y-4">
+                <div className="bg-[#FCFAF7] rounded-lg p-6 shadow-sm">
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-start space-x-4 flex-1">
+                      <FileText className="w-6 h-6 text-[#A5B99A] mt-1" />
+                      <div className="flex-1">
+                        <h3 className="font-medium text-[#2C2A29]">{doc.fileName}</h3>
+                        <p className="text-sm text-[#2C2A29] opacity-70 mt-1 capitalize">
+                          {doc.documentType.replace('_', ' ')}
+                        </p>
+                        {doc.note && (
+                          <p className="text-sm text-[#2C2A29] opacity-70 mt-2">{doc.note}</p>
+                        )}
+                        <p className="text-xs text-[#2C2A29] opacity-50 mt-2">
+                          {new Date(doc.createdAt).toLocaleDateString()} • {(doc.fileSize / 1024).toFixed(1)} KB
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <button
+                        onClick={() => setAnalyzingDocId(analyzingDocId === doc.id ? null : doc.id)}
+                        className={`p-2 rounded-lg transition-colors flex items-center space-x-1 ${
+                          analyzingDocId === doc.id
+                            ? 'bg-[#93B0C8] text-white'
+                            : 'text-[#93B0C8] hover:bg-white'
+                        }`}
+                        title="Analyze with AI"
+                      >
+                        <Sparkles className="w-4 h-4" />
+                        <span className="text-sm">AI</span>
+                      </button>
+                      <a
+                        href={doc.fileUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 text-[#93B0C8] hover:bg-white rounded-lg transition-colors"
+                      >
+                        <Eye className="w-5 h-5" />
+                      </a>
+                      <button
+                        onClick={() => handleDelete(doc.id)}
+                        className="p-2 text-red-500 hover:bg-white rounded-lg transition-colors"
+                      >
+                        <Trash2 className="w-5 h-5" />
+                      </button>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <a
-                      href={doc.fileUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-2 text-[#93B0C8] hover:bg-white rounded-lg transition-colors"
-                    >
-                      <Eye className="w-5 h-5" />
-                    </a>
-                    <button
-                      onClick={() => handleDelete(doc.id)}
-                      className="p-2 text-red-500 hover:bg-white rounded-lg transition-colors"
-                    >
-                      <Trash2 className="w-5 h-5" />
-                    </button>
-                  </div>
                 </div>
+                {analyzingDocId === doc.id && (
+                  <div className="ml-4">
+                    <DocumentAnalyzer
+                      documentId={doc.id}
+                      onAnalyzeComplete={(summary) => {
+                        console.log('Analysis complete:', summary);
+                      }}
+                    />
+                  </div>
+                )}
               </div>
             ))}
           </div>

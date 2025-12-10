@@ -135,23 +135,29 @@ export default function AIChecklist() {
               key={item.id}
               className="flex items-start space-x-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
             >
-              <div className="pt-1">
+              <div className="pt-1 flex-shrink-0">
                 <Circle className="w-5 h-5 text-gray-400" />
               </div>
-              <div className="flex-1">
-                <div className="flex items-center space-x-2 mb-1">
-                  <h3 className="font-medium text-[#2C2A29]">{item.title}</h3>
-                  <span
-                    className={`px-2 py-0.5 rounded-full text-xs font-medium ${getPriorityColor(item.priority)}`}
-                  >
-                    {item.priority}
-                  </span>
-                  <span className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full text-xs">
-                    {getCategoryLabel(item.category)}
-                  </span>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-start flex-wrap gap-2 mb-2">
+                  <h3 className="font-medium text-[#2C2A29] flex-1 min-w-0 break-words">
+                    {item.title}
+                  </h3>
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    <span
+                      className={`px-2 py-0.5 rounded-full text-xs font-medium whitespace-nowrap ${getPriorityColor(item.priority)}`}
+                    >
+                      {item.priority}
+                    </span>
+                    <span className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full text-xs whitespace-nowrap">
+                      {getCategoryLabel(item.category)}
+                    </span>
+                  </div>
                 </div>
                 {item.description && (
-                  <p className="text-sm text-[#2C2A29] opacity-70">{item.description}</p>
+                  <p className="text-sm text-[#2C2A29] opacity-70 mb-2 break-words">
+                    {item.description}
+                  </p>
                 )}
                 {item.actionUrl && (
                   <a

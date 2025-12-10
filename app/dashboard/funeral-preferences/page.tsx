@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Save, Upload, X, Image as ImageIcon } from 'lucide-react';
+import { ArrowLeft, Save, Upload, X, Image as ImageIcon, Sparkles } from 'lucide-react';
 import Link from 'next/link';
+import FuneralPreferenceGenerator from '@/components/ai/FuneralPreferenceGenerator';
 
 interface FuneralPreferences {
   burialOrCremation: 'burial' | 'cremation' | '';
@@ -185,10 +186,33 @@ export default function FuneralPreferencesPage() {
               </p>
             </div>
           </div>
+          <button
+            onClick={() => setShowAIGenerator(!showAIGenerator)}
+            className="px-4 py-2 bg-[#93B0C8] text-white rounded-lg hover:bg-[#A5B99A] transition-colors flex items-center space-x-2"
+          >
+            <Sparkles className="w-4 h-4" />
+            <span>AI Generate Preferences</span>
+          </button>
         </div>
       </header>
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {showAIGenerator && (
+          <div className="mb-6">
+            <FuneralPreferenceGenerator
+              onApply={(preferences) => {
+                setFormData({
+                  ...formData,
+                  song1: preferences.recommendedSongs[0] || formData.song1,
+                  song2: preferences.recommendedSongs[1] || formData.song2,
+                  song3: preferences.recommendedSongs[2] || formData.song3,
+                  atmosphereWishes: preferences.atmosphereDescription || formData.atmosphereWishes,
+                });
+                setShowAIGenerator(false);
+              }}
+            />
+          </div>
+        )}
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Basic Preferences */}
           <div className="bg-[#FCFAF7] rounded-lg p-6 shadow-sm">
