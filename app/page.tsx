@@ -52,18 +52,20 @@ export default function HomePage() {
                 <p className="text-xs text-[#2C2A29] opacity-50 -mt-0.5">Secure Planning</p>
               </div>
             </Link>
-            <div className="flex items-center space-x-3 sm:space-x-4">
+            <div className="flex items-center space-x-2 sm:space-x-3">
               <Link
                 href="/auth/login"
-                className="px-4 py-2 text-sm font-medium text-[#2C2A29] hover:text-[#93B0C8] transition-colors"
+                className="group inline-flex items-center space-x-2 px-4 sm:px-5 py-2 sm:py-2.5 text-sm font-medium text-[#2C2A29] hover:text-[#93B0C8] transition-all duration-200 rounded-lg hover:bg-[#FCFAF7] border border-transparent hover:border-[#A5B99A]/20"
               >
-                Sign In
+                <User className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                <span className="hidden sm:inline">Sign In</span>
               </Link>
               <Link
                 href="/auth/signup"
-                className="px-6 py-2.5 bg-gradient-to-r from-[#A5B99A] to-[#93B0C8] text-white rounded-lg hover:shadow-lg transition-all text-sm font-semibold transform hover:scale-105"
+                className="inline-flex items-center justify-center px-5 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-[#A5B99A] to-[#93B0C8] text-white rounded-lg hover:shadow-lg transition-all duration-200 text-sm font-semibold transform hover:scale-105 active:scale-95"
               >
-                Get Started
+                <span>Get Started</span>
+                <ArrowRight className="w-4 h-4 ml-1.5 hidden sm:inline" />
               </Link>
             </div>
           </div>
