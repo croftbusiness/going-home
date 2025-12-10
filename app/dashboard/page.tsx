@@ -27,6 +27,7 @@ import {
   Scale,
 } from 'lucide-react';
 import AIChecklist from '@/components/ai/AIChecklist';
+import ProfilePictureUpload from '@/components/ProfilePictureUpload';
 
 interface SectionStatus {
   personalDetails: boolean;
@@ -51,6 +52,7 @@ export default function DashboardPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [userName, setUserName] = useState('');
+  const [profilePictureUrl, setProfilePictureUrl] = useState<string | null>(null);
   const [status, setStatus] = useState<SectionStatus>({
     personalDetails: false,
     medicalContacts: false,
@@ -76,15 +78,26 @@ export default function DashboardPage() {
 
   const checkAuthAndLoadData = async () => {
     try {
-      const response = await fetch('/api/user/status');
-      if (!response.ok) {
+      const [statusRes, personalRes] = await Promise.all([
+        fetch('/api/user/status'),
+        fetch('/api/user/personal-details'),
+      ]);
+      
+      if (!statusRes.ok) {
         router.push('/auth/login');
         return;
       }
 
-      const data = await response.json();
-      setUserName(data.userName);
-      setStatus(data.status);
+      const statusData = await statusRes.json();
+      setUserName(statusData.userName);
+      setStatus(statusData.status);
+      
+      if (personalRes.ok) {
+        const personalData = await personalRes.json();
+        if (personalData.personalDetails?.profilePictureUrl) {
+          setProfilePictureUrl(personalData.personalDetails.profilePictureUrl);
+        }
+      }
     } catch (error) {
       router.push('/auth/login');
     } finally {
@@ -355,38 +368,43 @@ export default function DashboardPage() {
 
         {/* All Sections */}
         <div>
-          <h2 className="text-xl sm:text-2xl font-semibold text-[#2C2A29] mb-4 sm:mb-6">All Sections</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6 gap-2">
+            <h2 className="text-xl sm:text-2xl font-semibold text-[#2C2A29]">All Sections</h2>
+            <div className="text-xs sm:text-sm text-[#2C2A29] opacity-60">
+              {completedSections} of {totalSections} completed
+            </div>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
             {sections.map((section) => {
               const Icon = section.icon;
               return (
                 <Link
                   key={section.href}
                   href={section.href}
-                  className="group bg-white rounded-xl p-6 border border-gray-200 hover:border-[#A5B99A] hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+                  className="group bg-white rounded-xl p-4 sm:p-5 lg:p-6 border border-gray-200 hover:border-[#A5B99A] hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col"
                 >
-                  <div className="flex items-start justify-between mb-4">
-                    <div className={`p-3.5 ${section.bgColor} rounded-xl shadow-sm`}>
-                      <Icon className={`w-6 h-6 ${section.color.replace('bg-', 'text-')}`} />
+                  <div className="flex items-start justify-between mb-3 sm:mb-4">
+                    <div className={`p-2.5 sm:p-3.5 ${section.bgColor} rounded-xl shadow-sm flex-shrink-0`}>
+                      <Icon className={`w-5 h-5 sm:w-6 sm:h-6 ${section.color.replace('bg-', 'text-')}`} />
                     </div>
                     {section.completed ? (
-                      <div className="flex items-center space-x-1">
-                        <CheckCircle className="w-5 h-5 text-[#A5B99A]" />
-                        <span className="text-xs text-[#A5B99A] font-medium">Done</span>
+                      <div className="flex items-center space-x-1 flex-shrink-0">
+                        <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-[#A5B99A]" />
+                        <span className="text-xs text-[#A5B99A] font-medium hidden sm:inline">Done</span>
                       </div>
                     ) : (
-                      <Circle className="w-5 h-5 text-gray-300" />
+                      <Circle className="w-4 h-4 sm:w-5 sm:h-5 text-gray-300 flex-shrink-0" />
                     )}
                   </div>
-                  <h3 className="text-lg font-semibold text-[#2C2A29] mb-2 group-hover:text-[#93B0C8] transition-colors">
+                  <h3 className="text-base sm:text-lg font-semibold text-[#2C2A29] mb-2 group-hover:text-[#93B0C8] transition-colors">
                     {section.title}
                   </h3>
-                  <p className="text-sm text-[#2C2A29] opacity-70 mb-4 leading-relaxed">
+                  <p className="text-xs sm:text-sm text-[#2C2A29] opacity-70 mb-3 sm:mb-4 leading-relaxed flex-grow">
                     {section.description}
                   </p>
-                  <div className="flex items-center text-sm text-[#A5B99A] font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="flex items-center text-xs sm:text-sm text-[#A5B99A] font-semibold opacity-0 group-hover:opacity-100 transition-opacity mt-auto">
                     {section.completed ? 'View Details' : 'Get Started'} 
-                    <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                    <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                   </div>
                 </Link>
               );

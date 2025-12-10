@@ -58,6 +58,7 @@ export default function DashboardLayout({
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [userName, setUserName] = useState('');
+  const [profilePictureUrl, setProfilePictureUrl] = useState<string | null>(null);
 
   useEffect(() => {
     loadUserInfo();
@@ -65,10 +66,21 @@ export default function DashboardLayout({
 
   const loadUserInfo = async () => {
     try {
-      const response = await fetch('/api/user/status');
-      if (response.ok) {
-        const data = await response.json();
-        setUserName(data.userName);
+      const [statusRes, personalRes] = await Promise.all([
+        fetch('/api/user/status'),
+        fetch('/api/user/personal-details'),
+      ]);
+      
+      if (statusRes.ok) {
+        const statusData = await statusRes.json();
+        setUserName(statusData.userName);
+      }
+      
+      if (personalRes.ok) {
+        const personalData = await personalRes.json();
+        if (personalData.personalDetails?.profilePictureUrl) {
+          setProfilePictureUrl(personalData.personalDetails.profilePictureUrl);
+        }
       }
     } catch (error) {
       // Ignore errors
@@ -137,14 +149,36 @@ export default function DashboardLayout({
           {/* User Section */}
           <div className="p-4 border-t border-gray-200">
             <div className="px-4 py-2 mb-3">
-              <p className="text-xs text-[#2C2A29] opacity-60 mb-1">Signed in as</p>
-              <p className="text-sm font-medium text-[#2C2A29] truncate">
-                {userName || 'User'}
-              </p>
+              <div className="flex items-center space-x-3 mb-2">
+                {profilePictureUrl ? (
+                  <img
+                    src={profilePictureUrl}
+                    alt="Profile"
+                    className="w-10 h-10 rounded-full object-cover border-2 border-[#A5B99A]"
+                    onError={(e) => {
+                      // Fallback to default if image fails to load
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                      if (target.nextElementSibling) {
+                        (target.nextElementSibling as HTMLElement).style.display = 'flex';
+                      }
+                    }}
+                  />
+                ) : null}
+                <div className={`flex items-center justify-center w-10 h-10 rounded-full bg-[#A5B99A] bg-opacity-10 border-2 border-[#A5B99A] ${profilePictureUrl ? 'hidden' : ''}`}>
+                  <User className="w-5 h-5 text-[#A5B99A]" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs text-[#2C2A29] opacity-60 mb-0.5">Signed in as</p>
+                  <p className="text-sm font-medium text-[#2C2A29] truncate">
+                    {userName || 'User'}
+                  </p>
+                </div>
+              </div>
             </div>
             <button
               onClick={handleLogout}
-              className="w-full flex items-center space-x-3 px-4 py-2.5 text-sm text-[#2C2A29] hover:bg-white rounded-lg transition-colors"
+              className="w-full flex items-center space-x-3 px-4 py-2.5 text-sm text-[#2C2A29] hover:bg-white rounded-lg transition-colors touch-target"
             >
               <LogOut className="w-4 h-4 opacity-70" />
               <span>Sign Out</span>

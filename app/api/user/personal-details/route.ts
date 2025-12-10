@@ -34,6 +34,7 @@ export async function GET() {
       emergencyContactName: data.emergency_contact_name || '',
       emergencyContactPhone: data.emergency_contact_phone || '',
       emergencyContactRelationship: data.emergency_contact_relationship || '',
+      profilePictureUrl: data.profile_picture_url || '',
     } : null;
 
     return NextResponse.json({ personalDetails });
@@ -74,6 +75,7 @@ export async function POST(request: Request) {
       emergency_contact_name: body.emergencyContactName,
       emergency_contact_phone: body.emergencyContactPhone,
       emergency_contact_relationship: body.emergencyContactRelationship,
+      profile_picture_url: body.profilePictureUrl || null,
     };
 
     let data, error;
@@ -114,6 +116,7 @@ export async function POST(request: Request) {
       emergencyContactName: data.emergency_contact_name || '',
       emergencyContactPhone: data.emergency_contact_phone || '',
       emergencyContactRelationship: data.emergency_contact_relationship || '',
+      profilePictureUrl: data.profile_picture_url || '',
     } : null;
 
     return NextResponse.json({ personalDetails });
