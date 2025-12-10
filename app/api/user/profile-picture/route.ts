@@ -158,9 +158,27 @@ export async function POST(request: Request) {
       }, { status: 500 });
     }
 
+    // Verify the save was successful by querying it back
+    const { data: verifyDetails } = await supabase
+      .from('personal_details')
+      .select('profile_picture_url')
+      .eq('user_id', auth.userId)
+      .maybeSingle();
+
+    if (!verifyDetails?.profile_picture_url || verifyDetails.profile_picture_url !== photoApiUrl) {
+      console.error('Profile picture URL was not saved correctly. Expected:', photoApiUrl, 'Got:', verifyDetails?.profile_picture_url);
+      return NextResponse.json({ 
+        url: photoApiUrl,
+        filePath: fileName,
+        error: 'Photo uploaded but failed to save to database. Please ensure the profile_picture_url column exists in your database.',
+        warning: true
+      }, { status: 500 });
+    }
+
     return NextResponse.json({ 
       url: photoApiUrl,
-      filePath: fileName 
+      filePath: fileName,
+      saved: true
     });
   } catch (error: any) {
     console.error('Profile picture upload error:', error);
