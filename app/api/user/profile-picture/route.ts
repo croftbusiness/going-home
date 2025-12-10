@@ -107,16 +107,53 @@ export async function POST(request: Request) {
     // Get the URL for the uploaded file
     const photoApiUrl = `/api/user/photo?path=${encodeURIComponent(fileName)}`;
 
-    // Update personal_details with new profile picture URL
-    const { error: updateError } = await supabase
+    // Check if personal_details exists
+    const { data: existingDetails, error: checkError } = await supabase
       .from('personal_details')
-      .update({ profile_picture_url: photoApiUrl })
-      .eq('user_id', auth.userId);
+      .select('id')
+      .eq('user_id', auth.userId)
+      .maybeSingle();
+
+    let updateError = null;
+
+    if (existingDetails) {
+      // Update existing record
+      const { error } = await supabase
+        .from('personal_details')
+        .update({ profile_picture_url: photoApiUrl })
+        .eq('user_id', auth.userId);
+      updateError = error;
+    } else {
+      // Create new record with just profile picture (minimal required fields)
+      // We'll use placeholder values that can be updated later
+      const { error } = await supabase
+        .from('personal_details')
+        .insert({
+          user_id: auth.userId,
+          full_name: 'User', // Placeholder - will be updated when user fills in personal details
+          date_of_birth: '1900-01-01', // Placeholder
+          address: '', // Placeholder
+          city: '', // Placeholder
+          state: '', // Placeholder
+          zip_code: '', // Placeholder
+          phone: '', // Placeholder
+          email: '', // Placeholder
+          emergency_contact_name: '', // Placeholder
+          emergency_contact_phone: '', // Placeholder
+          emergency_contact_relationship: '', // Placeholder
+          profile_picture_url: photoApiUrl,
+        });
+      updateError = error;
+    }
 
     if (updateError) {
-      // If personal_details doesn't exist, we can't update it
-      // But we still return the URL so it can be saved when personal details are created
-      console.warn('Could not update personal_details:', updateError);
+      console.error('Could not save profile picture URL to database:', updateError);
+      // Still return the URL so the user can see it, but log the error
+      return NextResponse.json({ 
+        url: photoApiUrl,
+        filePath: fileName,
+        warning: 'Photo uploaded but may not be saved. Please refresh the page.'
+      });
     }
 
     return NextResponse.json({ 

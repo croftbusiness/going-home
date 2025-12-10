@@ -58,11 +58,15 @@ export default function ProfilePictureUpload({
       }
 
       const data = await response.json();
+      if (data.warning) {
+        console.warn(data.warning);
+        // Still show the image even if there was a warning
+      }
       onUploadComplete(data.url);
     } catch (err: any) {
       setError(err.message || 'Failed to upload profile picture');
-    } finally {
       setUploading(false);
+    } finally {
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
