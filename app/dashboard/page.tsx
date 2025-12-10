@@ -26,6 +26,7 @@ import {
   FileCheck,
   Scale,
 } from 'lucide-react';
+import AIChecklist from '@/components/ai/AIChecklist';
 
 interface SectionStatus {
   personalDetails: boolean;

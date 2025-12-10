@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Plus, Mail, Edit, Trash2 } from 'lucide-react';
+import { ArrowLeft, Plus, Mail, Edit, Trash2, Sparkles } from 'lucide-react';
 import Link from 'next/link';
+import AILetterGenerator from '@/components/ai/AILetterGenerator';
 
 interface Letter {
   id: string;
