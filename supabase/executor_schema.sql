@@ -18,3 +18,10 @@ CREATE INDEX IF NOT EXISTS idx_executor_accounts_executor_email ON executor_acco
 CREATE INDEX IF NOT EXISTS idx_executor_accounts_account_user_id ON executor_accounts(account_user_id);
 CREATE INDEX IF NOT EXISTS idx_executor_accounts_invitation_token ON executor_accounts(invitation_token);
 
+-- Trigger for updated_at (safe: drop if exists before creating)
+DROP TRIGGER IF EXISTS update_executor_accounts_updated_at ON executor_accounts;
+CREATE TRIGGER update_executor_accounts_updated_at 
+    BEFORE UPDATE ON executor_accounts
+    FOR EACH ROW 
+    EXECUTE FUNCTION update_updated_at_column();
+

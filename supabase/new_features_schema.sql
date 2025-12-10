@@ -154,30 +154,54 @@ CREATE TABLE IF NOT EXISTS children_wishes (
 
 CREATE INDEX IF NOT EXISTS idx_children_wishes_user_id ON children_wishes(user_id);
 
--- Triggers for updated_at
-CREATE TRIGGER update_digital_accounts_updated_at BEFORE UPDATE ON digital_accounts
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+-- Triggers for updated_at (safe: drop if exists before creating)
+DROP TRIGGER IF EXISTS update_digital_accounts_updated_at ON digital_accounts;
+CREATE TRIGGER update_digital_accounts_updated_at 
+    BEFORE UPDATE ON digital_accounts
+    FOR EACH ROW 
+    EXECUTE FUNCTION update_updated_at_column();
 
-CREATE TRIGGER update_assets_updated_at BEFORE UPDATE ON assets
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+DROP TRIGGER IF EXISTS update_assets_updated_at ON assets;
+CREATE TRIGGER update_assets_updated_at 
+    BEFORE UPDATE ON assets
+    FOR EACH ROW 
+    EXECUTE FUNCTION update_updated_at_column();
 
-CREATE TRIGGER update_legacy_messages_updated_at BEFORE UPDATE ON legacy_messages
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+DROP TRIGGER IF EXISTS update_legacy_messages_updated_at ON legacy_messages;
+CREATE TRIGGER update_legacy_messages_updated_at 
+    BEFORE UPDATE ON legacy_messages
+    FOR EACH ROW 
+    EXECUTE FUNCTION update_updated_at_column();
 
-CREATE TRIGGER update_end_of_life_checklist_updated_at BEFORE UPDATE ON end_of_life_checklist
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+DROP TRIGGER IF EXISTS update_end_of_life_checklist_updated_at ON end_of_life_checklist;
+CREATE TRIGGER update_end_of_life_checklist_updated_at 
+    BEFORE UPDATE ON end_of_life_checklist
+    FOR EACH ROW 
+    EXECUTE FUNCTION update_updated_at_column();
 
-CREATE TRIGGER update_personal_biography_updated_at BEFORE UPDATE ON personal_biography
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+DROP TRIGGER IF EXISTS update_personal_biography_updated_at ON personal_biography;
+CREATE TRIGGER update_personal_biography_updated_at 
+    BEFORE UPDATE ON personal_biography
+    FOR EACH ROW 
+    EXECUTE FUNCTION update_updated_at_column();
 
-CREATE TRIGGER update_insurance_financial_contacts_updated_at BEFORE UPDATE ON insurance_financial_contacts
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+DROP TRIGGER IF EXISTS update_insurance_financial_contacts_updated_at ON insurance_financial_contacts;
+CREATE TRIGGER update_insurance_financial_contacts_updated_at 
+    BEFORE UPDATE ON insurance_financial_contacts
+    FOR EACH ROW 
+    EXECUTE FUNCTION update_updated_at_column();
 
-CREATE TRIGGER update_household_information_updated_at BEFORE UPDATE ON household_information
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+DROP TRIGGER IF EXISTS update_household_information_updated_at ON household_information;
+CREATE TRIGGER update_household_information_updated_at 
+    BEFORE UPDATE ON household_information
+    FOR EACH ROW 
+    EXECUTE FUNCTION update_updated_at_column();
 
-CREATE TRIGGER update_children_wishes_updated_at BEFORE UPDATE ON children_wishes
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+DROP TRIGGER IF EXISTS update_children_wishes_updated_at ON children_wishes;
+CREATE TRIGGER update_children_wishes_updated_at 
+    BEFORE UPDATE ON children_wishes
+    FOR EACH ROW 
+    EXECUTE FUNCTION update_updated_at_column();
 
 -- Row Level Security
 ALTER TABLE digital_accounts ENABLE ROW LEVEL SECURITY;
