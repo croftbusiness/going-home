@@ -31,7 +31,10 @@ export async function POST(request: Request) {
     // Generate PDF directly in Next.js API route
     const pdfBytes = await generatePDF(questionnaire);
 
-    return new NextResponse(pdfBytes, {
+    // Convert Uint8Array to Buffer for NextResponse
+    const pdfBuffer = Buffer.from(pdfBytes);
+
+    return new NextResponse(pdfBuffer, {
       headers: {
         'Content-Type': 'application/pdf',
         'Content-Disposition': `attachment; filename="will-questionnaire-${questionnaireId}.pdf"`,
