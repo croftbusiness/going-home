@@ -271,16 +271,31 @@ export default function LettersPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[#2C2A29] mb-1">
-                  Your Message *
-                </label>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="block text-sm font-medium text-[#2C2A29]">
+                    Your Message *
+                  </label>
+                  <div className="text-xs text-[#2C2A29] opacity-60">
+                    Use AI Coach below to improve your message
+                  </div>
+                </div>
                 <textarea
                   value={formData.messageText}
                   onChange={(e) => setFormData({ ...formData, messageText: e.target.value })}
                   required
-                  rows={12}
+                  rows={8}
                   placeholder="Write your heartfelt message here..."
-                  className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent"
+                  className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent mb-4"
+                />
+                <LegacyMessageCoach
+                  initialText={formData.messageText}
+                  onSave={(improvedText, title) => {
+                    setFormData({
+                      ...formData,
+                      messageText: improvedText,
+                      title: title || formData.title,
+                    });
+                  }}
                 />
               </div>
 
