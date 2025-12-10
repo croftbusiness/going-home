@@ -236,26 +236,32 @@ export default function LettersPage() {
                 <label className="block text-sm font-medium text-[#2C2A29] mb-1">
                   Recipient *
                 </label>
-                <select
-                  value={formData.recipientId}
-                  onChange={(e) => {
-                    const contact = contacts.find(c => c.id === e.target.value);
-                    setFormData({
-                      ...formData,
-                      recipientId: e.target.value,
-                      recipientRelationship: contact?.relationship || '',
-                    });
-                  }}
-                  required
-                  className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent"
-                >
-                  <option value="">Select recipient</option>
-                  {contacts.map(contact => (
-                    <option key={contact.id} value={contact.id}>
-                      {contact.name} ({contact.relationship})
-                    </option>
-                  ))}
-                </select>
+                {contacts.length === 0 ? (
+                  <div className="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg text-[#2C2A29] opacity-70 text-sm">
+                    No trusted contacts available. <Link href="/dashboard/trusted-contacts" className="text-[#93B0C8] hover:underline font-medium">Add contacts first</Link> to create a letter.
+                  </div>
+                ) : (
+                  <select
+                    value={formData.recipientId}
+                    onChange={(e) => {
+                      const contact = contacts.find(c => c.id === e.target.value);
+                      setFormData({
+                        ...formData,
+                        recipientId: e.target.value,
+                        recipientRelationship: contact?.relationship || '',
+                      });
+                    }}
+                    required
+                    className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent cursor-pointer"
+                  >
+                    <option value="">Select recipient</option>
+                    {contacts.map(contact => (
+                      <option key={contact.id} value={contact.id}>
+                        {contact.name} ({contact.relationship})
+                      </option>
+                    ))}
+                  </select>
+                )}
               </div>
 
               <div>
