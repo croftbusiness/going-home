@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useRef } from 'react';
-import { User, Camera, X, Loader2, Trash2 } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { User, Camera, Loader2, Trash2 } from 'lucide-react';
 
 interface ProfilePictureUploadProps {
   currentUrl: string | null;
@@ -69,7 +69,9 @@ export default function ProfilePictureUpload({
     }
   };
 
-  const handleDelete = async () => {
+  const handleDelete = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    
     if (!currentUrl) return;
 
     if (!confirm('Are you sure you want to remove your profile picture?')) {
@@ -97,6 +99,10 @@ export default function ProfilePictureUpload({
     }
   };
 
+  const handleChangeClick = () => {
+    fileInputRef.current?.click();
+  };
+
   return (
     <div className="relative flex flex-col items-center">
       <div className={`${sizeClasses[size]} relative rounded-full overflow-hidden border-2 border-[#A5B99A] bg-[#A5B99A] bg-opacity-10 flex items-center justify-center group cursor-pointer transition-all hover:border-[#93B0C8] hover:shadow-lg`}>
@@ -111,11 +117,28 @@ export default function ProfilePictureUpload({
                 target.style.display = 'none';
               }}
             />
-            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all flex flex-col items-center justify-center gap-1.5">
-              <Camera className="w-5 h-5 sm:w-6 sm:h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
-              <span className="text-xs text-white opacity-0 group-hover:opacity-100 transition-opacity font-medium">
-                Update
-              </span>
+            {/* Premium hover overlay with menu options */}
+            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-60 transition-all duration-200 flex flex-col items-center justify-center gap-3">
+              {/* Change Photo Button */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleChangeClick();
+                }}
+                className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center space-x-2 px-4 py-2 bg-white text-[#2C2A29] rounded-lg hover:bg-gray-50 shadow-md font-medium text-sm"
+              >
+                <Camera className="w-4 h-4" />
+                <span>Change Photo</span>
+              </button>
+              
+              {/* Remove Photo Button */}
+              <button
+                onClick={handleDelete}
+                className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center space-x-2 px-4 py-2 bg-white text-red-600 rounded-lg hover:bg-red-50 shadow-md font-medium text-sm"
+              >
+                <Trash2 className="w-4 h-4" />
+                <span>Remove Photo</span>
+              </button>
             </div>
           </>
         ) : (
@@ -128,26 +151,11 @@ export default function ProfilePictureUpload({
         )}
         
         {uploading && (
-          <div className="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center z-20">
             <Loader2 className="w-5 h-5 sm:w-6 sm:h-6 text-white animate-spin" />
           </div>
         )}
       </div>
-      
-      {/* Delete Button - Premium Design */}
-      {currentUrl && !uploading && (
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            handleDelete();
-          }}
-          className="mt-3 flex items-center space-x-1.5 px-3 py-1.5 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-full transition-all duration-200 hover:shadow-sm border border-red-200 hover:border-red-300 group/delete"
-          title="Remove profile picture"
-        >
-          <Trash2 className="w-3.5 h-3.5 group-hover/delete:scale-110 transition-transform" />
-          <span>Remove Photo</span>
-        </button>
-      )}
       
       {!currentUrl && (
         <p className="mt-2 text-xs text-[#2C2A29] opacity-70 text-center max-w-[120px]">
@@ -157,21 +165,8 @@ export default function ProfilePictureUpload({
       
       {currentUrl && (
         <p className="mt-2 text-xs text-[#2C2A29] opacity-70 text-center max-w-[140px]">
-          Click to update photo
+          Hover to change or remove
         </p>
-      )}
-
-      {currentUrl && !uploading && (
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            handleDelete();
-          }}
-          className="absolute -top-1 -right-1 p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors touch-target shadow-md z-10"
-          title="Remove profile picture"
-        >
-          <X className="w-3 h-3 sm:w-4 sm:h-4" />
-        </button>
       )}
 
       <input
@@ -184,18 +179,19 @@ export default function ProfilePictureUpload({
         disabled={uploading}
       />
       
-      <label
-        htmlFor="profile-picture-upload"
-        className="absolute inset-0 cursor-pointer"
-        title={currentUrl ? 'Change profile picture' : 'Add profile picture'}
-      />
+      {!currentUrl && (
+        <label
+          htmlFor="profile-picture-upload"
+          className="absolute inset-0 cursor-pointer"
+          title="Add profile picture"
+        />
+      )}
 
       {error && (
-        <div className="absolute top-full left-0 mt-2 bg-red-50 text-red-700 text-xs px-2 py-1 rounded whitespace-nowrap z-10">
+        <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 bg-red-50 text-red-700 text-xs px-3 py-2 rounded-lg shadow-md whitespace-nowrap z-30 border border-red-200">
           {error}
         </div>
       )}
     </div>
   );
 }
-
