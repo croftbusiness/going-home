@@ -77,16 +77,31 @@ export default function DocumentsPage() {
         body: formData,
       });
 
-      if (!response.ok) throw new Error('Upload failed');
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Upload failed');
+      }
 
       const newDoc = await response.json();
+      
+      if (!newDoc.document) {
+        throw new Error('Invalid response from server');
+      }
+      
       setDocuments([...documents, newDoc.document]);
       setSuccess(true);
       setShowUploadForm(false);
       setUploadData({ documentType: '', note: '' });
+      // Reset file input
+      if (e.target) {
+        e.target.value = '';
+      }
+      // Reload documents to ensure consistency
+      await loadDocuments();
       setTimeout(() => setSuccess(false), 3000);
-    } catch (error) {
-      setError('Failed to upload document');
+    } catch (error: any) {
+      console.error('Upload error:', error);
+      setError(error.message || 'Failed to upload document');
     } finally {
       setUploading(false);
     }

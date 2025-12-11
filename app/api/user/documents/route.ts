@@ -17,7 +17,19 @@ export async function GET() {
       .order('created_at', { ascending: false });
 
     if (error) throw error;
-    return NextResponse.json({ documents: data || [] });
+    
+    // Transform database column names to camelCase for frontend
+    const transformedDocuments = (data || []).map((doc: any) => ({
+      id: doc.id,
+      documentType: doc.document_type,
+      fileName: doc.file_name,
+      fileUrl: doc.file_url,
+      fileSize: doc.file_size,
+      note: doc.note || '',
+      createdAt: doc.created_at,
+    }));
+    
+    return NextResponse.json({ documents: transformedDocuments });
   } catch (error) {
     console.error('Documents GET error:', error);
     return NextResponse.json({ error: 'Failed to load' }, { status: 500 });
@@ -69,9 +81,25 @@ export async function POST(request: Request) {
       .single();
 
     if (dbError) throw dbError;
-    return NextResponse.json({ document });
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to upload' }, { status: 500 });
+    
+    // Transform database column names to camelCase for frontend
+    const transformedDocument = {
+      id: document.id,
+      documentType: document.document_type,
+      fileName: document.file_name,
+      fileUrl: document.file_url,
+      fileSize: document.file_size,
+      note: document.note || '',
+      createdAt: document.created_at,
+    };
+    
+    return NextResponse.json({ document: transformedDocument });
+  } catch (error: any) {
+    console.error('Document upload error:', error);
+    return NextResponse.json(
+      { error: error.message || 'Failed to upload document' },
+      { status: 500 }
+    );
   }
 }
 
