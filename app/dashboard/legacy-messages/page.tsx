@@ -183,20 +183,21 @@ export default function LegacyMessagesPage() {
       // Set stream state - this will trigger useEffect to attach to video element
       setStream(mediaStream);
       
-      // Start recording state
+      // Start recording state and timer
       setIsRecording(true);
+      setRecordingTime(0);
       
       // Clear any existing interval first
       if (recordingIntervalRef.current) {
         clearInterval(recordingIntervalRef.current);
+        recordingIntervalRef.current = null;
       }
       
-      // Start timer immediately
-      setRecordingTime(0);
+      // Start timer
       recordingIntervalRef.current = setInterval(() => {
         setRecordingTime((prev) => {
           const next = prev + 1;
-          console.log('Timer tick:', next); // Debug log
+          console.log('Timer updating to:', next); // Debug log
           return next;
         });
       }, 1000);
@@ -590,7 +591,7 @@ export default function LegacyMessagesPage() {
                         <div className="flex items-center justify-center space-x-3 mb-6">
                           <div className="w-4 h-4 bg-red-600 rounded-full animate-pulse shadow-lg" />
                           <span className="text-xl sm:text-2xl font-bold text-red-700">
-                            Recording: {formatTime(recordingTime)}
+                            Recording: {formatTime(recordingTime)} ({recordingTime}s)
                           </span>
                         </div>
                         {formData.messageType === 'video' && (
