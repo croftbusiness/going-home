@@ -3,7 +3,7 @@
 
 CREATE TABLE IF NOT EXISTS funeral_planning_boards (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  user_id UUID REFERENCES users(id) ON DELETE CASCADE UNIQUE NOT NULL,
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE NOT NULL UNIQUE,
   
   -- Casket choices (array of image URLs)
   casket_images JSONB DEFAULT '[]'::jsonb,
