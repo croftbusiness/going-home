@@ -25,29 +25,55 @@ import {
   Baby,
   FileCheck,
   Scale,
+  Stethoscope,
+  Sparkles,
+  FolderHeart,
+  CreditCard,
+  FileQuestion,
+  PenTool,
+  Settings,
+  LayoutDashboard,
 } from 'lucide-react';
 
+// Organized navigation with sections and unique icons
+// Order: Most engaging/appealing items first, then organized by category
 const navigation = [
-  { name: 'Dashboard', href: '/dashboard', icon: Home },
-  { name: 'Personal Details', href: '/dashboard/personal-details', icon: User },
-  { name: 'Medical & Legal', href: '/dashboard/medical-contacts', icon: Heart },
-  { name: 'Funeral Planning', href: '/dashboard/funeral-planning', icon: Heart },
-  { name: 'Basic Funeral Preferences', href: '/dashboard/funeral-preferences', icon: FileText },
-  { name: 'Will Questionnaire', href: '/dashboard/will-questionnaire', icon: Scale },
-  { name: 'Documents', href: '/dashboard/documents', icon: Upload },
-  { name: 'Personal Letters', href: '/dashboard/letters', icon: Mail },
-  { name: 'Trusted Contacts', href: '/dashboard/trusted-contacts', icon: Users },
-  { name: 'Digital Accounts', href: '/dashboard/digital-accounts', icon: Key },
-  { name: 'Assets', href: '/dashboard/assets', icon: DollarSign },
-  { name: 'Legacy Messages', href: '/dashboard/legacy-messages', icon: Video },
-  { name: 'End-of-Life Checklist', href: '/dashboard/end-of-life-checklist', icon: CheckSquare },
-  { name: 'Biography', href: '/dashboard/biography', icon: BookOpen },
-  { name: 'Insurance & Financial', href: '/dashboard/insurance-financial', icon: Building2 },
-  { name: 'Household Info', href: '/dashboard/household', icon: HomeIcon },
-  { name: 'Children\'s Wishes', href: '/dashboard/children-wishes', icon: Baby },
-  { name: 'Final Summary', href: '/dashboard/final-summary', icon: FileCheck },
-  { name: 'Release Settings', href: '/dashboard/release-settings', icon: Shield },
+  // Primary/Quick Start
+  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, section: 'primary' },
+  { name: 'Personal Details', href: '/dashboard/personal-details', icon: User, section: 'primary' },
+  { name: 'Personal Letters', href: '/dashboard/letters', icon: PenTool, section: 'primary' },
+  { name: 'Documents', href: '/dashboard/documents', icon: Upload, section: 'primary' },
+  { name: 'Trusted Contacts', href: '/dashboard/trusted-contacts', icon: Users, section: 'primary' },
+  
+  // Planning & Legacy
+  { name: 'Funeral Planning', href: '/dashboard/funeral-planning', icon: Sparkles, section: 'planning' },
+  { name: 'Legacy Messages', href: '/dashboard/legacy-messages', icon: Video, section: 'planning' },
+  { name: 'Will Questionnaire', href: '/dashboard/will-questionnaire', icon: FileQuestion, section: 'planning' },
+  { name: 'Biography', href: '/dashboard/biography', icon: BookOpen, section: 'planning' },
+  
+  // Financial & Legal
+  { name: 'Assets', href: '/dashboard/assets', icon: DollarSign, section: 'financial' },
+  { name: 'Insurance & Financial', href: '/dashboard/insurance-financial', icon: CreditCard, section: 'financial' },
+  { name: 'Digital Accounts', href: '/dashboard/digital-accounts', icon: Key, section: 'financial' },
+  { name: 'Medical & Legal', href: '/dashboard/medical-contacts', icon: Stethoscope, section: 'financial' },
+  
+  // Personal & Family
+  { name: 'Children\'s Wishes', href: '/dashboard/children-wishes', icon: Baby, section: 'personal' },
+  { name: 'Household Info', href: '/dashboard/household', icon: HomeIcon, section: 'personal' },
+  { name: 'End-of-Life Checklist', href: '/dashboard/end-of-life-checklist', icon: CheckSquare, section: 'personal' },
+  
+  // Administrative
+  { name: 'Final Summary', href: '/dashboard/final-summary', icon: FileCheck, section: 'admin' },
+  { name: 'Release Settings', href: '/dashboard/release-settings', icon: Shield, section: 'admin' },
 ];
+
+const sectionLabels: Record<string, string> = {
+  primary: 'Quick Start',
+  planning: 'Planning & Legacy',
+  financial: 'Financial & Legal',
+  personal: 'Personal & Family',
+  admin: 'Settings',
+};
 
 export default function DashboardLayout({
   children,
@@ -112,63 +138,98 @@ export default function DashboardLayout({
     <div className="min-h-screen bg-[#FAF9F7] flex">
       {/* Sidebar */}
       <aside className={`
-        fixed inset-y-0 left-0 z-50 w-64 bg-[#FCFAF7] border-r border-gray-200 transform transition-transform duration-300 ease-in-out
+        fixed inset-y-0 left-0 z-50 w-72 bg-gradient-to-b from-[#FCFAF7] to-white border-r border-gray-200/50 shadow-lg transform transition-transform duration-300 ease-in-out
         lg:translate-x-0 lg:static lg:inset-0
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         <div className="flex flex-col h-full">
           {/* Logo/Header */}
-          <div className="flex items-center justify-between p-6 border-b border-gray-200">
-            <div>
-              <h1 className="text-xl font-semibold text-[#2C2A29]">Going Home</h1>
-              <p className="text-xs text-[#2C2A29] opacity-60 mt-0.5">Secure Planning</p>
+          <div className="flex items-center justify-between p-6 border-b border-gray-200/50 bg-white/50 backdrop-blur-sm">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#A5B99A] to-[#93B0C8] flex items-center justify-center shadow-md">
+                <Heart className="w-5 h-5 text-white" fill="currentColor" />
+              </div>
+              <div>
+                <h1 className="text-lg font-bold text-[#2C2A29] tracking-tight">Going Home</h1>
+                <p className="text-xs text-[#2C2A29] opacity-50 font-medium">Secure Planning</p>
+              </div>
             </div>
             <button
               onClick={() => setSidebarOpen(false)}
-              className="lg:hidden p-2 hover:bg-white rounded-lg transition-colors"
+              className="lg:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
             >
               <X className="w-5 h-5 text-[#2C2A29]" />
             </button>
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 overflow-y-auto py-4 px-3">
-            <div className="space-y-1">
-              {navigation.map((item) => {
-                const Icon = item.icon;
-                const isActive = pathname === item.href;
-                return (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    onClick={() => setSidebarOpen(false)}
-                    className={`
-                      flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200
-                      ${isActive
-                        ? 'bg-[#A5B99A] bg-opacity-10 text-[#A5B99A] font-medium border-l-3 border-[#A5B99A]'
-                        : 'text-[#2C2A29] hover:bg-white hover:text-[#93B0C8]'
-                      }
-                    `}
-                  >
-                    <Icon className={`w-5 h-5 ${isActive ? 'text-[#A5B99A]' : 'opacity-70'}`} />
-                    <span className="text-sm">{item.name}</span>
-                  </Link>
-                );
-              })}
+          <nav className="flex-1 overflow-y-auto py-6 px-4 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
+            <div className="space-y-6">
+              {Object.entries(
+                navigation.reduce((acc, item) => {
+                  const section = item.section || 'primary';
+                  if (!acc[section]) acc[section] = [];
+                  acc[section].push(item);
+                  return acc;
+                }, {} as Record<string, Array<typeof navigation[0]>>)
+              ).map(([section, items]) => (
+                <div key={section} className="space-y-1">
+                  {section !== 'primary' && (
+                    <div className="px-4 py-2 mb-2">
+                      <p className="text-xs font-semibold text-[#2C2A29] opacity-40 uppercase tracking-wider">
+                        {sectionLabels[section] || section}
+                      </p>
+                    </div>
+                  )}
+                  {items.map((item) => {
+                    const Icon = item.icon;
+                    const isActive = pathname === item.href;
+                    return (
+                      <Link
+                        key={item.name}
+                        href={item.href}
+                        onClick={() => setSidebarOpen(false)}
+                        className={`
+                          group flex items-center space-x-3 px-4 py-2.5 rounded-xl transition-all duration-200 relative
+                          ${isActive
+                            ? 'bg-gradient-to-r from-[#A5B99A] to-[#93B0C8] text-white shadow-md shadow-[#A5B99A]/20'
+                            : 'text-[#2C2A29] hover:bg-gray-50 hover:text-[#93B0C8]'
+                          }
+                        `}
+                      >
+                        <div className={`
+                          p-1.5 rounded-lg transition-all
+                          ${isActive 
+                            ? 'bg-white/20' 
+                            : 'bg-gray-100 group-hover:bg-[#A5B99A]/10'
+                          }
+                        `}>
+                          <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-[#2C2A29] opacity-70'}`} />
+                        </div>
+                        <span className={`text-sm font-medium ${isActive ? 'text-white' : 'text-[#2C2A29]'}`}>
+                          {item.name}
+                        </span>
+                        {isActive && (
+                          <div className="absolute right-2 w-1.5 h-1.5 rounded-full bg-white/60" />
+                        )}
+                      </Link>
+                    );
+                  })}
+                </div>
+              ))}
             </div>
           </nav>
 
           {/* User Section */}
-          <div className="p-4 border-t border-gray-200">
-            <div className="px-4 py-2 mb-3">
-              <div className="flex items-center space-x-3 mb-2">
+          <div className="p-4 border-t border-gray-200/50 bg-white/50 backdrop-blur-sm">
+            <div className="px-4 py-3 mb-3 bg-gradient-to-br from-[#FAF9F7] to-white rounded-xl border border-gray-200/50">
+              <div className="flex items-center space-x-3">
                 {profilePictureUrl ? (
                   <img
                     src={profilePictureUrl}
                     alt="Profile"
-                    className="w-10 h-10 rounded-full object-cover border-2 border-[#A5B99A]"
+                    className="w-11 h-11 rounded-full object-cover border-2 border-[#A5B99A] shadow-sm"
                     onError={(e) => {
-                      // Fallback to default if image fails to load
                       const target = e.target as HTMLImageElement;
                       target.style.display = 'none';
                       if (target.nextElementSibling) {
@@ -177,12 +238,12 @@ export default function DashboardLayout({
                     }}
                   />
                 ) : null}
-                <div className={`flex items-center justify-center w-10 h-10 rounded-full bg-[#A5B99A] bg-opacity-10 border-2 border-[#A5B99A] ${profilePictureUrl ? 'hidden' : ''}`}>
-                  <User className="w-5 h-5 text-[#A5B99A]" />
+                <div className={`flex items-center justify-center w-11 h-11 rounded-full bg-gradient-to-br from-[#A5B99A] to-[#93B0C8] border-2 border-white shadow-sm ${profilePictureUrl ? 'hidden' : ''}`}>
+                  <User className="w-5 h-5 text-white" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs text-[#2C2A29] opacity-60 mb-0.5">Signed in as</p>
-                  <p className="text-sm font-medium text-[#2C2A29] truncate">
+                  <p className="text-xs text-[#2C2A29] opacity-50 mb-0.5 font-medium">Signed in as</p>
+                  <p className="text-sm font-semibold text-[#2C2A29] truncate">
                     {userName || 'User'}
                   </p>
                 </div>
@@ -190,7 +251,7 @@ export default function DashboardLayout({
             </div>
             <button
               onClick={handleLogout}
-              className="w-full flex items-center space-x-3 px-4 py-2.5 text-sm text-[#2C2A29] hover:bg-white rounded-lg transition-colors touch-target"
+              className="w-full flex items-center justify-center space-x-2 px-4 py-2.5 text-sm font-medium text-[#2C2A29] hover:bg-gray-100 rounded-xl transition-all duration-200 touch-target border border-gray-200/50 hover:border-gray-300"
             >
               <LogOut className="w-4 h-4 opacity-70" />
               <span>Sign Out</span>
