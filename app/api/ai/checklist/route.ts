@@ -99,90 +99,148 @@ Format: {"items": [{"title":"...","description":"...","priority":"high","categor
     // Parse JSON response into structured items
     const items: ChecklistResponse['items'] = [];
     
-    if (parsedItems && Array.isArray(parsedItems)) {
-      parsedItems.slice(0, 10).forEach((item: any, idx: number) => {
-          const categoryMap: Record<string, ChecklistResponse['items'][0]['category']> = {
-            'personal_info': 'personal_info',
-            'documents': 'documents',
-            'letters': 'letters',
-            'contacts': 'contacts',
-            'preferences': 'preferences',
-          };
-          
-          const category = categoryMap[item.category] || 'personal_info';
-          const priority = ['high', 'medium', 'low'].includes(item.priority) ? item.priority : 'medium';
-          
-          // Map category to action URL
-          const actionUrlMap: Record<string, string> = {
-            'personal_info': '/dashboard/personal-details',
-            'documents': '/dashboard/documents',
-            'letters': '/dashboard/letters',
-            'contacts': '/dashboard/trusted-contacts',
-            'preferences': '/dashboard/funeral-preferences',
-          };
-          
-          items.push({
-            id: `item-${idx + 1}`,
-            category,
-            priority,
-            title: (item.title || '').trim().substring(0, 100), // Allow longer titles
-            description: (item.description || '').trim().substring(0, 200), // Allow longer descriptions
-            actionUrl: actionUrlMap[category] || '/dashboard',
-          });
-        });
-    } else {
-      // Fallback: generate simple suggestions based on missing data
-      if (!personalDetails.data) {
-        items.push({
-          id: 'item-1',
-          category: 'personal_info',
-          priority: 'high',
-          title: 'Complete your personal details',
-          description: 'Add your full name, date of birth, and contact information',
-          actionUrl: '/dashboard/personal-details',
-        });
-      }
-      if (!funeralPreferences.data) {
-        items.push({
-          id: 'item-2',
-          category: 'preferences',
-          priority: 'medium',
-          title: 'Add your funeral preferences',
-          description: 'Share your wishes for services and ceremonies',
-          actionUrl: '/dashboard/funeral-preferences',
-        });
-      }
-      if (!documents.data || documents.data.length === 0) {
-        items.push({
-          id: 'item-3',
-          category: 'documents',
-          priority: 'high',
-          title: 'Upload important documents',
-          description: 'Store wills, IDs, insurance, and other essential paperwork',
-          actionUrl: '/dashboard/documents',
-        });
-      }
-      if (!letters.data || letters.data.length === 0) {
-        items.push({
-          id: 'item-4',
-          category: 'letters',
-          priority: 'medium',
-          title: 'Write a letter to a loved one',
-          description: 'Create personal messages for family and friends',
-          actionUrl: '/dashboard/letters',
-        });
-      }
-      if (!trustedContacts.data || trustedContacts.data.length === 0) {
-        items.push({
-          id: 'item-5',
-          category: 'contacts',
-          priority: 'high',
-          title: 'Add trusted contacts',
-          description: 'Grant access to trusted family or friends',
-          actionUrl: '/dashboard/trusted-contacts',
-        });
-      }
+    // Always generate fallback suggestions based on actual missing data
+    // This ensures suggestions are shown even if AI returns empty or fails
+    const fallbackItems: ChecklistResponse['items'] = [];
+    
+    // Check for missing data and create fallback suggestions
+    if (!personalDetails.data || 
+        !personalDetails.data.full_name || 
+        personalDetails.data.full_name === 'User' ||
+        !personalDetails.data.date_of_birth ||
+        personalDetails.data.date_of_birth === '1900-01-01') {
+      fallbackItems.push({
+        id: 'fallback-1',
+        category: 'personal_info',
+        priority: 'high',
+        title: 'Complete your personal details',
+        description: 'Add your full name, date of birth, address, and contact information to ensure your profile is complete',
+        actionUrl: '/dashboard/personal-details',
+      });
     }
+    
+    if (!funeralPreferences.data) {
+      fallbackItems.push({
+        id: 'fallback-2',
+        category: 'preferences',
+        priority: 'medium',
+        title: 'Add your funeral preferences',
+        description: 'Share your wishes for services, ceremonies, and how you want to be remembered',
+        actionUrl: '/dashboard/funeral-preferences',
+      });
+    }
+    
+    if (!documents.data || documents.data.length === 0) {
+      fallbackItems.push({
+        id: 'fallback-3',
+        category: 'documents',
+        priority: 'high',
+        title: 'Upload important documents',
+        description: 'Store wills, IDs, insurance policies, deeds, and other essential paperwork securely',
+        actionUrl: '/dashboard/documents',
+      });
+    }
+    
+    if (!letters.data || letters.data.length === 0) {
+      fallbackItems.push({
+        id: 'fallback-4',
+        category: 'letters',
+        priority: 'medium',
+        title: 'Write a letter to a loved one',
+        description: 'Create personal messages, memories, or words of wisdom for family and friends',
+        actionUrl: '/dashboard/letters',
+      });
+    }
+    
+    if (!trustedContacts.data || trustedContacts.data.length === 0) {
+      fallbackItems.push({
+        id: 'fallback-5',
+        category: 'contacts',
+        priority: 'high',
+        title: 'Add trusted contacts',
+        description: 'Grant access to trusted family members or friends who may need to help in the future',
+        actionUrl: '/dashboard/trusted-contacts',
+      });
+    }
+    
+    if (!medicalContacts.data) {
+      fallbackItems.push({
+        id: 'fallback-6',
+        category: 'contacts',
+        priority: 'medium',
+        title: 'Add medical and legal contacts',
+        description: 'Store information about your physician, lawyer, and other important professionals',
+        actionUrl: '/dashboard/medical-contacts',
+      });
+    }
+    
+    if (!willQuestionnaire.data) {
+      fallbackItems.push({
+        id: 'fallback-7',
+        category: 'documents',
+        priority: 'high',
+        title: 'Complete your will questionnaire',
+        description: 'Document your wishes for asset distribution, guardianship, and executors',
+        actionUrl: '/dashboard/will-questionnaire/edit',
+      });
+    }
+    
+    if (!household.data) {
+      fallbackItems.push({
+        id: 'fallback-8',
+        category: 'personal_info',
+        priority: 'medium',
+        title: 'Add household information',
+        description: 'Include pet care instructions, access codes, utility accounts, and monthly bills',
+        actionUrl: '/dashboard/household-information',
+      });
+    }
+
+    // Process AI-generated items if available
+    if (parsedItems && Array.isArray(parsedItems) && parsedItems.length > 0) {
+      parsedItems.slice(0, 8).forEach((item: any, idx: number) => {
+        const categoryMap: Record<string, ChecklistResponse['items'][0]['category']> = {
+          'personal_info': 'personal_info',
+          'documents': 'documents',
+          'letters': 'letters',
+          'contacts': 'contacts',
+          'preferences': 'preferences',
+        };
+        
+        const category = categoryMap[item.category] || 'personal_info';
+        const priority = ['high', 'medium', 'low'].includes(item.priority) ? item.priority : 'medium';
+        
+        // Map category to action URL
+        const actionUrlMap: Record<string, string> = {
+          'personal_info': '/dashboard/personal-details',
+          'documents': '/dashboard/documents',
+          'letters': '/dashboard/letters',
+          'contacts': '/dashboard/trusted-contacts',
+          'preferences': '/dashboard/funeral-preferences',
+        };
+        
+        items.push({
+          id: `ai-item-${idx + 1}`,
+          category,
+          priority,
+          title: (item.title || '').trim().substring(0, 100),
+          description: (item.description || '').trim().substring(0, 200),
+          actionUrl: actionUrlMap[category] || '/dashboard',
+        });
+      });
+    }
+
+    // Combine AI suggestions with fallback suggestions
+    // Deduplicate by checking if we already have a suggestion for the same category/priority
+    const existingCategories = new Set(items.map(item => `${item.category}-${item.actionUrl}`));
+    
+    fallbackItems.forEach(fallbackItem => {
+      const key = `${fallbackItem.category}-${fallbackItem.actionUrl}`;
+      if (!existingCategories.has(key)) {
+        items.push(fallbackItem);
+        existingCategories.add(key);
+      }
+    });
 
     // Calculate completion percentage (rough estimate)
     const totalSections = 11;
