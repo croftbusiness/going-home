@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { 
   ArrowLeft, Image as ImageIcon, Plus, X, Save, Trash2, 
   Palette, Flower2, Shirt, Camera, Box, Package, Sparkles,
-  Loader2, AlertCircle, CheckCircle2
+  Loader2, AlertCircle, CheckCircle2, Maximize2, X as XIcon
 } from 'lucide-react';
 
 interface BoardItem {
@@ -142,11 +142,24 @@ export default function PlanningBoardPage() {
     generalNotes: '',
   });
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useState<{ url: string; fileName?: string } | null>(null);
   const fileInputRefs = useRef<{ [key: string]: HTMLInputElement | null }>({});
 
   useEffect(() => {
     loadBoard();
   }, []);
+
+  // Keyboard handler for ESC key to close image modal
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && selectedImage) {
+        setSelectedImage(null);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedImage]);
 
   const loadBoard = async () => {
     try {
@@ -428,6 +441,7 @@ export default function PlanningBoardPage() {
                           <div
                             key={item.id}
                             className="group relative mb-4 break-inside-avoid rounded-xl overflow-hidden shadow-md hover:shadow-2xl transition-all cursor-pointer"
+                            onClick={() => setSelectedImage({ url: item.url, fileName: item.fileName })}
                           >
                             <div className="relative">
                               <img
@@ -437,6 +451,11 @@ export default function PlanningBoardPage() {
                                 loading="lazy"
                               />
                               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl">
+                                <div className="absolute top-2 right-2">
+                                  <div className="p-2 bg-white/90 rounded-full backdrop-blur-sm">
+                                    <Maximize2 className="w-4 h-4 text-[#2C2A29]" />
+                                  </div>
+                                </div>
                                 <div className="absolute bottom-0 left-0 right-0 p-3">
                                   {item.fileName && (
                                     <p className="text-white text-xs font-medium truncate mb-1">
@@ -523,6 +542,47 @@ export default function PlanningBoardPage() {
           </button>
         </div>
       </main>
+
+      {/* Image Modal/Lightbox */}
+      {selectedImage && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4"
+          onClick={() => setSelectedImage(null)}
+        >
+          <div className="relative max-w-7xl max-h-full w-full h-full flex items-center justify-center">
+            {/* Close Button */}
+            <button
+              onClick={() => setSelectedImage(null)}
+              className="absolute top-4 right-4 z-10 p-3 bg-white/10 hover:bg-white/20 rounded-full backdrop-blur-sm transition-colors text-white"
+              aria-label="Close"
+            >
+              <XIcon className="w-6 h-6" />
+            </button>
+
+            {/* Image */}
+            <div className="relative max-w-full max-h-full flex items-center justify-center">
+              <img
+                src={selectedImage.url}
+                alt={selectedImage.fileName || 'Planning board image'}
+                className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl"
+                onClick={(e) => e.stopPropagation()}
+              />
+            </div>
+
+            {/* Image Info */}
+            {selectedImage.fileName && (
+              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-lg">
+                <p className="text-white text-sm font-medium">{selectedImage.fileName}</p>
+              </div>
+            )}
+
+            {/* Keyboard hint */}
+            <div className="absolute bottom-4 right-4 px-3 py-1.5 bg-white/10 backdrop-blur-sm rounded-lg">
+              <p className="text-white text-xs opacity-70">Press ESC to close</p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
