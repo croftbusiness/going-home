@@ -59,16 +59,19 @@ export default function RecipesPage() {
       const formData = new FormData();
       formData.append('file', file);
 
-      const response = await fetch('/api/user/upload-photo', {
+      const response = await fetch('/api/user/family-legacy/upload', {
         method: 'POST',
         body: formData,
       });
 
-      if (!response.ok) throw new Error('Upload failed');
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Upload failed');
+      }
 
       const data = await response.json();
       return data.url;
-    } catch (error) {
+    } catch (error: any) {
       console.error('Upload error:', error);
       throw error;
     } finally {
