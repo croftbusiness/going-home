@@ -32,6 +32,16 @@ export default function LoginPage() {
         throw new Error(data.error || 'Login failed');
       }
 
+      // Check onboarding status before redirecting
+      const onboardingRes = await fetch('/api/user/onboarding/complete');
+      if (onboardingRes.ok) {
+        const onboardingData = await onboardingRes.json();
+        if (!onboardingData.onboardingComplete) {
+          router.push('/onboarding');
+          return;
+        }
+      }
+      
       // Redirect to dashboard
       router.push('/dashboard');
     } catch (err: any) {

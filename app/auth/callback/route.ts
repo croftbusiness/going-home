@@ -78,6 +78,18 @@ export async function GET(request: Request) {
       path: '/',
     });
 
+    // Check if user needs onboarding
+    const { data: userData } = await dbClient
+      .from('users')
+      .select('onboarding_complete')
+      .eq('id', data.user.id)
+      .single();
+
+    // If onboarding not complete, redirect to onboarding (unless already going there)
+    if (!userData?.onboarding_complete && !next.includes('/onboarding')) {
+      return NextResponse.redirect(new URL('/onboarding', requestUrl.origin));
+    }
+
     // Redirect to dashboard or next URL
     return NextResponse.redirect(new URL(next, requestUrl.origin));
   }

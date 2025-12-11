@@ -58,8 +58,8 @@ export default function SignupPage() {
         throw new Error(data.error || 'Signup failed');
       }
 
-      // Redirect to dashboard
-      router.push('/dashboard');
+      // New users always go to onboarding first
+      router.push('/onboarding');
     } catch (err: any) {
       setError(err.message);
     } finally {

@@ -78,6 +78,16 @@ export default function DashboardPage() {
 
   const checkAuthAndLoadData = async () => {
     try {
+      // Check onboarding status first
+      const onboardingRes = await fetch('/api/user/onboarding/complete');
+      if (onboardingRes.ok) {
+        const onboardingData = await onboardingRes.json();
+        if (!onboardingData.onboardingComplete) {
+          router.push('/onboarding');
+          return;
+        }
+      }
+
       const [statusRes, personalRes] = await Promise.all([
         fetch('/api/user/status'),
         fetch('/api/user/personal-details'),
