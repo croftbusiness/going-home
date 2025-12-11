@@ -2,16 +2,16 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Heart, Sparkles, ArrowRight, CheckCircle2, User, Users, Home, Mail, Phone, Calendar } from 'lucide-react';
+import { Heart, Sparkles, ArrowRight, CheckCircle2, User, Users } from 'lucide-react';
 
 interface OnboardingData {
   preferredName: string;
   hasFamily: boolean;
   hasChildren: boolean;
   primaryGoal: string;
-  emergencyContactName: string;
-  emergencyContactPhone: string;
-  emergencyContactRelationship: string;
+  legacyMessage?: string;
+  mostImportantValue?: string;
+  favoriteMemory?: string;
 }
 
 export default function OnboardingPage() {
@@ -26,9 +26,9 @@ export default function OnboardingPage() {
     hasFamily: false,
     hasChildren: false,
     primaryGoal: '',
-    emergencyContactName: '',
-    emergencyContactPhone: '',
-    emergencyContactRelationship: '',
+    legacyMessage: '',
+    mostImportantValue: '',
+    favoriteMemory: '',
   });
 
   useEffect(() => {
@@ -318,59 +318,56 @@ export default function OnboardingPage() {
               </select>
             </div>
 
-            {/* Emergency Contact */}
+            {/* Legacy Message */}
             <div className="border-t border-gray-200 pt-6">
-              <h3 className="text-lg font-semibold text-[#2C2A29] mb-4 flex items-center space-x-2">
-                <Phone className="w-5 h-5 text-[#A5B99A]" />
-                <span>Emergency Contact</span>
-              </h3>
-              <p className="text-sm text-[#2C2A29] opacity-70 mb-4">
-                Who should we contact in case of an emergency?
+              <label className="block text-sm font-semibold text-[#2C2A29] mb-2">
+                <Heart className="w-4 h-4 inline mr-2 text-[#A5B99A]" />
+                What's one thing you want your loved ones to always remember about you?
+              </label>
+              <textarea
+                value={formData.legacyMessage}
+                onChange={(e) => setFormData({ ...formData, legacyMessage: e.target.value })}
+                placeholder="Share something meaningful - a value, a memory, or words of wisdom..."
+                rows={4}
+                className="w-full px-4 py-3 text-base bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#A5B99A] focus:border-[#A5B99A] transition-all resize-none"
+              />
+              <p className="text-xs text-[#2C2A29] opacity-60 mt-1">
+                This will help us personalize your experience and create meaningful content for you.
               </p>
+            </div>
 
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-[#2C2A29] mb-2">
-                    Name <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.emergencyContactName}
-                    onChange={(e) => setFormData({ ...formData, emergencyContactName: e.target.value })}
-                    required
-                    placeholder="Full name"
-                    className="w-full px-4 py-3 text-base bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#A5B99A] focus:border-[#A5B99A] transition-all"
-                  />
-                </div>
+            {/* Most Important Value */}
+            <div>
+              <label className="block text-sm font-semibold text-[#2C2A29] mb-2">
+                What matters most to you in life?
+              </label>
+              <input
+                type="text"
+                value={formData.mostImportantValue}
+                onChange={(e) => setFormData({ ...formData, mostImportantValue: e.target.value })}
+                placeholder="e.g., Family, Faith, Helping Others, Creativity..."
+                className="w-full px-4 py-3 text-base bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#A5B99A] focus:border-[#A5B99A] transition-all"
+              />
+              <p className="text-xs text-[#2C2A29] opacity-60 mt-1">
+                This helps us understand what's truly important to you.
+              </p>
+            </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-[#2C2A29] mb-2">
-                    Phone Number <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="tel"
-                    value={formData.emergencyContactPhone}
-                    onChange={(e) => setFormData({ ...formData, emergencyContactPhone: e.target.value })}
-                    required
-                    placeholder="(555) 123-4567"
-                    className="w-full px-4 py-3 text-base bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#A5B99A] focus:border-[#A5B99A] transition-all"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-[#2C2A29] mb-2">
-                    Relationship <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.emergencyContactRelationship}
-                    onChange={(e) => setFormData({ ...formData, emergencyContactRelationship: e.target.value })}
-                    required
-                    placeholder="e.g., Spouse, Sibling, Friend"
-                    className="w-full px-4 py-3 text-base bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#A5B99A] focus:border-[#A5B99A] transition-all"
-                  />
-                </div>
-              </div>
+            {/* Favorite Memory */}
+            <div>
+              <label className="block text-sm font-semibold text-[#2C2A29] mb-2">
+                Share a favorite memory you'd want to preserve (optional)
+              </label>
+              <textarea
+                value={formData.favoriteMemory}
+                onChange={(e) => setFormData({ ...formData, favoriteMemory: e.target.value })}
+                placeholder="A moment with family, an accomplishment, a simple joy..."
+                rows={3}
+                className="w-full px-4 py-3 text-base bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#A5B99A] focus:border-[#A5B99A] transition-all resize-none"
+              />
+              <p className="text-xs text-[#2C2A29] opacity-60 mt-1">
+                These memories help create a richer legacy for your loved ones.
+              </p>
             </div>
 
             {/* Submit Button */}

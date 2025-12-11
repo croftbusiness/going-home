@@ -36,9 +36,9 @@ export async function POST(request: Request) {
       zip_code: '00000',
       phone: '000-000-0000', // Placeholder
       email: userData?.email || '', // Use actual user email
-      emergency_contact_name: body.emergencyContactName || 'To be completed',
-      emergency_contact_phone: body.emergencyContactPhone || '000-000-0000',
-      emergency_contact_relationship: body.emergencyContactRelationship || 'To be completed',
+      emergency_contact_name: 'To be completed', // User can add this later in their profile
+      emergency_contact_phone: '000-000-0000',
+      emergency_contact_relationship: 'To be completed',
     };
 
     if (existingDetails) {
@@ -46,17 +46,6 @@ export async function POST(request: Request) {
       const updateData: any = {
         preferred_name: body.preferredName || undefined,
       };
-      
-      // Only update emergency contact if provided
-      if (body.emergencyContactName) {
-        updateData.emergency_contact_name = body.emergencyContactName;
-      }
-      if (body.emergencyContactPhone) {
-        updateData.emergency_contact_phone = body.emergencyContactPhone;
-      }
-      if (body.emergencyContactRelationship) {
-        updateData.emergency_contact_relationship = body.emergencyContactRelationship;
-      }
 
       const { error } = await supabase
         .from('personal_details')
@@ -76,6 +65,43 @@ export async function POST(request: Request) {
       if (error) {
         console.error('Error creating personal_details:', error);
         throw error;
+      }
+    }
+
+    // Optionally save emotional responses to personal_biography if provided
+    if (body.legacyMessage || body.favoriteMemory || body.mostImportantValue) {
+      const { data: existingBiography } = await supabase
+        .from('personal_biography')
+        .select('id')
+        .eq('user_id', auth.userId)
+        .maybeSingle();
+
+      const biographyData: any = {
+        user_id: auth.userId,
+      };
+
+      // Save onboarding responses to appropriate fields
+      if (body.legacyMessage) {
+        biographyData.lessons_learned = body.legacyMessage;
+      }
+      if (body.favoriteMemory) {
+        biographyData.favorite_memories = body.favoriteMemory;
+      }
+      if (body.mostImportantValue) {
+        biographyData.life_story = body.mostImportantValue;
+      }
+
+      if (existingBiography) {
+        // Update existing biography with onboarding data
+        await supabase
+          .from('personal_biography')
+          .update(biographyData)
+          .eq('id', existingBiography.id);
+      } else {
+        // Create new biography record
+        await supabase
+          .from('personal_biography')
+          .insert(biographyData);
       }
     }
 
