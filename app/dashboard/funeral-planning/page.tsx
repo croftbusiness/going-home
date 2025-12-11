@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, Heart, Music, Palette, FileText, Mail, Sparkles, Image, Lightbulb, CheckCircle, Grid3x3 } from 'lucide-react';
+import { ArrowLeft, Heart, Music, Palette, FileText, Mail, Sparkles, Image, Lightbulb, CheckCircle, Grid3x3, Calculator } from 'lucide-react';
 
 interface FuneralPlanningStatus {
   story: boolean;
@@ -155,6 +155,16 @@ export default function FuneralPlanningPage() {
       color: 'bg-[#A5B99A]',
       bgColor: 'bg-[#A5B99A] bg-opacity-5',
       completed: status.letters,
+    },
+    {
+      id: 'costCalculator',
+      title: 'Cost Calculator',
+      description: 'Estimate and plan your funeral expenses',
+      icon: Calculator,
+      href: '/dashboard/funeral-cost-calculator',
+      color: 'bg-[#93B0C8]',
+      bgColor: 'bg-[#93B0C8] bg-opacity-5',
+      completed: false,
     },
   ];
 
