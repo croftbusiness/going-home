@@ -149,3 +149,4 @@ The complete schema is in `supabase/legacy_features_schema.sql` and includes:
 6. ⏭️ Test timed release logic
 7. ⏭️ Set up delivery system for comfort messages
 
+

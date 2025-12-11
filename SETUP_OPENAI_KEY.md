@@ -80,3 +80,4 @@ When deploying to Vercel:
 
 Your `.env.local` file is already protected by `.gitignore`, so it won't be committed to git.
 
+

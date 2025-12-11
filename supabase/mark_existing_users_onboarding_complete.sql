@@ -6,3 +6,4 @@ WHERE onboarding_complete IS NULL OR onboarding_complete = FALSE;
 
 COMMENT ON COLUMN users.onboarding_complete IS 'Set to TRUE for all existing users to skip onboarding';
 
+

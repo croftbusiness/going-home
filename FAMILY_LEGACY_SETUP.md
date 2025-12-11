@@ -120,3 +120,4 @@ All tables have RLS enabled:
 - Users can only access their own records
 - Use `auth.uid() = user_id` in policies
 
+

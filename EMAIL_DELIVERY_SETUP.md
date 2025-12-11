@@ -128,3 +128,4 @@ The email includes:
 - Executor must confirm death before any emails are sent
 - This prevents accidentally sending letters while user is still alive
 
+

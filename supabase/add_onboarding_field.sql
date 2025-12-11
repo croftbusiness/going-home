@@ -6,3 +6,4 @@ CREATE INDEX IF NOT EXISTS idx_users_onboarding_complete ON users(onboarding_com
 
 COMMENT ON COLUMN users.onboarding_complete IS 'Tracks whether user has completed the initial onboarding questionnaire';
 
+

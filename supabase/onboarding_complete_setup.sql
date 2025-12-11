@@ -24,3 +24,4 @@ COMMENT ON COLUMN users.onboarding_complete IS
 -- Verify the update (optional - you can run this separately to check)
 -- SELECT id, email, onboarding_complete FROM users;
 
+

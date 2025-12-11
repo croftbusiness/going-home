@@ -53,3 +53,4 @@ If the migration fails, check:
 - Are there any existing data conflicts?
 - Check the Supabase SQL Editor for specific error messages
 
+

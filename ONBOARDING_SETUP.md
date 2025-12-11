@@ -104,3 +104,4 @@ You can easily customize:
 5. Log out and log back in
 6. Should skip onboarding and go directly to dashboard
 
+
