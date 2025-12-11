@@ -31,6 +31,8 @@ export async function GET() {
       durationSeconds: msg.duration_seconds,
       description: msg.description,
       playOnDate: msg.play_on_date,
+      releaseType: msg.release_type || 'after_death',
+      releaseDate: msg.release_date,
       createdAt: msg.created_at,
       updatedAt: msg.updated_at,
     }));
@@ -57,14 +59,16 @@ export async function POST(request: Request) {
       message_type: body.messageType,
       title: body.title,
       recipient_type: body.recipientType,
-      recipient_id: body.recipientId,
-      recipient_name: body.recipientName,
+      recipient_id: body.recipientId || null,
+      recipient_name: body.recipientName || null,
       file_url: body.fileUrl,
       file_size: body.fileSize,
       mime_type: body.mimeType,
       duration_seconds: body.durationSeconds,
-      description: body.description,
-      play_on_date: body.playOnDate,
+      description: body.description || null,
+      play_on_date: body.playOnDate || null,
+      release_type: body.releaseType || 'after_death',
+      release_date: body.releaseDate || null,
     };
 
     const { data, error } = await supabase
