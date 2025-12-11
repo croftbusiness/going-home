@@ -92,11 +92,44 @@ export default function LegacyMessagesPage() {
       if (stream) {
         stream.getTracks().forEach(track => track.stop());
       }
+    };
+  }, [stream, formData.messageType]);
+
+  // Effect to manage timer when recording
+  useEffect(() => {
+    if (isRecording) {
+      // Reset timer to 0 when starting
+      setRecordingTime(0);
+      
+      // Clear any existing interval
       if (recordingIntervalRef.current) {
         clearInterval(recordingIntervalRef.current);
       }
+      
+      // Start new interval
+      recordingIntervalRef.current = setInterval(() => {
+        setRecordingTime((prev) => {
+          const next = prev + 1;
+          console.log('Timer tick:', next);
+          return next;
+        });
+      }, 1000);
+    } else {
+      // Clear interval when recording stops
+      if (recordingIntervalRef.current) {
+        clearInterval(recordingIntervalRef.current);
+        recordingIntervalRef.current = null;
+      }
+    }
+    
+    // Cleanup on unmount or when isRecording changes
+    return () => {
+      if (recordingIntervalRef.current) {
+        clearInterval(recordingIntervalRef.current);
+        recordingIntervalRef.current = null;
+      }
     };
-  }, [stream, formData.messageType]);
+  }, [isRecording]);
 
   const loadData = async () => {
     try {
@@ -183,24 +216,8 @@ export default function LegacyMessagesPage() {
       // Set stream state - this will trigger useEffect to attach to video element
       setStream(mediaStream);
       
-      // Start recording state and timer
+      // Start recording state - this will trigger useEffect to start timer
       setIsRecording(true);
-      setRecordingTime(0);
-      
-      // Clear any existing interval first
-      if (recordingIntervalRef.current) {
-        clearInterval(recordingIntervalRef.current);
-        recordingIntervalRef.current = null;
-      }
-      
-      // Start timer
-      recordingIntervalRef.current = setInterval(() => {
-        setRecordingTime((prev) => {
-          const next = prev + 1;
-          console.log('Timer updating to:', next); // Debug log
-          return next;
-        });
-      }, 1000);
     } catch (err: any) {
       setError('Failed to access camera/microphone: ' + err.message);
       console.error('Recording error:', err);
