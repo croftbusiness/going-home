@@ -45,10 +45,10 @@ export async function POST(request: Request) {
       supabase.from('documents').select('*').eq('user_id', userId),
       supabase.from('letters').select('*').eq('user_id', userId),
       supabase.from('will_questionnaires').select('*').eq('user_id', userId).maybeSingle(),
-      supabase.from('household').select('*').eq('user_id', userId).maybeSingle(),
+      supabase.from('household_information').select('*').eq('user_id', userId).maybeSingle(),
       supabase.from('assets').select('*').eq('user_id', userId),
       supabase.from('digital_accounts').select('*').eq('user_id', userId),
-      supabase.from('insurance_financial').select('*').eq('user_id', userId),
+      supabase.from('insurance_financial_contacts').select('*').eq('user_id', userId),
     ]);
 
     // Build data summary for AI analysis
