@@ -18,8 +18,9 @@ export default function OnboardingPage() {
   const router = useRouter();
   const [step, setStep] = useState<'intro' | 'questionnaire' | 'complete'>('intro');
   const [introAnimation, setIntroAnimation] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [checking, setChecking] = useState(true);
+  const [error, setError] = useState('');
   const [formData, setFormData] = useState<OnboardingData>({
     preferredName: '',
     hasFamily: false,
@@ -73,8 +74,10 @@ export default function OnboardingPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setError('');
 
     try {
+      // Save onboarding questionnaire data
       const response = await fetch('/api/user/onboarding', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -82,7 +85,8 @@ export default function OnboardingPage() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to save onboarding data');
+        const errorData = await response.json().catch(() => ({ error: 'Failed to save onboarding data' }));
+        throw new Error(errorData.error || 'Failed to save onboarding data');
       }
 
       // Mark onboarding as complete
@@ -91,7 +95,8 @@ export default function OnboardingPage() {
       });
 
       if (!completeResponse.ok) {
-        throw new Error('Failed to mark onboarding complete');
+        const errorData = await completeResponse.json().catch(() => ({ error: 'Failed to mark onboarding complete' }));
+        throw new Error(errorData.error || 'Failed to mark onboarding complete');
       }
 
       setStep('complete');
@@ -101,7 +106,8 @@ export default function OnboardingPage() {
         router.push('/dashboard');
       }, 2000);
     } catch (error: any) {
-      alert('Error: ' + error.message);
+      console.error('Onboarding submission error:', error);
+      setError(error.message || 'Failed to save. Please try again.');
       setLoading(false);
     }
   };
@@ -191,6 +197,14 @@ export default function OnboardingPage() {
               Help us personalize your experience with a few quick questions
             </p>
           </div>
+
+          {/* Error Message */}
+          {error && (
+            <div className="bg-red-50 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded-lg mb-6">
+              <p className="font-medium">Error</p>
+              <p className="text-sm">{error}</p>
+            </div>
+          )}
 
           {/* Questionnaire Form */}
           <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-xl p-6 sm:p-8 space-y-6">

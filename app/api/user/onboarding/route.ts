@@ -18,37 +18,65 @@ export async function POST(request: Request) {
       .eq('user_id', auth.userId)
       .single();
 
+    // Get user email for personal_details
+    const { data: userData } = await supabase
+      .from('users')
+      .select('email')
+      .eq('id', auth.userId)
+      .single();
+
     const personalDetailsData: any = {
       user_id: auth.userId,
       preferred_name: body.preferredName,
-      full_name: body.preferredName, // Use preferred name as full name initially
-      date_of_birth: new Date().toISOString().split('T')[0], // Placeholder, user can update later
-      address: '', // Placeholder
-      city: '',
-      state: '',
-      zip_code: '',
-      phone: '',
-      email: '', // Will be populated from user table if needed
-      emergency_contact_name: body.emergencyContactName,
-      emergency_contact_phone: body.emergencyContactPhone,
-      emergency_contact_relationship: body.emergencyContactRelationship,
+      full_name: body.preferredName || 'User', // Use preferred name as full name initially
+      date_of_birth: '1900-01-01', // Placeholder date, user can update later
+      address: 'To be completed', // Placeholder, user can update later
+      city: 'To be completed',
+      state: 'To be completed',
+      zip_code: '00000',
+      phone: '000-000-0000', // Placeholder
+      email: userData?.email || '', // Use actual user email
+      emergency_contact_name: body.emergencyContactName || 'To be completed',
+      emergency_contact_phone: body.emergencyContactPhone || '000-000-0000',
+      emergency_contact_relationship: body.emergencyContactRelationship || 'To be completed',
     };
 
     if (existingDetails) {
-      // Update existing record
+      // Update existing record - only update the fields we have from onboarding
+      const updateData: any = {
+        preferred_name: body.preferredName || undefined,
+      };
+      
+      // Only update emergency contact if provided
+      if (body.emergencyContactName) {
+        updateData.emergency_contact_name = body.emergencyContactName;
+      }
+      if (body.emergencyContactPhone) {
+        updateData.emergency_contact_phone = body.emergencyContactPhone;
+      }
+      if (body.emergencyContactRelationship) {
+        updateData.emergency_contact_relationship = body.emergencyContactRelationship;
+      }
+
       const { error } = await supabase
         .from('personal_details')
-        .update(personalDetailsData)
+        .update(updateData)
         .eq('id', existingDetails.id);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error updating personal_details:', error);
+        throw error;
+      }
     } else {
-      // Create new record
+      // Create new record with all required fields
       const { error } = await supabase
         .from('personal_details')
         .insert(personalDetailsData);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error creating personal_details:', error);
+        throw error;
+      }
     }
 
     return NextResponse.json({ success: true });
