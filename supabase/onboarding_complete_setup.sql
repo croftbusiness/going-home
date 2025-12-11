@@ -25,3 +25,4 @@ COMMENT ON COLUMN users.onboarding_complete IS
 -- SELECT id, email, onboarding_complete FROM users;
 
 
+

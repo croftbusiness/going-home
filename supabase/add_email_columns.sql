@@ -16,3 +16,4 @@ COMMENT ON COLUMN letters.email_sent_at IS 'Timestamp when email was sent';
 COMMENT ON COLUMN letters.recipient_email IS 'Email address of the recipient (cached from trusted_contacts)';
 
 
+

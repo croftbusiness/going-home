@@ -127,3 +127,4 @@ The disclaimer is displayed:
 - The module follows the same patterns as other dashboard features
 
 
+

@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { 
   ArrowLeft, Image as ImageIcon, Plus, X, Save, Trash2, 
   Palette, Flower2, Shirt, Camera, Box, Package, Sparkles,
-  Loader2, AlertCircle, CheckCircle2, Maximize2, X as XIcon
+  Loader2, AlertCircle, CheckCircle2, Maximize2, X as XIcon, Heart
 } from 'lucide-react';
 
 interface BoardItem {
