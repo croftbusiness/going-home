@@ -158,17 +158,6 @@ export default function LegacyMessagesPage() {
         
         recorder.start();
         setMediaRecorder(recorder);
-        
-        // Small delay to ensure video element is visible before starting recording
-        setTimeout(() => {
-          setIsRecording(true);
-          setRecordingTime(0);
-          
-          // Update recording time every second
-          recordingIntervalRef.current = setInterval(() => {
-            setRecordingTime(prev => prev + 1);
-          }, 1000);
-        }, 100);
       } else {
         const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
         setStream(audioStream);
@@ -190,15 +179,21 @@ export default function LegacyMessagesPage() {
         
         recorder.start();
         setMediaRecorder(recorder);
-        
-        setIsRecording(true);
-        setRecordingTime(0);
-        
-        // Update recording time every second
-        recordingIntervalRef.current = setInterval(() => {
-          setRecordingTime(prev => prev + 1);
-        }, 1000);
       }
+      
+      // Start recording state and timer for both video and audio
+      setIsRecording(true);
+      setRecordingTime(0);
+      
+      // Clear any existing interval first
+      if (recordingIntervalRef.current) {
+        clearInterval(recordingIntervalRef.current);
+      }
+      
+      // Update recording time every second
+      recordingIntervalRef.current = setInterval(() => {
+        setRecordingTime(prev => prev + 1);
+      }, 1000);
     } catch (err: any) {
       setError('Failed to access camera/microphone: ' + err.message);
       console.error('Recording error:', err);
