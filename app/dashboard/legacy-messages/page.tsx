@@ -125,16 +125,22 @@ export default function LegacyMessagesPage() {
       
       if (formData.messageType === 'video') {
         const videoStream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: 'user' },
+          video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } },
           audio: true,
         });
         
+        setStream(videoStream);
+        
+        // Set up video element to show preview
         if (videoRef.current) {
           videoRef.current.srcObject = videoStream;
-          videoRef.current.play();
+          videoRef.current.muted = true;
+          videoRef.current.playsInline = true;
+          videoRef.current.play().catch(err => {
+            console.error('Error playing video:', err);
+          });
         }
         
-        setStream(videoStream);
         const recorder = new MediaRecorder(videoStream, {
           mimeType: 'video/webm;codecs=vp8,opus',
         });
@@ -152,6 +158,17 @@ export default function LegacyMessagesPage() {
         
         recorder.start();
         setMediaRecorder(recorder);
+        
+        // Small delay to ensure video element is visible before starting recording
+        setTimeout(() => {
+          setIsRecording(true);
+          setRecordingTime(0);
+          
+          // Update recording time every second
+          recordingIntervalRef.current = setInterval(() => {
+            setRecordingTime(prev => prev + 1);
+          }, 1000);
+        }, 100);
       } else {
         const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
         setStream(audioStream);
@@ -173,18 +190,23 @@ export default function LegacyMessagesPage() {
         
         recorder.start();
         setMediaRecorder(recorder);
+        
+        setIsRecording(true);
+        setRecordingTime(0);
+        
+        // Update recording time every second
+        recordingIntervalRef.current = setInterval(() => {
+          setRecordingTime(prev => prev + 1);
+        }, 1000);
       }
-      
-      setIsRecording(true);
-      setRecordingTime(0);
-      
-      // Update recording time every second
-      recordingIntervalRef.current = setInterval(() => {
-        setRecordingTime(prev => prev + 1);
-      }, 1000);
     } catch (err: any) {
       setError('Failed to access camera/microphone: ' + err.message);
       console.error('Recording error:', err);
+      // Clean up on error
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+        setStream(null);
+      }
     }
   };
 
@@ -571,14 +593,21 @@ export default function LegacyMessagesPage() {
                           </span>
                         </div>
                         {formData.messageType === 'video' && (
-                          <video
-                            ref={videoRef}
-                            autoPlay
-                            muted
-                            playsInline
-                            className="w-full max-w-md mx-auto rounded-xl mb-6 bg-black shadow-2xl"
-                            style={{ maxHeight: '300px' }}
-                          />
+                          <div className="mb-6">
+                            <video
+                              ref={videoRef}
+                              autoPlay
+                              muted
+                              playsInline
+                              className="w-full max-w-md mx-auto rounded-xl bg-black shadow-2xl"
+                              style={{ maxHeight: '400px', display: stream ? 'block' : 'none' }}
+                            />
+                            {!stream && (
+                              <div className="w-full max-w-md mx-auto h-64 bg-black rounded-xl flex items-center justify-center">
+                                <div className="text-white">Starting camera...</div>
+                              </div>
+                            )}
+                          </div>
                         )}
                         <button
                           onClick={stopRecording}
