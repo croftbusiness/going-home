@@ -63,6 +63,7 @@ const navigation = [
   { name: 'Children\'s Wishes', href: '/dashboard/children-wishes', icon: Baby, section: 'personal' },
   { name: 'Household Info', href: '/dashboard/household', icon: HomeIcon, section: 'personal' },
   { name: 'End-of-Life Checklist', href: '/dashboard/end-of-life-checklist', icon: CheckSquare, section: 'personal' },
+  { name: 'End-of-Life Directives', href: '/dashboard/end-of-life-directives', icon: Heart, section: 'personal' },
   
   // Administrative
   { name: 'Final Summary', href: '/dashboard/final-summary', icon: FileCheck, section: 'admin' },
