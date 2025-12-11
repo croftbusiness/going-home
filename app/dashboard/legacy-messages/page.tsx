@@ -77,8 +77,17 @@ export default function LegacyMessagesPage() {
     loadData();
   }, []);
 
-  // Cleanup on unmount
+  // Effect to attach video stream to video element when available
   useEffect(() => {
+    if (stream && videoRef.current && formData.messageType === 'video') {
+      videoRef.current.srcObject = stream;
+      videoRef.current.muted = true;
+      videoRef.current.playsInline = true;
+      videoRef.current.play().catch(err => {
+        console.error('Error playing video:', err);
+      });
+    }
+    
     return () => {
       if (stream) {
         stream.getTracks().forEach(track => track.stop());
@@ -87,7 +96,7 @@ export default function LegacyMessagesPage() {
         clearInterval(recordingIntervalRef.current);
       }
     };
-  }, [stream]);
+  }, [stream, formData.messageType]);
 
   const loadData = async () => {
     try {
@@ -122,26 +131,17 @@ export default function LegacyMessagesPage() {
   const startRecording = async () => {
     try {
       setError('');
+      setRecordingTime(0);
+      
+      let mediaStream: MediaStream;
       
       if (formData.messageType === 'video') {
-        const videoStream = await navigator.mediaDevices.getUserMedia({
+        mediaStream = await navigator.mediaDevices.getUserMedia({
           video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } },
           audio: true,
         });
         
-        setStream(videoStream);
-        
-        // Set up video element to show preview
-        if (videoRef.current) {
-          videoRef.current.srcObject = videoStream;
-          videoRef.current.muted = true;
-          videoRef.current.playsInline = true;
-          videoRef.current.play().catch(err => {
-            console.error('Error playing video:', err);
-          });
-        }
-        
-        const recorder = new MediaRecorder(videoStream, {
+        const recorder = new MediaRecorder(mediaStream, {
           mimeType: 'video/webm;codecs=vp8,opus',
         });
         
@@ -159,10 +159,9 @@ export default function LegacyMessagesPage() {
         recorder.start();
         setMediaRecorder(recorder);
       } else {
-        const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        setStream(audioStream);
+        mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
         
-        const recorder = new MediaRecorder(audioStream, {
+        const recorder = new MediaRecorder(mediaStream, {
           mimeType: 'audio/webm',
         });
         
@@ -181,18 +180,25 @@ export default function LegacyMessagesPage() {
         setMediaRecorder(recorder);
       }
       
-      // Start recording state and timer for both video and audio
+      // Set stream state - this will trigger useEffect to attach to video element
+      setStream(mediaStream);
+      
+      // Start recording state
       setIsRecording(true);
-      setRecordingTime(0);
       
       // Clear any existing interval first
       if (recordingIntervalRef.current) {
         clearInterval(recordingIntervalRef.current);
       }
       
-      // Update recording time every second
+      // Start timer immediately
+      setRecordingTime(0);
       recordingIntervalRef.current = setInterval(() => {
-        setRecordingTime(prev => prev + 1);
+        setRecordingTime((prev) => {
+          const next = prev + 1;
+          console.log('Timer tick:', next); // Debug log
+          return next;
+        });
       }, 1000);
     } catch (err: any) {
       setError('Failed to access camera/microphone: ' + err.message);
@@ -589,15 +595,16 @@ export default function LegacyMessagesPage() {
                         </div>
                         {formData.messageType === 'video' && (
                           <div className="mb-6">
-                            <video
-                              ref={videoRef}
-                              autoPlay
-                              muted
-                              playsInline
-                              className="w-full max-w-md mx-auto rounded-xl bg-black shadow-2xl"
-                              style={{ maxHeight: '400px', display: stream ? 'block' : 'none' }}
-                            />
-                            {!stream && (
+                            {stream ? (
+                              <video
+                                ref={videoRef}
+                                autoPlay
+                                muted
+                                playsInline
+                                className="w-full max-w-md mx-auto rounded-xl bg-black shadow-2xl"
+                                style={{ maxHeight: '400px' }}
+                              />
+                            ) : (
                               <div className="w-full max-w-md mx-auto h-64 bg-black rounded-xl flex items-center justify-center">
                                 <div className="text-white">Starting camera...</div>
                               </div>
