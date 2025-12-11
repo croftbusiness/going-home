@@ -21,9 +21,22 @@ export async function GET() {
 
     if (error) throw error;
 
-    const letters = data?.map(letter => ({
-      ...letter,
+    const letters = data?.map((letter: any) => ({
+      id: letter.id,
+      recipientId: letter.recipient_id,
       recipientName: letter.trusted_contacts?.name,
+      recipientRelationship: letter.recipient_relationship,
+      title: letter.title,
+      messageText: letter.message_text,
+      visibleAfterDeath: letter.visible_after_death,
+      releaseType: letter.release_type || 'after_death',
+      releaseDate: letter.release_date,
+      milestoneType: letter.milestone_type,
+      milestoneDate: letter.milestone_date,
+      milestoneDescription: letter.milestone_description,
+      letterCategory: letter.letter_category || 'other',
+      createdAt: letter.created_at,
+      updatedAt: letter.updated_at,
     })) || [];
 
     return NextResponse.json({ letters });
@@ -46,17 +59,42 @@ export async function POST(request: Request) {
       .from('letters')
       .insert({
         user_id: auth.userId,
-        recipient_id: body.recipientId,
+        recipient_id: body.recipientId || null,
         recipient_relationship: body.recipientRelationship,
         title: body.title,
         message_text: body.messageText,
-        visible_after_death: body.visibleAfterDeath,
+        visible_after_death: body.visibleAfterDeath ?? true,
+        release_type: body.releaseType || 'after_death',
+        release_date: body.releaseDate || null,
+        milestone_type: body.milestoneType || null,
+        milestone_date: body.milestoneDate || null,
+        milestone_description: body.milestoneDescription || null,
+        letter_category: body.letterCategory || 'other',
       })
       .select()
       .single();
 
     if (error) throw error;
-    return NextResponse.json({ letter: data });
+    
+    // Transform response
+    const letter = {
+      id: data.id,
+      recipientId: data.recipient_id,
+      recipientRelationship: data.recipient_relationship,
+      title: data.title,
+      messageText: data.message_text,
+      visibleAfterDeath: data.visible_after_death,
+      releaseType: data.release_type,
+      releaseDate: data.release_date,
+      milestoneType: data.milestone_type,
+      milestoneDate: data.milestone_date,
+      milestoneDescription: data.milestone_description,
+      letterCategory: data.letter_category,
+      createdAt: data.created_at,
+      updatedAt: data.updated_at,
+    };
+    
+    return NextResponse.json({ letter });
   } catch (error) {
     return NextResponse.json({ error: 'Failed to save' }, { status: 500 });
   }
@@ -80,11 +118,17 @@ export async function PUT(request: Request) {
     const { data, error } = await supabase
       .from('letters')
       .update({
-        recipient_id: body.recipientId,
+        recipient_id: body.recipientId || null,
         recipient_relationship: body.recipientRelationship,
         title: body.title,
         message_text: body.messageText,
-        visible_after_death: body.visibleAfterDeath,
+        visible_after_death: body.visibleAfterDeath ?? true,
+        release_type: body.releaseType || 'after_death',
+        release_date: body.releaseDate || null,
+        milestone_type: body.milestoneType || null,
+        milestone_date: body.milestoneDate || null,
+        milestone_description: body.milestoneDescription || null,
+        letter_category: body.letterCategory || 'other',
       })
       .eq('id', id)
       .eq('user_id', auth.userId)
@@ -92,7 +136,26 @@ export async function PUT(request: Request) {
       .single();
 
     if (error) throw error;
-    return NextResponse.json({ letter: data });
+    
+    // Transform response
+    const letter = {
+      id: data.id,
+      recipientId: data.recipient_id,
+      recipientRelationship: data.recipient_relationship,
+      title: data.title,
+      messageText: data.message_text,
+      visibleAfterDeath: data.visible_after_death,
+      releaseType: data.release_type,
+      releaseDate: data.release_date,
+      milestoneType: data.milestone_type,
+      milestoneDate: data.milestone_date,
+      milestoneDescription: data.milestone_description,
+      letterCategory: data.letter_category,
+      createdAt: data.created_at,
+      updatedAt: data.updated_at,
+    };
+    
+    return NextResponse.json({ letter });
   } catch (error) {
     return NextResponse.json({ error: 'Failed to update' }, { status: 500 });
   }

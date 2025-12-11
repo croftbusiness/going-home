@@ -15,6 +15,12 @@ interface Letter {
   title: string;
   messageText: string;
   visibleAfterDeath: boolean;
+  releaseType?: 'after_death' | 'on_date' | 'on_milestone' | 'immediate';
+  releaseDate?: string;
+  milestoneType?: 'birthday' | 'graduation' | 'wedding' | 'first_child' | 'anniversary' | 'custom';
+  milestoneDate?: string;
+  milestoneDescription?: string;
+  letterCategory?: 'in_case_i_pass' | 'birthday' | 'milestone' | 'encouragement' | 'final_words' | 'love_letter' | 'other';
   createdAt: string;
 }
 
@@ -40,6 +46,12 @@ export default function LettersPage() {
     title: '',
     messageText: '',
     visibleAfterDeath: true,
+    releaseType: 'after_death' as 'after_death' | 'on_date' | 'on_milestone' | 'immediate',
+    releaseDate: '',
+    milestoneType: 'birthday' as 'birthday' | 'graduation' | 'wedding' | 'first_child' | 'anniversary' | 'custom' | '',
+    milestoneDate: '',
+    milestoneDescription: '',
+    letterCategory: 'other' as 'in_case_i_pass' | 'birthday' | 'milestone' | 'encouragement' | 'final_words' | 'love_letter' | 'other',
   });
 
   useEffect(() => {
@@ -101,6 +113,12 @@ export default function LettersPage() {
         title: '',
         messageText: '',
         visibleAfterDeath: true,
+        releaseType: 'after_death' as const,
+        releaseDate: '',
+        milestoneType: 'birthday' as const,
+        milestoneDate: '',
+        milestoneDescription: '',
+        letterCategory: 'other' as const,
       });
       setTimeout(() => setSuccess(false), 3000);
     } catch (error) {
@@ -110,11 +128,17 @@ export default function LettersPage() {
 
   const handleEdit = (letter: Letter) => {
     setFormData({
-      recipientId: letter.recipientId,
+      recipientId: letter.recipientId || '',
       recipientRelationship: letter.recipientRelationship,
-      title: letter.title,
-      messageText: letter.messageText,
-      visibleAfterDeath: letter.visibleAfterDeath,
+      title: letter.title || '',
+      messageText: letter.messageText || '',
+      visibleAfterDeath: letter.visibleAfterDeath ?? true,
+      releaseType: letter.releaseType || 'after_death',
+      releaseDate: letter.releaseDate || '',
+      milestoneType: (letter.milestoneType || 'birthday') as any,
+      milestoneDate: letter.milestoneDate || '',
+      milestoneDescription: letter.milestoneDescription || '',
+      letterCategory: (letter.letterCategory || 'other') as any,
     });
     setEditingId(letter.id);
     setShowForm(true);
@@ -184,6 +208,12 @@ export default function LettersPage() {
                     title: '',
                     messageText: '',
                     visibleAfterDeath: true,
+                    releaseType: 'after_death' as const,
+                    releaseDate: '',
+                    milestoneType: 'birthday' as const,
+                    milestoneDate: '',
+                    milestoneDescription: '',
+                    letterCategory: 'other' as const,
                   });
                 }}
                 className="w-full sm:w-auto px-4 py-2.5 bg-[#A5B99A] text-white rounded-lg hover:bg-[#93B0C8] transition-colors flex items-center justify-center space-x-2 text-sm sm:text-base"
@@ -314,18 +344,20 @@ export default function LettersPage() {
                 />
               </div>
 
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  id="visibleAfterDeath"
-                  checked={formData.visibleAfterDeath}
-                  onChange={(e) => setFormData({ ...formData, visibleAfterDeath: e.target.checked })}
-                  className="w-4 h-4 text-[#A5B99A] border-gray-300 rounded focus:ring-[#A5B99A]"
-                />
-                <label htmlFor="visibleAfterDeath" className="ml-2 text-sm text-[#2C2A29]">
-                  Visible only after death release is triggered
-                </label>
-              </div>
+              {formData.releaseType === 'after_death' && (
+                <div className="flex items-center p-3 bg-[#EBD9B5] bg-opacity-30 rounded-lg">
+                  <input
+                    type="checkbox"
+                    id="visibleAfterDeath"
+                    checked={formData.visibleAfterDeath}
+                    onChange={(e) => setFormData({ ...formData, visibleAfterDeath: e.target.checked })}
+                    className="w-4 h-4 text-[#A5B99A] border-gray-300 rounded focus:ring-[#A5B99A]"
+                  />
+                  <label htmlFor="visibleAfterDeath" className="ml-2 text-sm text-[#2C2A29]">
+                    This letter will be released when your executor activates your account release
+                  </label>
+                </div>
+              )}
 
               <div className="flex justify-end space-x-4 pt-4">
                 <button
