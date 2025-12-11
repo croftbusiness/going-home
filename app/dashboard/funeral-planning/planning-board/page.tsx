@@ -156,7 +156,8 @@ export default function PlanningBoardPage() {
           router.push('/auth/login');
           return;
         }
-        throw new Error('Failed to load board');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to load board');
       }
 
       const data = await response.json();
@@ -164,7 +165,8 @@ export default function PlanningBoardPage() {
         setBoard(data.board);
       }
     } catch (err: any) {
-      setError('Failed to load planning board');
+      console.error('Error loading planning board:', err);
+      setError(err.message || 'Failed to load planning board. Please ensure the database migration has been run.');
     } finally {
       setLoading(false);
     }
@@ -294,9 +296,24 @@ export default function PlanningBoardPage() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10">
         {/* Success/Error Messages */}
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start space-x-3">
-            <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-            <p className="text-sm text-red-700">{error}</p>
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <div className="flex items-start space-x-3">
+              <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <p className="text-sm font-medium text-red-800 mb-1">Error Loading Planning Board</p>
+                <p className="text-sm text-red-700">{error}</p>
+                {error.includes('migration') && (
+                  <div className="mt-3 p-3 bg-red-100 rounded border border-red-300">
+                    <p className="text-xs font-medium text-red-900 mb-1">To fix this:</p>
+                    <ol className="text-xs text-red-800 list-decimal list-inside space-y-1">
+                      <li>Run the SQL migration in your Supabase dashboard</li>
+                      <li>Execute: <code className="bg-red-200 px-1 rounded">supabase/funeral_planning_board_schema.sql</code></li>
+                      <li>Refresh this page</li>
+                    </ol>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         )}
         {success && (

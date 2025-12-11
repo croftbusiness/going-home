@@ -16,7 +16,17 @@ export async function GET() {
       .maybeSingle();
 
     if (error) {
-      return NextResponse.json({ error: 'Failed to load planning board' }, { status: 500 });
+      console.error('Planning board GET database error:', error);
+      // Check if table doesn't exist (PGRST error code)
+      if (error.code === '42P01' || error.message?.includes('does not exist')) {
+        return NextResponse.json({ 
+          error: 'Database table not found. Please run the migration: supabase/funeral_planning_board_schema.sql' 
+        }, { status: 500 });
+      }
+      return NextResponse.json({ 
+        error: 'Failed to load planning board',
+        details: error.message 
+      }, { status: 500 });
     }
 
     // Transform snake_case to camelCase
