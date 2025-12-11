@@ -20,6 +20,11 @@ INSERT INTO storage.buckets (id, name, public)
 VALUES ('legacy-messages', 'legacy-messages', false)
 ON CONFLICT (id) DO NOTHING;
 
+-- Funeral assets bucket (for planning board images)
+INSERT INTO storage.buckets (id, name, public) 
+VALUES ('funeral-assets', 'funeral-assets', false)
+ON CONFLICT (id) DO NOTHING;
+
 -- ============================================================================
 -- STORAGE POLICIES
 -- ============================================================================
@@ -100,5 +105,31 @@ USING (
   bucket_id = 'legacy-messages' 
   AND auth.uid()::text = (storage.foldername(name))[1]
 );
+
+-- Funeral assets bucket policies
+DROP POLICY IF EXISTS "Users can upload own funeral assets" ON storage.objects;
+CREATE POLICY "Users can upload own funeral assets"
+ON storage.objects FOR INSERT
+WITH CHECK (
+  bucket_id = 'funeral-assets' 
+  AND auth.uid()::text = (storage.foldername(name))[1]
+);
+
+DROP POLICY IF EXISTS "Users can view own funeral assets" ON storage.objects;
+CREATE POLICY "Users can view own funeral assets"
+ON storage.objects FOR SELECT
+USING (
+  bucket_id = 'funeral-assets' 
+  AND auth.uid()::text = (storage.foldername(name))[1]
+);
+
+DROP POLICY IF EXISTS "Users can delete own funeral assets" ON storage.objects;
+CREATE POLICY "Users can delete own funeral assets"
+ON storage.objects FOR DELETE
+USING (
+  bucket_id = 'funeral-assets' 
+  AND auth.uid()::text = (storage.foldername(name))[1]
+);
+
 
 

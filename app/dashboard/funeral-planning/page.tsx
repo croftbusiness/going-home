@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, Heart, Music, Palette, FileText, Mail, Sparkles, Image, Lightbulb, CheckCircle } from 'lucide-react';
+import { ArrowLeft, Heart, Music, Palette, FileText, Mail, Sparkles, Image, Lightbulb, CheckCircle, Grid3x3 } from 'lucide-react';
 
 interface FuneralPlanningStatus {
   story: boolean;
@@ -13,6 +13,7 @@ interface FuneralPlanningStatus {
   playlist: boolean;
   letters: boolean;
   themes: boolean;
+  planningBoard: boolean;
 }
 
 export default function FuneralPlanningPage() {
@@ -26,6 +27,7 @@ export default function FuneralPlanningPage() {
     playlist: false,
     letters: false,
     themes: false,
+    planningBoard: false,
   });
 
   useEffect(() => {
@@ -35,14 +37,26 @@ export default function FuneralPlanningPage() {
   const checkStatus = async () => {
     try {
       // Check which features have data
-      const [storyRes, moodboardRes, scriptRes, playlistRes, lettersRes, themesRes] = await Promise.all([
+      const [storyRes, moodboardRes, scriptRes, playlistRes, lettersRes, themesRes, planningBoardRes] = await Promise.all([
         fetch('/api/funeral/story'),
         fetch('/api/funeral/moodboard'),
         fetch('/api/funeral/script'),
         fetch('/api/funeral/playlist'),
         fetch('/api/funeral/letter'),
         fetch('/api/funeral/life-themes'),
+        fetch('/api/funeral/planning-board'),
       ]);
+
+      const planningBoardData = planningBoardRes.ok ? await planningBoardRes.json() : null;
+      const hasPlanningBoardImages = planningBoardData?.board && (
+        (planningBoardData.board.casketImages?.length > 0) ||
+        (planningBoardData.board.urnImages?.length > 0) ||
+        (planningBoardData.board.flowerImages?.length > 0) ||
+        (planningBoardData.board.colorPaletteImages?.length > 0) ||
+        (planningBoardData.board.serviceStyleImages?.length > 0) ||
+        (planningBoardData.board.outfitImages?.length > 0) ||
+        (planningBoardData.board.personalPhotos?.length > 0)
+      );
 
       setStatus({
         story: storyRes.ok && (await storyRes.json()).story !== null,
@@ -52,6 +66,7 @@ export default function FuneralPlanningPage() {
         playlist: playlistRes.ok && (await playlistRes.json()).playlist !== null,
         letters: lettersRes.ok && (await lettersRes.json()).letters?.length > 0,
         themes: themesRes.ok && (await themesRes.json()).themes !== null,
+        planningBoard: !!hasPlanningBoardImages,
       });
     } catch (error) {
       console.error('Error checking status:', error);
@@ -70,6 +85,16 @@ export default function FuneralPlanningPage() {
       color: 'bg-[#A5B99A]',
       bgColor: 'bg-[#A5B99A] bg-opacity-5',
       completed: status.story,
+    },
+    {
+      id: 'planningBoard',
+      title: 'Visual Planning Board',
+      description: 'Pinterest-style board for caskets, urns, flowers, colors, and more',
+      icon: Grid3x3,
+      href: '/dashboard/funeral-planning/planning-board',
+      color: 'bg-[#A5B99A]',
+      bgColor: 'bg-[#A5B99A] bg-opacity-5',
+      completed: status.planningBoard,
     },
     {
       id: 'themes',
@@ -134,7 +159,7 @@ export default function FuneralPlanningPage() {
   ];
 
   const completedCount = Object.values(status).filter(Boolean).length;
-  const progress = (completedCount / 7) * 100;
+  const progress = (completedCount / 8) * 100;
 
   if (loading) {
     return (
@@ -255,5 +280,6 @@ export default function FuneralPlanningPage() {
     </div>
   );
 }
+
 
 
