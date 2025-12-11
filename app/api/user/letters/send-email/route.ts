@@ -30,7 +30,7 @@ export async function POST(request: Request) {
         trusted_contacts (name, email)
       `)
       .eq('id', letterId)
-      .eq('user_id', auth.userId)
+      .eq('user_id', userId)
       .single();
 
     if (letterError || !letter) {
@@ -46,7 +46,7 @@ export async function POST(request: Request) {
     const { data: releaseSettings } = await supabase
       .from('release_settings')
       .select('release_activated, release_activated_at')
-      .eq('user_id', auth.userId)
+      .eq('user_id', userId)
       .single();
 
     if (!releaseSettings?.release_activated) {
@@ -66,7 +66,7 @@ export async function POST(request: Request) {
     const { data: personalDetails } = await supabase
       .from('personal_details')
       .select('full_name, preferred_name')
-      .eq('user_id', auth.userId)
+      .eq('user_id', userId)
       .single();
 
     const userName = personalDetails?.preferred_name || personalDetails?.full_name || 'a loved one';
@@ -93,29 +93,99 @@ With love and remembrance,
 The Going Home Team
 `;
 
-    // TODO: Send email using email service (Resend, SendGrid, etc.)
-    // For now, we'll simulate sending and mark as sent
-    // In production, integrate with your email service provider
-    
+    // Send email using existing email service
     try {
-      // Example using fetch to your email API (you'll need to set this up)
-      // const emailResponse = await fetch('https://api.resend.com/emails', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify({
-      //     from: 'Going Home <noreply@goinghome.app>',
-      //     to: recipientEmail,
-      //     subject: emailSubject,
-      //     text: emailBody,
-      //   }),
-      // });
+      const nodemailer = require('nodemailer');
+      
+      const smtpHost = process.env.SMTP_HOST;
+      const smtpUser = process.env.SMTP_USER;
+      const smtpPassword = process.env.SMTP_PASSWORD;
 
-      // For now, just log and mark as sent (implement actual email sending)
-      console.log('Would send email to:', recipientEmail);
-      console.log('Subject:', emailSubject);
+      if (!smtpHost || !smtpUser || !smtpPassword) {
+        console.warn('SMTP configuration missing. Cannot send letter email.');
+        return NextResponse.json(
+          { error: 'Email service not configured. Please configure SMTP settings.' },
+          { status: 500 }
+        );
+      }
+
+      // Check for placeholder values
+      const placeholderPatterns = ['your-smtp-host', 'your-email', 'your-app-password', 'example.com'];
+      const isPlaceholder = (value: string) => 
+        placeholderPatterns.some(pattern => value.toLowerCase().includes(pattern.toLowerCase()));
+
+      if (isPlaceholder(smtpHost) || isPlaceholder(smtpUser) || isPlaceholder(smtpPassword)) {
+        console.warn('SMTP configuration contains placeholder values. Cannot send letter email.');
+        return NextResponse.json(
+          { error: 'Email service not properly configured. Please update SMTP settings in environment variables.' },
+          { status: 500 }
+        );
+      }
+
+      const transporter = nodemailer.createTransport({
+        host: smtpHost,
+        port: parseInt(process.env.SMTP_PORT || '587'),
+        secure: process.env.SMTP_PORT === '465',
+        auth: {
+          user: smtpUser,
+          pass: smtpPassword,
+        },
+      });
+
+      // Create HTML email with better formatting
+      const emailHtml = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${emailSubject}</title>
+</head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.8; color: #2C2A29; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #FAF9F7;">
+  <div style="background-color: #FCFAF7; border-radius: 8px; padding: 40px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+    <h1 style="color: #2C2A29; margin-top: 0; font-size: 24px; margin-bottom: 20px;">${emailSubject}</h1>
+    
+    <p style="color: #2C2A29; font-size: 16px; margin-bottom: 20px;">
+      Dear ${letter.trusted_contacts?.name || 'Friend'},
+    </p>
+    
+    <div style="background-color: white; padding: 30px; border-radius: 6px; border-left: 4px solid #A5B99A; margin: 20px 0;">
+      <p style="color: #2C2A29; font-size: 16px; white-space: pre-wrap; margin: 0;">${letter.message_text}</p>
+    </div>
+    
+    ${letter.release_type === 'after_death' 
+      ? `<p style="color: #2C2A29; opacity: 0.7; font-size: 14px; font-style: italic; margin-top: 20px;">
+        This message was created to be shared with you after ${userName}'s passing.
+      </p>` 
+      : letter.release_type === 'on_date'
+      ? `<p style="color: #2C2A29; opacity: 0.7; font-size: 14px; font-style: italic; margin-top: 20px;">
+        This message was scheduled to be delivered to you on ${new Date(letter.release_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}.
+      </p>`
+      : letter.release_type === 'on_milestone'
+      ? `<p style="color: #2C2A29; opacity: 0.7; font-size: 14px; font-style: italic; margin-top: 20px;">
+        This message was meant to be shared with you on the milestone: ${letter.milestone_type?.replace(/_/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase())}${letter.milestone_description ? ` (${letter.milestone_description})` : ''}.
+      </p>`
+      : ''}
+    
+    <hr style="border: none; border-top: 1px solid #EBD9B5; margin: 30px 0;" />
+    
+    <p style="color: #2C2A29; opacity: 0.6; font-size: 12px; margin: 0;">
+      With love and remembrance,<br>
+      The Going Home Team
+    </p>
+  </div>
+</body>
+</html>`;
+
+      await transporter.sendMail({
+        from: process.env.EMAIL_FROM || `Going Home <${smtpUser}>`,
+        to: recipientEmail,
+        subject: emailSubject,
+        text: emailBody,
+        html: emailHtml,
+      });
+
+      console.log(`Letter email sent successfully to ${recipientEmail}`);
 
       // Mark email as sent
       const { error: updateError } = await supabase
@@ -131,8 +201,6 @@ The Going Home Team
       return NextResponse.json({ 
         success: true, 
         message: 'Email sent successfully',
-        // In production, remove this after implementing actual email
-        note: 'Email functionality needs to be implemented with your email service provider'
       });
 
     } catch (emailError: any) {

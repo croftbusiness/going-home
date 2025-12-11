@@ -46,6 +46,8 @@ export async function POST(request: Request) {
 
     // Send emails for each letter
     const results = [];
+    const internalApiKey = process.env.INTERNAL_API_KEY || 'internal-key';
+    
     for (const letter of lettersToSend) {
       try {
         // Double-check: Only send if release is activated (user has passed)
@@ -57,6 +59,7 @@ export async function POST(request: Request) {
 
         if (!releaseSettings?.release_activated) {
           console.log(`Skipping letter ${letter.id}: User has not passed away yet`);
+          results.push({ letterId: letter.id, status: 'skipped', reason: 'User has not passed away' });
           continue;
         }
 
@@ -65,10 +68,12 @@ export async function POST(request: Request) {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            // Note: This requires proper authentication in production
-            // You may need to use service role key or internal auth
+            'Authorization': `Bearer ${internalApiKey}`,
           },
-          body: JSON.stringify({ letterId: letter.id }),
+          body: JSON.stringify({ 
+            letterId: letter.id,
+            userId: letter.user_id 
+          }),
         });
 
         if (emailResponse.ok) {

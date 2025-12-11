@@ -118,13 +118,53 @@ export async function POST(request: Request) {
 
     // Activate release if not already activated
     if (!releaseSettings.release_activated) {
-      await supabase
+      const { error: activateError } = await supabase
         .from('release_settings')
         .update({
           release_activated: true,
           release_activated_at: new Date().toISOString(),
         })
         .eq('id', releaseSettings.id);
+
+      if (activateError) {
+        console.error('Error activating release:', activateError);
+      } else {
+        // After activating release (user has passed away), send all "after_death" letters via email
+        try {
+          const { data: lettersToSend } = await supabase
+            .from('letters')
+            .select('id')
+            .eq('user_id', releaseSettings.user_id)
+            .eq('release_type', 'after_death')
+            .eq('auto_email_enabled', true)
+            .eq('email_sent', false);
+
+          if (lettersToSend && lettersToSend.length > 0) {
+            // Send each letter via email in background (don't await to avoid blocking)
+            Promise.all(
+              lettersToSend.map(async (letter) => {
+                try {
+                  await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/user/letters/send-email`, {
+                    method: 'POST',
+                    headers: { 
+                      'Content-Type': 'application/json',
+                      // Use service role or internal auth token here
+                    },
+                    body: JSON.stringify({ letterId: letter.id }),
+                  });
+                } catch (emailErr) {
+                  console.error(`Failed to send email for letter ${letter.id}:`, emailErr);
+                }
+              })
+            ).catch(err => {
+              console.error('Error batch sending letters:', err);
+            });
+          }
+        } catch (emailError) {
+          console.error('Error sending letters after release activation:', emailError);
+          // Don't fail the release activation if email sending fails
+        }
+      }
     }
 
     // Store executor session
