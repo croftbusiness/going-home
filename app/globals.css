@@ -17,6 +17,19 @@
   animation: fadeIn 0.3s ease-out;
 }
 
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite;
+}
+
 /* Mobile-first optimizations */
 @layer utilities {
   /* Ensure minimum touch target size (44x44px recommended by Apple/Google) */
