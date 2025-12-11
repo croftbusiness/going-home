@@ -18,7 +18,8 @@ export default function OnboardingPage() {
   const router = useRouter();
   const [step, setStep] = useState<'intro' | 'questionnaire' | 'complete'>('intro');
   const [introAnimation, setIntroAnimation] = useState(0);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [checking, setChecking] = useState(true);
   const [formData, setFormData] = useState<OnboardingData>({
     preferredName: '',
     hasFamily: false,
@@ -30,8 +31,32 @@ export default function OnboardingPage() {
   });
 
   useEffect(() => {
+    // Check if onboarding is already complete
+    const checkOnboardingStatus = async () => {
+      try {
+        const response = await fetch('/api/user/onboarding/complete');
+        if (response.ok) {
+          const data = await response.json();
+          if (data.onboardingComplete) {
+            // Already completed, redirect to dashboard
+            router.push('/dashboard');
+            return;
+          }
+        }
+      } catch (error) {
+        console.error('Error checking onboarding status:', error);
+        // Continue with onboarding if check fails (for new users)
+      } finally {
+        setChecking(false);
+      }
+    };
+    
+    checkOnboardingStatus();
+  }, [router]);
+
+  useEffect(() => {
     // Animated intro sequence
-    if (step === 'intro') {
+    if (step === 'intro' && !checking) {
       const timers = [
         setTimeout(() => setIntroAnimation(1), 300),
         setTimeout(() => setIntroAnimation(2), 800),
@@ -39,7 +64,7 @@ export default function OnboardingPage() {
       ];
       return () => timers.forEach(clearTimeout);
     }
-  }, [step]);
+  }, [step, checking]);
 
   const handleStartQuestionnaire = () => {
     setStep('questionnaire');
@@ -80,6 +105,17 @@ export default function OnboardingPage() {
       setLoading(false);
     }
   };
+
+  if (checking) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-[#FAF9F7] via-[#FCFAF7] to-[#FAF9F7] flex items-center justify-center px-4">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#A5B99A] mx-auto mb-4"></div>
+          <p className="text-[#2C2A29] opacity-70">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (step === 'intro') {
     return (

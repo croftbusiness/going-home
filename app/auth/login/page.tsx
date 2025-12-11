@@ -33,13 +33,18 @@ export default function LoginPage() {
       }
 
       // Check onboarding status before redirecting
-      const onboardingRes = await fetch('/api/user/onboarding/complete');
-      if (onboardingRes.ok) {
-        const onboardingData = await onboardingRes.json();
-        if (!onboardingData.onboardingComplete) {
-          router.push('/onboarding');
-          return;
+      try {
+        const onboardingRes = await fetch('/api/user/onboarding/complete');
+        if (onboardingRes.ok) {
+          const onboardingData = await onboardingRes.json();
+          if (!onboardingData.onboardingComplete) {
+            router.push('/onboarding');
+            return;
+          }
         }
+      } catch (error) {
+        console.error('Error checking onboarding status:', error);
+        // Continue to dashboard if check fails
       }
       
       // Redirect to dashboard

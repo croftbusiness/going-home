@@ -79,14 +79,20 @@ export async function GET(request: Request) {
     });
 
     // Check if user needs onboarding
-    const { data: userData } = await dbClient
+    const { data: userData, error: userError } = await dbClient
       .from('users')
       .select('onboarding_complete')
       .eq('id', data.user.id)
       .single();
 
-    // If onboarding not complete, redirect to onboarding (unless already going there)
-    if (!userData?.onboarding_complete && !next.includes('/onboarding')) {
+    // If column doesn't exist or user hasn't completed onboarding, redirect to onboarding
+    if (userError && (userError.code === '42703' || userError.message.includes('column'))) {
+      // Column doesn't exist yet - redirect to onboarding
+      if (!next.includes('/onboarding')) {
+        return NextResponse.redirect(new URL('/onboarding', requestUrl.origin));
+      }
+    } else if (userData && !userData.onboarding_complete && !next.includes('/onboarding')) {
+      // Column exists and user hasn't completed onboarding
       return NextResponse.redirect(new URL('/onboarding', requestUrl.origin));
     }
 

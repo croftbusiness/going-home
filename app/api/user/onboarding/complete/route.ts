@@ -44,10 +44,19 @@ export async function GET() {
       .eq('id', auth.userId)
       .single();
 
-    if (error) throw error;
+    if (error) {
+      // If column doesn't exist, assume onboarding not complete
+      if (error.code === '42703' || error.message.includes('column') || error.message.includes('does not exist')) {
+        console.warn('onboarding_complete column may not exist, defaulting to false');
+        return NextResponse.json({ 
+          onboardingComplete: false 
+        });
+      }
+      throw error;
+    }
 
     return NextResponse.json({ 
-      onboardingComplete: data?.onboarding_complete || false 
+      onboardingComplete: data?.onboarding_complete === true
     });
   } catch (error: any) {
     console.error('Check onboarding error:', error);

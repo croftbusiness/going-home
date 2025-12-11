@@ -82,10 +82,16 @@ export default function DashboardPage() {
       const onboardingRes = await fetch('/api/user/onboarding/complete');
       if (onboardingRes.ok) {
         const onboardingData = await onboardingRes.json();
+        // If onboarding is not complete (or if field doesn't exist and defaults to false), redirect
         if (!onboardingData.onboardingComplete) {
           router.push('/onboarding');
           return;
         }
+      } else {
+        // If check fails, log but continue (might be new user)
+        console.warn('Onboarding check failed, assuming needs onboarding');
+        router.push('/onboarding');
+        return;
       }
 
       const [statusRes, personalRes] = await Promise.all([
