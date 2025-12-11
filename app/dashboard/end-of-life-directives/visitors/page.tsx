@@ -128,6 +128,28 @@ export default function VisitorsPage() {
       </header>
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+        {/* Why This Helps Loved Ones */}
+        <div className="bg-gradient-to-br from-white via-[#FCFAF7] to-white rounded-xl p-6 mb-6 shadow-sm border border-gray-100">
+          <div className="flex items-start space-x-4">
+            <div className="p-3 bg-[#A5B99A] bg-opacity-10 rounded-xl flex-shrink-0">
+              <Heart className="w-6 h-6 text-[#A5B99A]" />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-lg font-semibold text-[#2C2A29] mb-2">
+                Why This Helps Your Loved Ones
+              </h3>
+              <p className="text-sm text-[#2C2A29] opacity-70 leading-relaxed">
+                Managing visitors during your final days can be emotionally complex for your family. By 
+                documenting who you want present, visitor limits, and privacy preferences now, you're giving 
+                them clear guidance and permission to protect your peace. They won't have to guess who you'd 
+                want to see or worry about managing difficult conversations with people who want to visit. 
+                Your preferences help them create the right environment for you while protecting their own 
+                emotional energy during this precious time together.
+              </p>
+            </div>
+          </div>
+        </div>
+
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="bg-[#FCFAF7] rounded-lg p-6 shadow-sm">
             <h2 className="text-lg font-medium text-[#2C2A29] mb-4">

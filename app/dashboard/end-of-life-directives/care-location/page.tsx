@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Save } from 'lucide-react';
+import { ArrowLeft, Save, Heart } from 'lucide-react';
 import Link from 'next/link';
 
 interface CareLocationData {
@@ -126,6 +126,27 @@ export default function CareLocationPage() {
       </header>
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+        {/* Why This Helps Loved Ones */}
+        <div className="bg-gradient-to-br from-white via-[#FCFAF7] to-white rounded-xl p-6 mb-6 shadow-sm border border-gray-100">
+          <div className="flex items-start space-x-4">
+            <div className="p-3 bg-[#A5B99A] bg-opacity-10 rounded-xl flex-shrink-0">
+              <Heart className="w-6 h-6 text-[#A5B99A]" />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-lg font-semibold text-[#2C2A29] mb-2">
+                Why This Helps Your Loved Ones
+              </h3>
+              <p className="text-sm text-[#2C2A29] opacity-70 leading-relaxed">
+                Deciding where you want to spend your final days is deeply personal, and your family will want 
+                to honor your wishes perfectly. By documenting your preferred location and environment preferences 
+                now, you're giving them clear guidance during a time when decision-making is already difficult. 
+                They won't have to wonder if you'd prefer home, hospice, or hospital—they'll know exactly what 
+                you wanted, giving them confidence and peace of mind that they're honoring your wishes.
+              </p>
+            </div>
+          </div>
+        </div>
+
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="bg-[#FCFAF7] rounded-lg p-6 shadow-sm">
             <h2 className="text-lg font-medium text-[#2C2A29] mb-4">
