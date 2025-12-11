@@ -6,3 +6,4 @@ COMMENT ON COLUMN personal_details.profile_picture_url IS 'URL to user profile p
 
 
 
+

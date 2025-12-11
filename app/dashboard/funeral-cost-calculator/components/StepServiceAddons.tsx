@@ -21,10 +21,10 @@ export default function StepServiceAddons({ data, setData }: StepServiceAddonsPr
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <div>
-        <h2 className="text-2xl font-semibold text-[#2C2A29] mb-2">Service Add-ons</h2>
-        <p className="text-[#2C2A29] opacity-70">Optional services and enhancements</p>
+        <h2 className="text-xl sm:text-2xl font-semibold text-[#2C2A29] mb-2">Service Add-ons</h2>
+        <p className="text-sm sm:text-base text-[#2C2A29] opacity-70">Optional services and enhancements</p>
       </div>
 
       <div className="space-y-4">
@@ -39,7 +39,7 @@ export default function StepServiceAddons({ data, setData }: StepServiceAddonsPr
               step="0.01"
               value={data.serviceAddons.flowers || ''}
               onChange={(e) => updateField('flowers', parseFloat(e.target.value) || 0)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent"
+              className="w-full pl-10 pr-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent touch-target"
               placeholder="0.00"
             />
           </div>
@@ -56,7 +56,7 @@ export default function StepServiceAddons({ data, setData }: StepServiceAddonsPr
               step="0.01"
               value={data.serviceAddons.printedMaterials || ''}
               onChange={(e) => updateField('printedMaterials', parseFloat(e.target.value) || 0)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent"
+              className="w-full pl-10 pr-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent touch-target"
               placeholder="0.00"
             />
           </div>
@@ -73,7 +73,7 @@ export default function StepServiceAddons({ data, setData }: StepServiceAddonsPr
               step="0.01"
               value={data.serviceAddons.obituaryPublicationFee || ''}
               onChange={(e) => updateField('obituaryPublicationFee', parseFloat(e.target.value) || 0)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent"
+              className="w-full pl-10 pr-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent touch-target"
               placeholder="0.00"
             />
           </div>
@@ -90,7 +90,7 @@ export default function StepServiceAddons({ data, setData }: StepServiceAddonsPr
               step="0.01"
               value={data.serviceAddons.memorialVideoPhotoMontage || ''}
               onChange={(e) => updateField('memorialVideoPhotoMontage', parseFloat(e.target.value) || 0)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent"
+              className="w-full pl-10 pr-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent touch-target"
               placeholder="0.00"
             />
           </div>
@@ -107,7 +107,7 @@ export default function StepServiceAddons({ data, setData }: StepServiceAddonsPr
               step="0.01"
               value={data.serviceAddons.musicianSingerCost || ''}
               onChange={(e) => updateField('musicianSingerCost', parseFloat(e.target.value) || 0)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent"
+              className="w-full pl-10 pr-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent touch-target"
               placeholder="0.00"
             />
           </div>
@@ -124,7 +124,7 @@ export default function StepServiceAddons({ data, setData }: StepServiceAddonsPr
               step="0.01"
               value={data.serviceAddons.officiantHonorarium || ''}
               onChange={(e) => updateField('officiantHonorarium', parseFloat(e.target.value) || 0)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent"
+              className="w-full pl-10 pr-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent touch-target"
               placeholder="0.00"
             />
           </div>

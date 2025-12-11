@@ -34,6 +34,7 @@ import {
   Target,
   Zap,
   FolderHeart,
+  Calculator,
 } from 'lucide-react';
 import AIChecklist from '@/components/ai/AIChecklist';
 import ProfilePictureUpload from '@/components/ProfilePictureUpload';
@@ -218,12 +219,22 @@ export default function DashboardPage() {
     {
       title: 'Funeral Planning',
       description: 'AI-guided comprehensive ceremony planning with stories and music',
-      icon: Heart,
+      icon: Sparkles,
       href: '/dashboard/funeral-planning',
       completed: false,
       color: 'bg-[#A5B99A]',
       bgColor: 'bg-[#A5B99A] bg-opacity-5',
       emotionalLevel: 9,
+    },
+    {
+      title: 'Funeral Cost Calculator',
+      description: 'Estimate and plan your funeral expenses with questionnaire or manual entry',
+      icon: DollarSign,
+      href: '/dashboard/funeral-cost-calculator',
+      completed: false,
+      color: 'bg-[#93B0C8]',
+      bgColor: 'bg-[#93B0C8] bg-opacity-5',
+      emotionalLevel: 6,
     },
     
     // HIGH EMOTIONAL VALUE - Family & Relationships

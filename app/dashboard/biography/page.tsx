@@ -207,7 +207,16 @@ export default function BiographyPage() {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || 'Failed to generate AI content');
+        const errorMsg = errorData.error || 'Failed to generate AI content';
+        
+        // Provide user-friendly error messages
+        if (response.status === 503) {
+          throw new Error('AI service is currently unavailable. Please try again later or contact support if this persists.');
+        } else if (response.status === 429) {
+          throw new Error('AI service is temporarily busy. Please wait a moment and try again.');
+        } else {
+          throw new Error(errorMsg);
+        }
       }
 
       const data = await response.json();

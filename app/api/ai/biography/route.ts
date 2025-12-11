@@ -2,10 +2,10 @@ import { NextResponse } from 'next/server';
 import { requireAuth } from '@/lib/auth';
 import OpenAI from 'openai';
 
-function getOpenAIClient(): OpenAI {
+function getOpenAIClient(): OpenAI | null {
   const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) {
-    throw new Error('OPENAI_API_KEY is not configured');
+  if (!apiKey || apiKey.trim() === '' || apiKey.includes('your-') || apiKey.includes('placeholder')) {
+    return null;
   }
   return new OpenAI({ apiKey });
 }
@@ -33,6 +33,12 @@ export async function POST(request: Request) {
     const { action, section, content, existingContent } = body;
 
     const openai = getOpenAIClient();
+    if (!openai) {
+      return NextResponse.json(
+        { error: 'AI service is currently unavailable. Please configure OPENAI_API_KEY in your environment variables.' },
+        { status: 503 }
+      );
+    }
 
     let prompt = '';
     let systemPrompt = BASE_PROMPT;
@@ -106,18 +112,26 @@ Return the improved version.`;
     console.error('Biography AI error:', error);
     
     // Provide more helpful error messages
-    let errorMessage = 'Failed to generate AI content';
-    if (error.message?.includes('OPENAI_API_KEY')) {
-      errorMessage = 'AI service is not configured. Please contact support.';
-    } else if (error.message?.includes('rate limit')) {
+    let errorMessage = 'AI service is currently unavailable';
+    let statusCode = 503;
+    
+    if (error.message?.includes('OPENAI_API_KEY') || error.message?.includes('not configured')) {
+      errorMessage = 'AI service is not configured. Please contact support or check your environment settings.';
+      statusCode = 503;
+    } else if (error.message?.includes('rate limit') || error.message?.includes('429')) {
       errorMessage = 'AI service is temporarily busy. Please try again in a moment.';
+      statusCode = 429;
+    } else if (error.message?.includes('401') || error.message?.includes('unauthorized')) {
+      errorMessage = 'AI service authentication failed. Please check your API key configuration.';
+      statusCode = 401;
     } else if (error.message) {
-      errorMessage = error.message;
+      errorMessage = `AI service error: ${error.message}`;
+      statusCode = 500;
     }
     
     return NextResponse.json(
       { error: errorMessage },
-      { status: 500 }
+      { status: statusCode }
     );
   }
 }

@@ -35,6 +35,7 @@ import {
   Settings,
   LayoutDashboard,
   Gift,
+  Calculator,
 } from 'lucide-react';
 
 // Organized navigation with sections and unique icons
@@ -50,6 +51,7 @@ const navigation = [
   // Planning & Legacy
   { name: 'Family Legacy', href: '/dashboard/family-legacy', icon: Gift, section: 'planning' },
   { name: 'Funeral Planning', href: '/dashboard/funeral-planning', icon: Sparkles, section: 'planning' },
+  { name: 'Funeral Cost Calculator', href: '/dashboard/funeral-cost-calculator', icon: Calculator, section: 'planning' },
   { name: 'Legacy Messages', href: '/dashboard/legacy-messages', icon: Video, section: 'planning' },
   { name: 'Will Questionnaire', href: '/dashboard/will-questionnaire', icon: FileQuestion, section: 'planning' },
   { name: 'Biography', href: '/dashboard/biography', icon: BookOpen, section: 'planning' },
@@ -67,6 +69,8 @@ const navigation = [
   { name: 'End-of-Life Directives', href: '/dashboard/end-of-life-directives', icon: Heart, section: 'personal' },
   
   // Administrative
+  { name: 'Access Overview', href: '/dashboard/access-overview', icon: Users, section: 'admin' },
+  { name: 'Account Settings', href: '/dashboard/account-settings', icon: Settings, section: 'admin' },
   { name: 'Final Summary', href: '/dashboard/final-summary', icon: FileCheck, section: 'admin' },
   { name: 'Release Settings', href: '/dashboard/release-settings', icon: Shield, section: 'admin' },
 ];
@@ -236,22 +240,23 @@ export default function DashboardLayout({
             <div className="px-4 py-3 mb-3 bg-gradient-to-br from-[#FAF9F7] to-white rounded-xl border border-gray-200/50">
               <div className="flex items-center space-x-3">
                 {profilePictureUrl ? (
-                  <img
-                    src={profilePictureUrl}
-                    alt="Profile"
-                    className="w-11 h-11 rounded-full object-cover border-2 border-[#A5B99A] shadow-sm"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.style.display = 'none';
-                      if (target.nextElementSibling) {
-                        (target.nextElementSibling as HTMLElement).style.display = 'flex';
-                      }
-                    }}
-                  />
-                ) : null}
-                <div className={`flex items-center justify-center w-11 h-11 rounded-full bg-gradient-to-br from-[#A5B99A] to-[#93B0C8] border-2 border-white shadow-sm ${profilePictureUrl ? 'hidden' : ''}`}>
-                  <User className="w-5 h-5 text-white" />
-                </div>
+                  <div className="relative w-11 h-11 rounded-full overflow-hidden border-2 border-[#A5B99A] shadow-sm flex-shrink-0">
+                    <Image
+                      src={profilePictureUrl}
+                      alt="Profile"
+                      fill
+                      className="object-cover"
+                      sizes="44px"
+                      onError={() => {
+                        // Fallback handled by conditional rendering below
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center w-11 h-11 rounded-full bg-gradient-to-br from-[#A5B99A] to-[#93B0C8] border-2 border-white shadow-sm flex-shrink-0">
+                    <User className="w-5 h-5 text-white" />
+                  </div>
+                )}
                 <div className="flex-1 min-w-0">
                   <p className="text-xs text-[#2C2A29] opacity-50 mb-0.5 font-medium">Signed in as</p>
                   <p className="text-sm font-semibold text-[#2C2A29] truncate">

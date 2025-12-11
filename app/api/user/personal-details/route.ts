@@ -76,6 +76,7 @@ export async function POST(request: Request) {
       emergency_contact_phone: body.emergencyContactPhone,
       emergency_contact_relationship: body.emergencyContactRelationship,
       profile_picture_url: body.profilePictureUrl || null,
+      role: body.role || 'User',
     };
 
     let data, error;

@@ -52,12 +52,12 @@ export default function StepBurialOrCremation({ data, setData }: StepBurialOrCre
   };
 
   if (data.burialOrCremation === 'burial') {
-    return (
-      <div className="space-y-6">
-        <div>
-          <h2 className="text-2xl font-semibold text-[#2C2A29] mb-2">Burial Costs</h2>
-          <p className="text-[#2C2A29] opacity-70">Enter costs for burial-related expenses</p>
-        </div>
+  return (
+    <div className="space-y-4 sm:space-y-6">
+      <div>
+        <h2 className="text-xl sm:text-2xl font-semibold text-[#2C2A29] mb-2">Burial Costs</h2>
+        <p className="text-sm sm:text-base text-[#2C2A29] opacity-70">Enter costs for burial-related expenses</p>
+      </div>
 
         <div className="space-y-4">
           <div>
@@ -67,7 +67,7 @@ export default function StepBurialOrCremation({ data, setData }: StepBurialOrCre
             <select
               value={data.burialCosts.casketType || ''}
               onChange={(e) => updateBurialField('casketType', e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent"
+              className="w-full px-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent touch-target"
             >
               <option value="">Select casket type</option>
               {CASKET_TYPES.map((type) => (
@@ -89,7 +89,7 @@ export default function StepBurialOrCremation({ data, setData }: StepBurialOrCre
                 step="0.01"
                 value={data.burialCosts.casketCost || ''}
                 onChange={(e) => updateBurialField('casketCost', parseFloat(e.target.value) || 0)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent"
+                className="w-full pl-10 pr-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent touch-target"
                 placeholder="0.00"
               />
             </div>
@@ -102,7 +102,7 @@ export default function StepBurialOrCremation({ data, setData }: StepBurialOrCre
             <select
               value={data.burialCosts.vaultOrLiner || ''}
               onChange={(e) => updateBurialField('vaultOrLiner', e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent"
+              className="w-full px-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent touch-target"
             >
               <option value="">Select vault or liner</option>
               {VAULT_TYPES.map((type) => (
@@ -124,7 +124,7 @@ export default function StepBurialOrCremation({ data, setData }: StepBurialOrCre
                 step="0.01"
                 value={data.burialCosts.vaultOrLinerCost || ''}
                 onChange={(e) => updateBurialField('vaultOrLinerCost', parseFloat(e.target.value) || 0)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent"
+                className="w-full pl-10 pr-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent touch-target"
                 placeholder="0.00"
               />
             </div>
@@ -141,7 +141,7 @@ export default function StepBurialOrCremation({ data, setData }: StepBurialOrCre
                 step="0.01"
                 value={data.burialCosts.gravesiteCost || ''}
                 onChange={(e) => updateBurialField('gravesiteCost', parseFloat(e.target.value) || 0)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent"
+                className="w-full pl-10 pr-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent touch-target"
                 placeholder="0.00"
               />
             </div>
@@ -158,7 +158,7 @@ export default function StepBurialOrCremation({ data, setData }: StepBurialOrCre
                 step="0.01"
                 value={data.burialCosts.openingClosingFee || ''}
                 onChange={(e) => updateBurialField('openingClosingFee', parseFloat(e.target.value) || 0)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent"
+                className="w-full pl-10 pr-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent touch-target"
                 placeholder="0.00"
               />
             </div>
@@ -175,7 +175,7 @@ export default function StepBurialOrCremation({ data, setData }: StepBurialOrCre
                 step="0.01"
                 value={data.burialCosts.headstoneCost || ''}
                 onChange={(e) => updateBurialField('headstoneCost', parseFloat(e.target.value) || 0)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent"
+                className="w-full pl-10 pr-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent touch-target"
                 placeholder="0.00"
               />
             </div>
@@ -192,7 +192,7 @@ export default function StepBurialOrCremation({ data, setData }: StepBurialOrCre
                 step="0.01"
                 value={data.burialCosts.engravingCost || ''}
                 onChange={(e) => updateBurialField('engravingCost', parseFloat(e.target.value) || 0)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent"
+                className="w-full pl-10 pr-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent touch-target"
                 placeholder="0.00"
               />
             </div>
@@ -204,10 +204,10 @@ export default function StepBurialOrCremation({ data, setData }: StepBurialOrCre
 
   if (data.burialOrCremation === 'cremation') {
     return (
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
         <div>
-          <h2 className="text-2xl font-semibold text-[#2C2A29] mb-2">Cremation Costs</h2>
-          <p className="text-[#2C2A29] opacity-70">Enter costs for cremation-related expenses</p>
+          <h2 className="text-xl sm:text-2xl font-semibold text-[#2C2A29] mb-2">Cremation Costs</h2>
+          <p className="text-sm sm:text-base text-[#2C2A29] opacity-70">Enter costs for cremation-related expenses</p>
         </div>
 
         <div className="space-y-4">
@@ -222,7 +222,7 @@ export default function StepBurialOrCremation({ data, setData }: StepBurialOrCre
                 step="0.01"
                 value={data.cremationCosts.cremationFee || ''}
                 onChange={(e) => updateCremationField('cremationFee', parseFloat(e.target.value) || 0)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent"
+                className="w-full pl-10 pr-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent touch-target"
                 placeholder="0.00"
               />
             </div>
@@ -235,7 +235,7 @@ export default function StepBurialOrCremation({ data, setData }: StepBurialOrCre
             <select
               value={data.cremationCosts.urnType || ''}
               onChange={(e) => updateCremationField('urnType', e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent"
+              className="w-full px-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent touch-target"
             >
               <option value="">Select urn type</option>
               {URN_TYPES.map((type) => (
@@ -257,32 +257,34 @@ export default function StepBurialOrCremation({ data, setData }: StepBurialOrCre
                 step="0.01"
                 value={data.cremationCosts.urnCost || ''}
                 onChange={(e) => updateCremationField('urnCost', parseFloat(e.target.value) || 0)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent"
+                className="w-full pl-10 pr-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent touch-target"
                 placeholder="0.00"
               />
             </div>
           </div>
 
-          <div className="flex items-center space-x-3">
-            <input
-              type="checkbox"
-              id="keepsakeUrns"
-              checked={data.cremationCosts.keepsakeUrnsJewelry?.enabled || false}
-              onChange={(e) => updateCremationField('keepsakeUrnsJewelry', { ...data.cremationCosts.keepsakeUrnsJewelry, enabled: e.target.checked })}
-              className="w-5 h-5 text-[#A5B99A] border-gray-300 rounded focus:ring-[#A5B99A]"
-            />
-            <label htmlFor="keepsakeUrns" className="flex-1 text-sm font-medium text-[#2C2A29]">
-              Keepsake Urns/Jewelry
-            </label>
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:space-x-3">
+            <div className="flex items-center space-x-3 flex-1">
+              <input
+                type="checkbox"
+                id="keepsakeUrns"
+                checked={data.cremationCosts.keepsakeUrnsJewelry?.enabled || false}
+                onChange={(e) => updateCremationField('keepsakeUrnsJewelry', { ...data.cremationCosts.keepsakeUrnsJewelry, enabled: e.target.checked })}
+                className="w-5 h-5 text-[#A5B99A] border-gray-300 rounded focus:ring-[#A5B99A] touch-target"
+              />
+              <label htmlFor="keepsakeUrns" className="flex-1 text-sm font-medium text-[#2C2A29]">
+                Keepsake Urns/Jewelry
+              </label>
+            </div>
             {data.cremationCosts.keepsakeUrnsJewelry?.enabled && (
-              <div className="relative w-48">
+              <div className="relative w-full sm:w-48">
                 <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
                   type="number"
                   step="0.01"
                   value={data.cremationCosts.keepsakeUrnsJewelry?.cost || ''}
                   onChange={(e) => updateCremationField('keepsakeUrnsJewelry', { ...data.cremationCosts.keepsakeUrnsJewelry, enabled: true, cost: parseFloat(e.target.value) || 0 })}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent touch-target"
                   placeholder="0.00"
                 />
               </div>
@@ -300,7 +302,7 @@ export default function StepBurialOrCremation({ data, setData }: StepBurialOrCre
                 step="0.01"
                 value={data.cremationCosts.scatteringPermitFees || ''}
                 onChange={(e) => updateCremationField('scatteringPermitFees', parseFloat(e.target.value) || 0)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent"
+                className="w-full pl-10 pr-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent touch-target"
                 placeholder="0.00"
               />
             </div>

@@ -8,3 +8,4 @@ COMMENT ON COLUMN users.onboarding_complete IS 'Tracks whether user has complete
 
 
 
+

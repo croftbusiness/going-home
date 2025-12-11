@@ -21,10 +21,10 @@ export default function StepVenueCatering({ data, setData }: StepVenueCateringPr
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <div>
-        <h2 className="text-2xl font-semibold text-[#2C2A29] mb-2">Venue & Catering</h2>
-        <p className="text-[#2C2A29] opacity-70">Ceremony and reception venue costs</p>
+        <h2 className="text-xl sm:text-2xl font-semibold text-[#2C2A29] mb-2">Venue & Catering</h2>
+        <p className="text-sm sm:text-base text-[#2C2A29] opacity-70">Ceremony and reception venue costs</p>
       </div>
 
       <div className="space-y-4">
@@ -39,7 +39,7 @@ export default function StepVenueCatering({ data, setData }: StepVenueCateringPr
               step="0.01"
               value={data.venueAndCatering.ceremonyVenueFee || ''}
               onChange={(e) => updateField('ceremonyVenueFee', parseFloat(e.target.value) || 0)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent"
+              className="w-full pl-10 pr-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent touch-target"
               placeholder="0.00"
             />
           </div>
@@ -56,7 +56,7 @@ export default function StepVenueCatering({ data, setData }: StepVenueCateringPr
               step="0.01"
               value={data.venueAndCatering.receptionVenueFee || ''}
               onChange={(e) => updateField('receptionVenueFee', parseFloat(e.target.value) || 0)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent"
+              className="w-full pl-10 pr-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent touch-target"
               placeholder="0.00"
             />
           </div>
@@ -73,7 +73,7 @@ export default function StepVenueCatering({ data, setData }: StepVenueCateringPr
               step="0.01"
               value={data.venueAndCatering.catering || ''}
               onChange={(e) => updateField('catering', parseFloat(e.target.value) || 0)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent"
+              className="w-full pl-10 pr-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent touch-target"
               placeholder="0.00"
             />
           </div>

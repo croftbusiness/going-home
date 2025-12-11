@@ -39,20 +39,20 @@ export default function StepSummary({ data, setData, calculateTotal }: StepSumma
   const adjustedLegalTotal = legalTotal - ((data.legalAndAdmin.deathCertificatesQuantity || 0) * (data.legalAndAdmin.deathCertificatesCostPerCopy || 0)) + deathCertificatesTotal;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <div>
-        <h2 className="text-2xl font-semibold text-[#2C2A29] mb-2">Cost Summary</h2>
-        <p className="text-[#2C2A29] opacity-70">Review your estimated funeral costs</p>
+        <h2 className="text-xl sm:text-2xl font-semibold text-[#2C2A29] mb-2">Cost Summary</h2>
+        <p className="text-sm sm:text-base text-[#2C2A29] opacity-70">Review your estimated funeral costs</p>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-3 sm:space-y-4">
         {/* Funeral Home Services */}
-        <div className="bg-gray-50 rounded-lg p-4">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="font-semibold text-[#2C2A29]">Funeral Home Services</h3>
-            <span className="font-semibold text-[#2C2A29]">${formatCurrency(funeralHomeTotal)}</span>
+        <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2 gap-1">
+            <h3 className="font-semibold text-[#2C2A29] text-sm sm:text-base">Funeral Home Services</h3>
+            <span className="font-semibold text-[#2C2A29] text-base sm:text-lg">${formatCurrency(funeralHomeTotal)}</span>
           </div>
-          <div className="text-sm text-[#2C2A29] opacity-70 space-y-1">
+          <div className="text-xs sm:text-sm text-[#2C2A29] opacity-70 space-y-1">
             {data.funeralHomeServices.basicServiceFee && (
               <div className="flex justify-between">
                 <span>Basic Service Fee</span>
@@ -314,13 +314,13 @@ export default function StepSummary({ data, setData, calculateTotal }: StepSumma
         )}
 
         {/* Total */}
-        <div className="bg-gradient-to-r from-[#A5B99A] to-[#93B0C8] rounded-lg p-6 text-white">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <FileText className="w-6 h-6" />
-              <h3 className="text-xl font-semibold">Total Estimated Cost</h3>
+        <div className="bg-gradient-to-r from-[#A5B99A] to-[#93B0C8] rounded-lg p-4 sm:p-6 text-white">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div className="flex items-center space-x-2 sm:space-x-3">
+              <FileText className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" />
+              <h3 className="text-lg sm:text-xl font-semibold">Total Estimated Cost</h3>
             </div>
-            <span className="text-3xl font-bold">${formatCurrency(calculateTotal())}</span>
+            <span className="text-2xl sm:text-3xl font-bold">${formatCurrency(calculateTotal())}</span>
           </div>
         </div>
 
@@ -333,7 +333,7 @@ export default function StepSummary({ data, setData, calculateTotal }: StepSumma
             value={data.notes || ''}
             onChange={(e) => setData({ ...data, notes: e.target.value })}
             rows={4}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent"
+            className="w-full px-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent touch-target"
             placeholder="Add any notes or additional information about this calculation..."
           />
         </div>

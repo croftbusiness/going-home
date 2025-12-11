@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Plus, Users, Trash2, Edit, Eye, EyeOff } from 'lucide-react';
+import { ArrowLeft, Plus, Users, Trash2, Edit, Eye, EyeOff, Mail, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
 
 interface TrustedContact {
@@ -16,7 +16,9 @@ interface TrustedContact {
   canViewMedicalContacts: boolean;
   canViewFuneralPreferences: boolean;
   canViewDocuments: boolean;
-  canViewLetters: boolean;
+    canViewLetters: boolean;
+    role?: string;
+    status?: string;
 }
 
 export default function TrustedContactsPage() {
@@ -29,11 +31,13 @@ export default function TrustedContactsPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showPermissions, setShowPermissions] = useState(false);
   const [personalDetails, setPersonalDetails] = useState<any>(null);
+  const [sendingInvite, setSendingInvite] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
     relationship: '',
+    role: 'Custom',
     accessLevel: 'view',
     canViewPersonalDetails: false,
     canViewMedicalContacts: false,
@@ -69,6 +73,7 @@ export default function TrustedContactsPage() {
         email: '',
         phone: personalDetails.emergencyContactPhone || '',
         relationship: personalDetails.emergencyContactRelationship || '',
+        role: 'Custom',
         accessLevel: 'view',
         canViewPersonalDetails: false,
         canViewMedicalContacts: false,
@@ -128,7 +133,19 @@ export default function TrustedContactsPage() {
   };
 
   const handleEdit = (contact: TrustedContact) => {
-    setFormData(contact);
+    setFormData({
+      name: contact.name,
+      email: contact.email,
+      phone: contact.phone,
+      relationship: contact.relationship,
+      role: contact.role || 'Custom',
+      accessLevel: contact.accessLevel,
+      canViewPersonalDetails: contact.canViewPersonalDetails,
+      canViewMedicalContacts: contact.canViewMedicalContacts,
+      canViewFuneralPreferences: contact.canViewFuneralPreferences,
+      canViewDocuments: contact.canViewDocuments,
+      canViewLetters: contact.canViewLetters,
+    });
     setEditingId(contact.id);
     setShowForm(true);
     setShowPermissions(true);
@@ -146,6 +163,32 @@ export default function TrustedContactsPage() {
     }
   };
 
+  const handleSendInvite = async (contactId: string) => {
+    setSendingInvite(contactId);
+    setError('');
+
+    try {
+      const response = await fetch('/api/viewer/invite', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contactId }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to send invitation');
+      }
+
+      alert('Invitation sent successfully!');
+      await loadContacts();
+    } catch (error: any) {
+      setError(error.message || 'Failed to send invitation');
+    } finally {
+      setSendingInvite(null);
+    }
+  };
+
   const resetForm = () => {
     setFormData({
       name: '',
@@ -158,6 +201,7 @@ export default function TrustedContactsPage() {
       canViewFuneralPreferences: false,
       canViewDocuments: false,
       canViewLetters: false,
+      role: 'Custom',
     });
     setShowForm(false);
     setShowPermissions(false);
@@ -244,6 +288,25 @@ export default function TrustedContactsPage() {
                     className="w-full px-4 py-3 text-base bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent touch-target"
                   />
                 </div>
+              </div>
+
+              <div>
+                <label htmlFor="role" className="block text-sm font-medium text-[#2C2A29] mb-1">
+                  Role
+                </label>
+                <select
+                  id="role"
+                  value={formData.role}
+                  onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                  className="w-full px-4 py-3 text-base bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent touch-target"
+                >
+                  <option value="Custom">Custom</option>
+                  <option value="Executor">Executor</option>
+                  <option value="Spouse">Spouse</option>
+                  <option value="Child">Child</option>
+                  <option value="Attorney">Attorney</option>
+                  <option value="Family">Family</option>
+                </select>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -382,7 +445,15 @@ export default function TrustedContactsPage() {
                       <h3 className="text-lg font-medium text-[#2C2A29] mb-1">{contact.name}</h3>
                       <p className="text-sm text-[#2C2A29] opacity-70 mb-1">{contact.relationship}</p>
                       <p className="text-sm text-[#2C2A29] opacity-60 mb-1">{contact.email}</p>
-                      <p className="text-sm text-[#2C2A29] opacity-60">{contact.phone}</p>
+                      <p className="text-sm text-[#2C2A29] opacity-60 mb-2">{contact.phone}</p>
+                      {contact.role && (
+                        <p className="text-xs text-[#A5B99A] font-medium mb-2">Role: {contact.role}</p>
+                      )}
+                      {contact.status && (
+                        <p className="text-xs text-[#93B0C8] mb-2">
+                          Status: <span className="capitalize">{contact.status}</span>
+                        </p>
+                      )}
                       {(contact.canViewPersonalDetails || contact.canViewMedicalContacts || 
                         contact.canViewFuneralPreferences || contact.canViewDocuments || contact.canViewLetters) && (
                         <div className="mt-3 pt-3 border-t border-gray-200">
@@ -419,6 +490,18 @@ export default function TrustedContactsPage() {
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
+                    <button
+                      onClick={() => handleSendInvite(contact.id)}
+                      disabled={sendingInvite === contact.id}
+                      className="p-2 text-[#A5B99A] hover:bg-white rounded-lg transition-colors disabled:opacity-50"
+                      title="Send invitation email"
+                    >
+                      {sendingInvite === contact.id ? (
+                        <RefreshCw className="w-5 h-5 animate-spin" />
+                      ) : (
+                        <Mail className="w-5 h-5" />
+                      )}
+                    </button>
                     <button
                       onClick={() => handleEdit(contact)}
                       className="p-2 text-[#93B0C8] hover:bg-white rounded-lg transition-colors"
