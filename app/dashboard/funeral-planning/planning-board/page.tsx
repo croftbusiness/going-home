@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { 
   ArrowLeft, Image as ImageIcon, Plus, X, Save, Trash2, 
-  Palette, Flower2, Shirt, Camera, Coffin, Urn, Sparkles,
+  Palette, Flower2, Shirt, Camera, Box, Package, Sparkles,
   Loader2, AlertCircle, CheckCircle2
 } from 'lucide-react';
 
@@ -49,7 +49,7 @@ const categories: Category[] = [
     id: 'casketImages',
     label: 'Casket Choices',
     description: 'Caskets that reflect your style',
-    icon: Coffin,
+    icon: Box,
     color: 'text-[#A5B99A]',
     bgColor: 'bg-[#A5B99A]',
     imagesKey: 'casketImages',
@@ -59,7 +59,7 @@ const categories: Category[] = [
     id: 'urnImages',
     label: 'Urn Choices',
     description: 'Urns that speak to you',
-    icon: Urn,
+    icon: Package,
     color: 'text-[#93B0C8]',
     bgColor: 'bg-[#93B0C8]',
     imagesKey: 'urnImages',
@@ -371,7 +371,9 @@ export default function PlanningBoardPage() {
                     {/* Upload Button */}
                     <div className="mt-6 mb-4">
                       <input
-                        ref={(el) => (fileInputRefs.current[category.id] = el)}
+                        ref={(el: HTMLInputElement | null) => {
+                          fileInputRefs.current[category.id] = el;
+                        }}
                         type="file"
                         accept="image/jpeg,image/jpg,image/png,image/webp"
                         className="hidden"
