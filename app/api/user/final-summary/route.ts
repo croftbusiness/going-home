@@ -27,6 +27,7 @@ export async function GET() {
       insuranceFinancial,
       household,
       childrenWishes,
+      endOfLifeDirectives,
     ] = await Promise.all([
       supabase.from('personal_details').select('*').eq('user_id', auth.userId).single(),
       supabase.from('medical_contacts').select('*').eq('user_id', auth.userId).single(),
@@ -43,6 +44,7 @@ export async function GET() {
       supabase.from('insurance_financial_contacts').select('*').eq('user_id', auth.userId),
       supabase.from('household_information').select('*').eq('user_id', auth.userId).single(),
       supabase.from('children_wishes').select('*').eq('user_id', auth.userId),
+      supabase.from('end_of_life_directives').select('*').eq('user_id', auth.userId).single(),
     ]);
 
     const summary = {
@@ -61,6 +63,7 @@ export async function GET() {
       insuranceFinancial: insuranceFinancial.data || [],
       household: household.data || null,
       childrenWishes: childrenWishes.data || [],
+      endOfLifeDirectives: endOfLifeDirectives.data || null,
     };
 
     return NextResponse.json({ summary });

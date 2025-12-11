@@ -2,17 +2,81 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { FileCheck, User, Heart, FileText, Upload, Mail, Users, Key, DollarSign, Video, CheckSquare, BookOpen, Building2, Home as HomeIcon, Baby, Shield } from 'lucide-react';
+import Link from 'next/link';
+import { 
+  FileCheck, User, Heart, FileText, Upload, Mail, Users, Key, DollarSign, Video, 
+  CheckSquare, BookOpen, Building2, Home as HomeIcon, Baby, Shield, ArrowLeft,
+  Download, FileDown, CheckCircle2, Circle, Sparkles, FileX, AlertCircle
+} from 'lucide-react';
+
+interface SectionOption {
+  id: string;
+  label: string;
+  description: string;
+  icon: any;
+  color: string;
+}
+
+const sectionOptions: SectionOption[] = [
+  { id: 'personalDetails', label: 'Personal Details', description: 'Name, address, contact information', icon: User, color: 'bg-[#A5B99A]' },
+  { id: 'medicalContacts', label: 'Medical & Legal Contacts', description: 'Physician, attorney, medical notes', icon: Heart, color: 'bg-[#93B0C8]' },
+  { id: 'endOfLifeDirectives', label: 'End-of-Life Directives', description: 'Care preferences, treatment decisions, final wishes', icon: Heart, color: 'bg-[#A5B99A]' },
+  { id: 'funeralPreferences', label: 'Funeral Preferences', description: 'Service type, songs, atmosphere wishes', icon: FileText, color: 'bg-[#93B0C8]' },
+  { id: 'trustedContacts', label: 'Trusted Contacts', description: 'Family and friends with access', icon: Users, color: 'bg-[#A5B99A]' },
+  { id: 'documents', label: 'Documents', description: 'Wills, IDs, insurance papers', icon: Upload, color: 'bg-[#93B0C8]' },
+  { id: 'assets', label: 'Assets', description: 'Properties, vehicles, investments', icon: DollarSign, color: 'bg-[#A5B99A]' },
+  { id: 'insuranceFinancial', label: 'Insurance & Financial', description: 'Policies, accounts, advisors', icon: Building2, color: 'bg-[#93B0C8]' },
+  { id: 'household', label: 'Household Information', description: 'Pet care, access codes, utilities', icon: HomeIcon, color: 'bg-[#A5B99A]' },
+  { id: 'digitalAccounts', label: 'Digital Accounts', description: 'Online accounts and passwords', icon: Key, color: 'bg-[#93B0C8]' },
+  { id: 'childrenWishes', label: 'Children\'s Wishes', description: 'Messages and guardianship info', icon: Baby, color: 'bg-[#A5B99A]' },
+  { id: 'biography', label: 'Personal Biography', description: 'Life story and accomplishments', icon: BookOpen, color: 'bg-[#93B0C8]' },
+];
+
+const templates = {
+  executor: {
+    name: 'For Executor',
+    description: 'Essential information for your executor to handle your affairs',
+    sections: ['personalDetails', 'medicalContacts', 'trustedContacts', 'documents', 'assets', 'insuranceFinancial', 'household', 'digitalAccounts'],
+    icon: Shield,
+  },
+  family: {
+    name: 'For Family',
+    description: 'Personal information and wishes to share with loved ones',
+    sections: ['personalDetails', 'funeralPreferences', 'endOfLifeDirectives', 'biography', 'childrenWishes'],
+    icon: Users,
+  },
+  medical: {
+    name: 'For Medical Team',
+    description: 'Medical directives and care preferences for healthcare providers',
+    sections: ['personalDetails', 'medicalContacts', 'endOfLifeDirectives'],
+    icon: Heart,
+  },
+  complete: {
+    name: 'Complete Summary',
+    description: 'Everything - all sections included',
+    sections: sectionOptions.map(s => s.id),
+    icon: FileCheck,
+  },
+};
 
 export default function FinalSummaryPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
+  const [exporting, setExporting] = useState(false);
   const [error, setError] = useState('');
   const [summary, setSummary] = useState<any>(null);
+  const [selectedSections, setSelectedSections] = useState<string[]>([]);
+  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
 
   useEffect(() => {
     loadSummary();
   }, []);
+
+  useEffect(() => {
+    if (selectedTemplate && templates[selectedTemplate as keyof typeof templates]) {
+      setSelectedSections(templates[selectedTemplate as keyof typeof templates].sections);
+    }
+  }, [selectedTemplate]);
 
   const loadSummary = async () => {
     try {
@@ -27,6 +91,15 @@ export default function FinalSummaryPage() {
 
       const data = await response.json();
       setSummary(data.summary);
+      
+      // Default to all available sections
+      const availableSections = sectionOptions
+        .filter(section => {
+          const key = section.id as keyof typeof data.summary;
+          return data.summary[key] !== null && data.summary[key] !== undefined;
+        })
+        .map(s => s.id);
+      setSelectedSections(availableSections);
     } catch (err: any) {
       setError(err.message || 'Failed to load summary');
     } finally {
@@ -34,15 +107,73 @@ export default function FinalSummaryPage() {
     }
   };
 
+  const handleSectionToggle = (sectionId: string) => {
+    setSelectedSections(prev => 
+      prev.includes(sectionId)
+        ? prev.filter(id => id !== sectionId)
+        : [...prev, sectionId]
+    );
+    setSelectedTemplate(null); // Clear template when manually selecting
+  };
+
+  const handleTemplateSelect = (templateKey: string) => {
+    setSelectedTemplate(templateKey);
+  };
+
+  const handleExportPDF = async () => {
+    if (selectedSections.length === 0) {
+      setError('Please select at least one section to export');
+      return;
+    }
+
+    setExporting(true);
+    setError('');
+
+    try {
+      const response = await fetch('/api/user/final-summary/export-pdf', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          sections: selectedSections,
+          template: selectedTemplate,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to generate PDF');
+      }
+
+      // Download the PDF
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `final-arrangements-${selectedTemplate || 'custom'}-${Date.now()}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (err: any) {
+      setError(err.message || 'Failed to export PDF');
+    } finally {
+      setExporting(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#FAF9F7]">
-        <div className="text-[#2C2A29]">Loading...</div>
+        <div className="flex flex-col items-center space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#A5B99A]"></div>
+          <p className="text-[#2C2A29] opacity-60">Loading your summary...</p>
+        </div>
       </div>
     );
   }
 
-  if (error) {
+  if (error && !summary) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#FAF9F7]">
         <div className="text-red-600">{error}</div>
@@ -51,20 +182,176 @@ export default function FinalSummaryPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAF9F7]">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
-        <div className="mb-6 sm:mb-8">
-          <div className="flex items-start space-x-3 sm:space-x-4 mb-4">
-            <div className="p-2 sm:p-3 bg-[#A5B99A] bg-opacity-10 rounded-xl flex-shrink-0">
-              <FileCheck className="w-5 h-5 sm:w-6 sm:h-6 text-[#A5B99A]" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <h1 className="text-xl sm:text-2xl lg:text-3xl font-semibold text-[#2C2A29]">Final Arrangements Summary</h1>
-              <p className="text-xs sm:text-sm text-[#2C2A29] opacity-70 mt-1">
-                Complete overview of all your information and preferences
+    <div className="min-h-screen bg-gradient-to-br from-[#FAF9F7] via-white to-[#FAF9F7]">
+      {/* Header */}
+      <header className="bg-gradient-to-r from-[#A5B99A] to-[#93B0C8] text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+          <div className="flex items-center space-x-3 sm:space-x-4 mb-4">
+            <Link
+              href="/dashboard"
+              className="p-2 hover:bg-white/20 rounded-lg transition-colors flex-shrink-0"
+            >
+              <ArrowLeft className="w-5 h-5 text-white" />
+            </Link>
+            <div className="flex-1">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">
+                Final Arrangements Summary
+              </h1>
+              <p className="text-sm sm:text-base opacity-90">
+                Complete overview of your information and preferences
               </p>
             </div>
           </div>
+        </div>
+      </header>
+
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10">
+        {/* Export Options Card */}
+        <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-xl border border-gray-200 mb-8">
+          <div className="flex items-center space-x-3 mb-6">
+            <div className="p-3 bg-gradient-to-br from-[#A5B99A]/20 to-[#93B0C8]/20 rounded-xl">
+              <Download className="w-6 h-6 text-[#A5B99A]" />
+            </div>
+            <div>
+              <h2 className="text-xl sm:text-2xl font-bold text-[#2C2A29]">Export Options</h2>
+              <p className="text-sm text-[#2C2A29] opacity-70">Choose what to include in your PDF</p>
+            </div>
+          </div>
+
+          {/* Template Presets */}
+          <div className="mb-8">
+            <h3 className="text-sm font-semibold text-[#2C2A29] mb-4 uppercase tracking-wider">Quick Templates</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {Object.entries(templates).map(([key, template]) => {
+                const TemplateIcon = template.icon;
+                const isSelected = selectedTemplate === key;
+                return (
+                  <button
+                    key={key}
+                    onClick={() => handleTemplateSelect(key)}
+                    className={`p-4 rounded-xl border-2 transition-all text-left ${
+                      isSelected
+                        ? 'border-[#A5B99A] bg-[#A5B99A]/10 shadow-lg'
+                        : 'border-gray-200 hover:border-[#A5B99A]/50 hover:shadow-md'
+                    }`}
+                  >
+                    <div className="flex items-start justify-between mb-2">
+                      <TemplateIcon className={`w-5 h-5 ${isSelected ? 'text-[#A5B99A]' : 'text-gray-400'}`} />
+                      {isSelected && <CheckCircle2 className="w-5 h-5 text-[#A5B99A]" />}
+                    </div>
+                    <h4 className="font-semibold text-[#2C2A29] mb-1">{template.name}</h4>
+                    <p className="text-xs text-[#2C2A29] opacity-70">{template.description}</p>
+                    <p className="text-xs text-[#A5B99A] mt-2 font-medium">
+                      {template.sections.length} sections
+                    </p>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Custom Section Selection */}
+          <div className="mb-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-semibold text-[#2C2A29] uppercase tracking-wider">Custom Selection</h3>
+              <button
+                onClick={() => {
+                  const availableSections = sectionOptions
+                    .filter(section => {
+                      const key = section.id as keyof typeof summary;
+                      return summary[key] !== null && summary[key] !== undefined;
+                    })
+                    .map(s => s.id);
+                  setSelectedSections(availableSections);
+                  setSelectedTemplate(null);
+                }}
+                className="text-xs text-[#A5B99A] hover:text-[#93B0C8] font-medium"
+              >
+                Select All Available
+              </button>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {sectionOptions.map((section) => {
+                const Icon = section.icon;
+                const hasData = summary && summary[section.id as keyof typeof summary] !== null && 
+                               summary[section.id as keyof typeof summary] !== undefined &&
+                               (Array.isArray(summary[section.id as keyof typeof summary]) 
+                                 ? (summary[section.id as keyof typeof summary] as any[]).length > 0
+                                 : true);
+                const isSelected = selectedSections.includes(section.id);
+                
+                if (!hasData) return null;
+
+                return (
+                  <label
+                    key={section.id}
+                    className={`flex items-start space-x-3 p-3 rounded-lg border-2 cursor-pointer transition-all ${
+                      isSelected
+                        ? 'border-[#A5B99A] bg-[#A5B99A]/5'
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={isSelected}
+                      onChange={() => handleSectionToggle(section.id)}
+                      className="mt-1 w-4 h-4 text-[#A5B99A] border-gray-300 rounded focus:ring-[#A5B99A]"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center space-x-2 mb-1">
+                        <div className={`p-1.5 ${section.color} bg-opacity-10 rounded`}>
+                          <Icon className={`w-4 h-4 ${section.color.replace('bg-', 'text-')}`} />
+                        </div>
+                        <span className="font-medium text-sm text-[#2C2A29]">{section.label}</span>
+                      </div>
+                      <p className="text-xs text-[#2C2A29] opacity-60">{section.description}</p>
+                    </div>
+                  </label>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Export Button */}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-gray-200">
+            <div className="text-sm text-[#2C2A29] opacity-70">
+              {selectedSections.length > 0 ? (
+                <span className="font-medium text-[#A5B99A]">{selectedSections.length}</span>
+              ) : (
+                <span className="text-red-600">0</span>
+              )}{' '}
+              section{selectedSections.length !== 1 ? 's' : ''} selected
+            </div>
+            <button
+              onClick={handleExportPDF}
+              disabled={exporting || selectedSections.length === 0}
+              className="w-full sm:w-auto px-8 py-3 bg-gradient-to-r from-[#A5B99A] to-[#93B0C8] text-white rounded-xl font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+            >
+              {exporting ? (
+                <>
+                  <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
+                  <span>Generating PDF...</span>
+                </>
+              ) : (
+                <>
+                  <FileDown className="w-5 h-5" />
+                  <span>Download PDF</span>
+                </>
+              )}
+            </button>
+          </div>
+
+          {error && (
+            <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start space-x-3">
+              <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+              <p className="text-sm text-red-700">{error}</p>
+            </div>
+          )}
+        </div>
+
+        {/* Summary Preview */}
+        <div className="mb-6">
+          <h2 className="text-xl sm:text-2xl font-bold text-[#2C2A29] mb-4">Summary Preview</h2>
         </div>
 
         <div className="space-y-6">
@@ -75,24 +362,54 @@ export default function FinalSummaryPage() {
               title="Personal Details"
               color="bg-[#A5B99A]"
             >
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-xs sm:text-sm">
-                <div className="break-words">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-sm">
+                <div>
                   <span className="font-medium">Full Name:</span> {summary.personalDetails.full_name}
                 </div>
                 {summary.personalDetails.preferred_name && (
-                  <div className="break-words">
+                  <div>
                     <span className="font-medium">Preferred Name:</span> {summary.personalDetails.preferred_name}
                   </div>
                 )}
-                <div className="break-words">
+                <div>
                   <span className="font-medium">Date of Birth:</span> {summary.personalDetails.date_of_birth}
                 </div>
-                <div className="break-words">
+                <div>
                   <span className="font-medium">Phone:</span> {summary.personalDetails.phone}
                 </div>
-                <div className="col-span-1 sm:col-span-2 break-words">
+                <div className="col-span-1 sm:col-span-2">
                   <span className="font-medium">Address:</span> {summary.personalDetails.address}, {summary.personalDetails.city}, {summary.personalDetails.state} {summary.personalDetails.zip_code}
                 </div>
+              </div>
+            </SectionCard>
+          )}
+
+          {/* End-of-Life Directives */}
+          {summary?.endOfLifeDirectives && (
+            <SectionCard
+              icon={Heart}
+              title="End-of-Life Directives"
+              color="bg-[#A5B99A]"
+            >
+              <div className="space-y-4 text-sm">
+                {summary.endOfLifeDirectives.preferred_place_to_pass && (
+                  <div>
+                    <span className="font-medium">Preferred Place:</span> {summary.endOfLifeDirectives.preferred_place_to_pass}
+                  </div>
+                )}
+                {(summary.endOfLifeDirectives.cpr_preference || summary.endOfLifeDirectives.ventilator_preference) && (
+                  <div>
+                    <span className="font-medium">Life-Sustaining Treatments:</span>
+                    {summary.endOfLifeDirectives.cpr_preference && ` CPR: ${summary.endOfLifeDirectives.cpr_preference}`}
+                    {summary.endOfLifeDirectives.ventilator_preference && ` Ventilator: ${summary.endOfLifeDirectives.ventilator_preference}`}
+                  </div>
+                )}
+                {summary.endOfLifeDirectives.final_message_for_family && (
+                  <div>
+                    <span className="font-medium">Final Message:</span>
+                    <p className="mt-1 text-[#2C2A29] opacity-80">{summary.endOfLifeDirectives.final_message_for_family.substring(0, 200)}...</p>
+                  </div>
+                )}
               </div>
             </SectionCard>
           )}
@@ -117,11 +434,6 @@ export default function FinalSummaryPage() {
                     {summary.medicalContacts.lawyer_phone && ` - ${summary.medicalContacts.lawyer_phone}`}
                   </div>
                 )}
-                {summary.medicalContacts.medical_notes && (
-                  <div className="mt-2">
-                    <span className="font-medium">Notes:</span> {summary.medicalContacts.medical_notes}
-                  </div>
-                )}
               </div>
             </SectionCard>
           )}
@@ -144,58 +456,6 @@ export default function FinalSummaryPage() {
                     <span className="font-medium">Funeral Home:</span> {summary.funeralPreferences.funeral_home}
                   </div>
                 )}
-                {summary.funeralPreferences.service_type && (
-                  <div>
-                    <span className="font-medium">Service Type:</span> {summary.funeralPreferences.service_type}
-                  </div>
-                )}
-                {summary.funeralPreferences.atmosphere_wishes && (
-                  <div>
-                    <span className="font-medium">Atmosphere Wishes:</span> {summary.funeralPreferences.atmosphere_wishes}
-                  </div>
-                )}
-              </div>
-            </SectionCard>
-          )}
-
-          {/* Documents */}
-          {summary?.documents && summary.documents.length > 0 && (
-            <SectionCard
-              icon={Upload}
-              title="Documents"
-              color="bg-[#93B0C8]"
-            >
-              <div className="space-y-2">
-                {summary.documents.map((doc: any) => (
-                  <div key={doc.id} className="text-sm">
-                    <span className="font-medium">{doc.document_type}:</span> {doc.file_name}
-                  </div>
-                ))}
-              </div>
-            </SectionCard>
-          )}
-
-          {/* Letters */}
-          {summary?.letters && summary.letters.length > 0 && (
-            <SectionCard
-              icon={Mail}
-              title="Letters to Loved Ones"
-              color="bg-[#A5B99A]"
-            >
-              <div className="space-y-3">
-                {summary.letters.map((letter: any) => (
-                  <div key={letter.id} className="p-3 bg-gray-50 rounded-lg">
-                    <div className="font-medium text-sm mb-1">{letter.title || 'Untitled'}</div>
-                    <div className="text-xs text-[#2C2A29] opacity-70">
-                      To: {letter.recipient_relationship}
-                    </div>
-                    {letter.message_text && (
-                      <div className="text-sm mt-2 text-[#2C2A29] opacity-80">
-                        {letter.message_text.substring(0, 200)}...
-                      </div>
-                    )}
-                  </div>
-                ))}
               </div>
             </SectionCard>
           )}
@@ -207,9 +467,9 @@ export default function FinalSummaryPage() {
               title="Trusted Contacts"
               color="bg-[#93B0C8]"
             >
-              <div className="space-y-2">
+              <div className="space-y-2 text-sm">
                 {summary.trustedContacts.map((contact: any) => (
-                  <div key={contact.id} className="text-sm">
+                  <div key={contact.id}>
                     <span className="font-medium">{contact.name}</span> ({contact.relationship}) - {contact.email}
                   </div>
                 ))}
@@ -217,17 +477,17 @@ export default function FinalSummaryPage() {
             </SectionCard>
           )}
 
-          {/* Digital Accounts */}
-          {summary?.digitalAccounts && summary.digitalAccounts.length > 0 && (
+          {/* Documents */}
+          {summary?.documents && summary.documents.length > 0 && (
             <SectionCard
-              icon={Key}
-              title="Digital Accounts"
-              color="bg-[#A5B99A]"
+              icon={Upload}
+              title="Documents"
+              color="bg-[#93B0C8]"
             >
-              <div className="space-y-2">
-                {summary.digitalAccounts.map((account: any) => (
-                  <div key={account.id} className="text-sm">
-                    <span className="font-medium">{account.account_name}</span> ({account.account_type})
+              <div className="space-y-2 text-sm">
+                {summary.documents.map((doc: any) => (
+                  <div key={doc.id}>
+                    <span className="font-medium">{doc.document_type}:</span> {doc.file_name}
                   </div>
                 ))}
               </div>
@@ -241,77 +501,13 @@ export default function FinalSummaryPage() {
               title="Assets"
               color="bg-[#93B0C8]"
             >
-              <div className="space-y-2">
+              <div className="space-y-2 text-sm">
                 {summary.assets.map((asset: any) => (
-                  <div key={asset.id} className="text-sm">
+                  <div key={asset.id}>
                     <span className="font-medium">{asset.name}</span> ({asset.asset_type})
                     {asset.estimated_value && ` - ${asset.estimated_value}`}
                   </div>
                 ))}
-              </div>
-            </SectionCard>
-          )}
-
-          {/* Legacy Messages */}
-          {summary?.legacyMessages && summary.legacyMessages.length > 0 && (
-            <SectionCard
-              icon={Video}
-              title="Legacy Messages"
-              color="bg-[#A5B99A]"
-            >
-              <div className="space-y-2">
-                {summary.legacyMessages.map((msg: any) => (
-                  <div key={msg.id} className="text-sm">
-                    <span className="font-medium">{msg.title}</span> ({msg.message_type})
-                    {msg.recipient_name && ` - For: ${msg.recipient_name}`}
-                  </div>
-                ))}
-              </div>
-            </SectionCard>
-          )}
-
-          {/* End of Life Checklist */}
-          {summary?.endOfLifeChecklist && (
-            <SectionCard
-              icon={CheckSquare}
-              title="End-of-Life Checklist"
-              color="bg-[#93B0C8]"
-            >
-              <div className="space-y-2 text-sm">
-                {summary.endOfLifeChecklist.organ_donation_preference && (
-                  <div>
-                    <span className="font-medium">Organ Donation:</span> {summary.endOfLifeChecklist.organ_donation_preference}
-                  </div>
-                )}
-                {summary.endOfLifeChecklist.last_words && (
-                  <div>
-                    <span className="font-medium">Last Words:</span> {summary.endOfLifeChecklist.last_words.substring(0, 200)}...
-                  </div>
-                )}
-              </div>
-            </SectionCard>
-          )}
-
-          {/* Biography */}
-          {summary?.biography && (
-            <SectionCard
-              icon={BookOpen}
-              title="Personal Biography"
-              color="bg-[#A5B99A]"
-            >
-              <div className="space-y-3 text-sm">
-                {summary.biography.life_story && (
-                  <div>
-                    <span className="font-medium">Life Story:</span>
-                    <p className="mt-1 text-[#2C2A29] opacity-80">{summary.biography.life_story.substring(0, 300)}...</p>
-                  </div>
-                )}
-                {summary.biography.major_accomplishments && (
-                  <div>
-                    <span className="font-medium">Major Accomplishments:</span>
-                    <p className="mt-1 text-[#2C2A29] opacity-80">{summary.biography.major_accomplishments.substring(0, 200)}...</p>
-                  </div>
-                )}
               </div>
             </SectionCard>
           )}
@@ -323,9 +519,9 @@ export default function FinalSummaryPage() {
               title="Insurance & Financial Contacts"
               color="bg-[#93B0C8]"
             >
-              <div className="space-y-2">
+              <div className="space-y-2 text-sm">
                 {summary.insuranceFinancial.map((contact: any) => (
-                  <div key={contact.id} className="text-sm">
+                  <div key={contact.id}>
                     <span className="font-medium">{contact.company_name || contact.contact_type}</span>
                     {contact.policy_number && ` - Policy: ${contact.policy_number}`}
                   </div>
@@ -344,7 +540,7 @@ export default function FinalSummaryPage() {
               <div className="space-y-2 text-sm">
                 {summary.household.pet_care_instructions && (
                   <div>
-                    <span className="font-medium">Pet Care:</span> {summary.household.pet_care_instructions.substring(0, 200)}...
+                    <span className="font-medium">Pet Care:</span> Available
                   </div>
                 )}
                 {summary.household.home_access_codes && (
@@ -355,58 +551,8 @@ export default function FinalSummaryPage() {
               </div>
             </SectionCard>
           )}
-
-          {/* Children's Wishes */}
-          {summary?.childrenWishes && summary.childrenWishes.length > 0 && (
-            <SectionCard
-              icon={Baby}
-              title="Children's Wishes"
-              color="bg-[#93B0C8]"
-            >
-              <div className="space-y-3">
-                {summary.childrenWishes.map((wish: any) => (
-                  <div key={wish.id} className="p-3 bg-gray-50 rounded-lg">
-                    {wish.child_name && (
-                      <div className="font-medium text-sm mb-1">{wish.child_name}</div>
-                    )}
-                    {wish.guardian_name && (
-                      <div className="text-xs text-[#2C2A29] opacity-70">
-                        Guardian: {wish.guardian_name}
-                      </div>
-                    )}
-                    {wish.personal_message && (
-                      <div className="text-sm mt-2 text-[#2C2A29] opacity-80">
-                        {wish.personal_message.substring(0, 200)}...
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </SectionCard>
-          )}
-
-          {/* Release Settings */}
-          {summary?.releaseSettings && (
-            <SectionCard
-              icon={Shield}
-              title="Release Settings"
-              color="bg-[#93B0C8]"
-            >
-              <div className="text-sm">
-                <div>
-                  <span className="font-medium">Account Status:</span> {summary.releaseSettings.is_locked ? 'Locked' : 'Unlocked'}
-                </div>
-                {summary.releaseSettings.release_activated && (
-                  <div>
-                    <span className="font-medium">Release Activated:</span> Yes
-                    {summary.releaseSettings.release_activated_at && ` on ${new Date(summary.releaseSettings.release_activated_at).toLocaleDateString()}`}
-                  </div>
-                )}
-              </div>
-            </SectionCard>
-          )}
         </div>
-      </div>
+      </main>
     </div>
   );
 }
@@ -423,12 +569,12 @@ function SectionCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-gray-200">
-      <div className="flex items-center space-x-3 mb-3 sm:mb-4">
+    <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+      <div className="flex items-center space-x-3 mb-4">
         <div className={`p-2 ${color} bg-opacity-10 rounded-lg flex-shrink-0`}>
-          <Icon className={`w-4 h-4 sm:w-5 sm:h-5 ${color.replace('bg-', 'text-')}`} />
+          <Icon className={`w-5 h-5 ${color.replace('bg-', 'text-')}`} />
         </div>
-        <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-[#2C2A29]">{title}</h2>
+        <h2 className="text-lg font-semibold text-[#2C2A29]">{title}</h2>
       </div>
       <div className="text-[#2C2A29]">
         {children}
@@ -436,4 +582,3 @@ function SectionCard({
     </div>
   );
 }
-
