@@ -55,6 +55,17 @@ export async function POST(request: Request) {
     const supabase = createServerClient();
     const body = await request.json();
 
+    // Get recipient email if recipient is selected
+    let recipientEmail = null;
+    if (body.recipientId) {
+      const { data: contact } = await supabase
+        .from('trusted_contacts')
+        .select('email')
+        .eq('id', body.recipientId)
+        .single();
+      recipientEmail = contact?.email || null;
+    }
+
     const { data, error } = await supabase
       .from('letters')
       .insert({
@@ -70,6 +81,8 @@ export async function POST(request: Request) {
         milestone_date: body.milestoneDate || null,
         milestone_description: body.milestoneDescription || null,
         letter_category: body.letterCategory || 'other',
+        auto_email_enabled: body.autoEmailEnabled ?? (body.releaseType === 'after_death' || body.releaseType === 'on_date' || body.releaseType === 'on_milestone'),
+        recipient_email: recipientEmail,
       })
       .select()
       .single();
@@ -90,6 +103,9 @@ export async function POST(request: Request) {
       milestoneDate: data.milestone_date,
       milestoneDescription: data.milestone_description,
       letterCategory: data.letter_category,
+      autoEmailEnabled: data.auto_email_enabled ?? false,
+      emailSent: data.email_sent ?? false,
+      emailSentAt: data.email_sent_at,
       createdAt: data.created_at,
       updatedAt: data.updated_at,
     };
@@ -115,6 +131,17 @@ export async function PUT(request: Request) {
 
     const body = await request.json();
 
+    // Get recipient email if recipient is selected
+    let recipientEmail = null;
+    if (body.recipientId) {
+      const { data: contact } = await supabase
+        .from('trusted_contacts')
+        .select('email')
+        .eq('id', body.recipientId)
+        .single();
+      recipientEmail = contact?.email || null;
+    }
+
     const { data, error } = await supabase
       .from('letters')
       .update({
@@ -129,6 +156,8 @@ export async function PUT(request: Request) {
         milestone_date: body.milestoneDate || null,
         milestone_description: body.milestoneDescription || null,
         letter_category: body.letterCategory || 'other',
+        auto_email_enabled: body.autoEmailEnabled ?? (body.releaseType === 'after_death' || body.releaseType === 'on_date' || body.releaseType === 'on_milestone'),
+        recipient_email: recipientEmail,
       })
       .eq('id', id)
       .eq('user_id', auth.userId)
@@ -151,6 +180,9 @@ export async function PUT(request: Request) {
       milestoneDate: data.milestone_date,
       milestoneDescription: data.milestone_description,
       letterCategory: data.letter_category,
+      autoEmailEnabled: data.auto_email_enabled ?? false,
+      emailSent: data.email_sent ?? false,
+      emailSentAt: data.email_sent_at,
       createdAt: data.created_at,
       updatedAt: data.updated_at,
     };

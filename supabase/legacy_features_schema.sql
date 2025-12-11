@@ -5,14 +5,18 @@
 -- Run this after the main schema is set up
 -- ============================================================================
 
--- Enhanced Letters table: Add timed release, release conditions, milestone tracking
+-- Enhanced Letters table: Add timed release, release conditions, milestone tracking, email delivery
 ALTER TABLE letters 
 ADD COLUMN IF NOT EXISTS release_type TEXT DEFAULT 'after_death' CHECK (release_type IN ('after_death', 'on_date', 'on_milestone', 'immediate')),
 ADD COLUMN IF NOT EXISTS release_date DATE,
 ADD COLUMN IF NOT EXISTS milestone_type TEXT CHECK (milestone_type IN ('birthday', 'graduation', 'wedding', 'first_child', 'anniversary', 'custom')),
 ADD COLUMN IF NOT EXISTS milestone_date DATE,
 ADD COLUMN IF NOT EXISTS milestone_description TEXT,
-ADD COLUMN IF NOT EXISTS letter_category TEXT CHECK (letter_category IN ('in_case_i_pass', 'birthday', 'milestone', 'encouragement', 'final_words', 'love_letter', 'other'));
+ADD COLUMN IF NOT EXISTS letter_category TEXT CHECK (letter_category IN ('in_case_i_pass', 'birthday', 'milestone', 'encouragement', 'final_words', 'love_letter', 'other')),
+ADD COLUMN IF NOT EXISTS auto_email_enabled BOOLEAN DEFAULT FALSE,
+ADD COLUMN IF NOT EXISTS email_sent BOOLEAN DEFAULT FALSE,
+ADD COLUMN IF NOT EXISTS email_sent_at TIMESTAMPTZ,
+ADD COLUMN IF NOT EXISTS recipient_email TEXT;
 
 CREATE INDEX IF NOT EXISTS idx_letters_release_date ON letters(release_date);
 CREATE INDEX IF NOT EXISTS idx_letters_milestone_date ON letters(milestone_date);

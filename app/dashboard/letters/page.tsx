@@ -52,6 +52,7 @@ export default function LettersPage() {
     milestoneDate: '',
     milestoneDescription: '',
     letterCategory: 'other' as 'in_case_i_pass' | 'birthday' | 'milestone' | 'encouragement' | 'final_words' | 'love_letter' | 'other',
+    autoEmailEnabled: true,
   });
 
   useEffect(() => {
@@ -119,6 +120,7 @@ export default function LettersPage() {
         milestoneDate: '',
         milestoneDescription: '',
         letterCategory: 'other' as const,
+        autoEmailEnabled: true,
       });
       setTimeout(() => setSuccess(false), 3000);
     } catch (error) {
@@ -136,9 +138,10 @@ export default function LettersPage() {
       releaseType: letter.releaseType || 'after_death',
       releaseDate: letter.releaseDate || '',
       milestoneType: (letter.milestoneType || 'birthday') as any,
-      milestoneDate: letter.milestoneDate || '',
-      milestoneDescription: letter.milestoneDescription || '',
-      letterCategory: (letter.letterCategory || 'other') as any,
+        milestoneDate: letter.milestoneDate || '',
+        milestoneDescription: letter.milestoneDescription || '',
+        letterCategory: (letter.letterCategory || 'other') as any,
+        autoEmailEnabled: letter.autoEmailEnabled ?? true,
     });
     setEditingId(letter.id);
     setShowForm(true);
