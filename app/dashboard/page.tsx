@@ -56,6 +56,7 @@ interface SectionStatus {
   household: boolean;
   childrenWishes: boolean;
   familyLegacy: boolean;
+  endOfLifeDirectives: boolean;
 }
 
 export default function DashboardPage() {
@@ -81,6 +82,7 @@ export default function DashboardPage() {
     household: false,
     childrenWishes: false,
     familyLegacy: false,
+    endOfLifeDirectives: false,
   });
 
   useEffect(() => {
@@ -233,6 +235,16 @@ export default function DashboardPage() {
       completed: status.childrenWishes,
       color: 'bg-[#93B0C8]',
       bgColor: 'bg-[#93B0C8] bg-opacity-5',
+      emotionalLevel: 8,
+    },
+    {
+      title: 'End-of-Life Directives',
+      description: 'Comprehensive care plan: location, visitors, pain management, and final wishes',
+      icon: Heart,
+      href: '/dashboard/end-of-life-directives',
+      completed: status.endOfLifeDirectives,
+      color: 'bg-[#A5B99A]',
+      bgColor: 'bg-[#A5B99A] bg-opacity-5',
       emotionalLevel: 8,
     },
     {
@@ -661,4 +673,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
 

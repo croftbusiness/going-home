@@ -37,6 +37,7 @@ export async function POST(request: Request) {
       assets,
       digitalAccounts,
       insuranceFinancial,
+      endOfLifeDirectives,
     ] = await Promise.all([
       supabase.from('personal_details').select('*').eq('user_id', userId).maybeSingle(),
       supabase.from('medical_contacts').select('*').eq('user_id', userId).maybeSingle(),
@@ -49,6 +50,7 @@ export async function POST(request: Request) {
       supabase.from('assets').select('*').eq('user_id', userId),
       supabase.from('digital_accounts').select('*').eq('user_id', userId),
       supabase.from('insurance_financial_contacts').select('*').eq('user_id', userId),
+      supabase.from('end_of_life_directives').select('*').eq('user_id', userId).maybeSingle(),
     ]);
 
     // Build data summary for AI analysis
@@ -64,6 +66,7 @@ Household Info: ${household.data ? 'Complete' : 'Missing'}
 Assets: ${assets.data?.length || 0}
 Digital Accounts: ${digitalAccounts.data?.length || 0}
 Insurance/Financial: ${insuranceFinancial.data?.length || 0}
+End-of-Life Directives: ${endOfLifeDirectives.data ? 'Complete' : 'Missing'}
 `;
 
     // Use OpenAI directly with JSON mode for faster, structured responses
@@ -195,6 +198,17 @@ Format: {"items": [{"title":"...","description":"...","priority":"high","categor
         actionUrl: '/dashboard/household-information',
       });
     }
+    
+    if (!endOfLifeDirectives.data) {
+      fallbackItems.push({
+        id: 'fallback-9',
+        category: 'preferences',
+        priority: 'high',
+        title: 'Complete your end-of-life directives',
+        description: 'Document your comprehensive care preferences: location, visitors, pain management, life-sustaining treatments, and final wishes',
+        actionUrl: '/dashboard/end-of-life-directives',
+      });
+    }
 
     // Process AI-generated items if available
     if (parsedItems && Array.isArray(parsedItems) && parsedItems.length > 0) {
@@ -243,7 +257,7 @@ Format: {"items": [{"title":"...","description":"...","priority":"high","categor
     });
 
     // Calculate completion percentage (rough estimate)
-    const totalSections = 11;
+    const totalSections = 12;
     let completedSections = 0;
     if (personalDetails.data) completedSections++;
     if (medicalContacts.data) completedSections++;
@@ -256,6 +270,7 @@ Format: {"items": [{"title":"...","description":"...","priority":"high","categor
     if (assets.data && assets.data.length > 0) completedSections++;
     if (digitalAccounts.data && digitalAccounts.data.length > 0) completedSections++;
     if (insuranceFinancial.data && insuranceFinancial.data.length > 0) completedSections++;
+    if (endOfLifeDirectives.data) completedSections++;
 
     const completionPercentage = Math.round((completedSections / totalSections) * 100);
 

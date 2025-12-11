@@ -22,7 +22,7 @@ export async function GET() {
       personalDetails, medicalContacts, funeralPrefs, willQuestionnaire, documents, letters, 
       trustedContacts, releaseSettings, digitalAccounts, assets, legacyMessages,
       endOfLifeChecklist, biography, insuranceFinancial, household, childrenWishes,
-      familyLegacyRecipe, familyLegacyStory, familyLegacyHeirloom
+      familyLegacyRecipe, familyLegacyStory, familyLegacyHeirloom, endOfLifeDirectives
     ] = await Promise.all([
       supabase.from('personal_details').select('id').eq('user_id', auth.userId).single(),
       supabase.from('medical_contacts').select('id').eq('user_id', auth.userId).single(),
@@ -43,6 +43,7 @@ export async function GET() {
       supabase.from('legacy_recipes').select('id').eq('user_id', auth.userId).limit(1).maybeSingle(),
       supabase.from('legacy_stories').select('id').eq('user_id', auth.userId).limit(1).maybeSingle(),
       supabase.from('legacy_heirlooms').select('id').eq('user_id', auth.userId).limit(1).maybeSingle(),
+      supabase.from('end_of_life_directives').select('id').eq('user_id', auth.userId).single(),
     ]);
 
     // Family Legacy is considered complete if at least one sub-section has content
@@ -66,6 +67,7 @@ export async function GET() {
       household: !!household.data,
       childrenWishes: !!childrenWishes.data,
       familyLegacy: familyLegacyComplete,
+      endOfLifeDirectives: !!endOfLifeDirectives.data,
     };
 
     return NextResponse.json({
