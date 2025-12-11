@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { 
   Heart, 
   Shield, 
@@ -14,7 +15,19 @@ import {
   Sparkles,
   FolderLock,
   MessageSquare,
-  User
+  User,
+  Calculator,
+  BookOpen,
+  Music,
+  Palette,
+  Gift,
+  Home as HomeIcon,
+  Baby,
+  Building2,
+  Key,
+  DollarSign,
+  Video,
+  Grid3x3
 } from 'lucide-react';
 
 export default function HomePage() {
@@ -42,10 +55,16 @@ export default function HomePage() {
       <nav className="bg-white/80 backdrop-blur-sm border-b border-gray-100 sticky top-0 z-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
-            <Link href="/" className="flex items-center space-x-2 group">
-              <div className="relative">
-                <Heart className="w-8 h-8 text-[#A5B99A] group-hover:text-[#93B0C8] transition-colors" fill="currentColor" />
-                <Sparkles className="w-3 h-3 text-[#93B0C8] absolute -top-1 -right-1" />
+            <Link href="/" className="flex items-center space-x-3 group">
+              <div className="relative w-10 h-10 flex-shrink-0">
+                <Image
+                  src="/logo.png"
+                  alt="Going Home Logo"
+                  width={40}
+                  height={40}
+                  className="object-contain"
+                  priority
+                />
               </div>
               <div>
                 <h1 className="text-xl font-bold text-[#2C2A29]">Going Home</h1>
@@ -88,8 +107,8 @@ export default function HomePage() {
               </span>
             </h1>
             <p className="text-xl sm:text-2xl text-[#2C2A29]/70 mb-10 max-w-2xl mx-auto leading-relaxed">
-              Securely store your end-of-life preferences, important documents, and personal messages
-              for loved ones—all in one simple, private space.
+              Securely store your end-of-life preferences, important documents, personal messages, 
+              and funeral planning—all in one simple, private space designed with care.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
@@ -138,13 +157,63 @@ export default function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <FeatureCard
               icon={<FileText className="w-6 h-6" />}
-              title="Comprehensive Forms"
-              description="Easy-to-use forms for personal details, medical contacts, funeral preferences, and more. Everything organized and accessible."
+              title="Personal Information"
+              description="Store personal details, medical contacts, household information, and emergency contacts securely."
+            />
+            <FeatureCard
+              icon={<Heart className="w-6 h-6" />}
+              title="End-of-Life Planning"
+              description="Document your end-of-life directives, care preferences, and final wishes with guided forms."
+            />
+            <FeatureCard
+              icon={<Music className="w-6 h-6" />}
+              title="Funeral Planning"
+              description="Plan your ceremony with AI-assisted story creation, visual planning boards, playlists, and more."
+            />
+            <FeatureCard
+              icon={<Calculator className="w-6 h-6" />}
+              title="Cost Calculator"
+              description="Estimate funeral expenses with our comprehensive cost calculator for burial or cremation."
+            />
+            <FeatureCard
+              icon={<BookOpen className="w-6 h-6" />}
+              title="Personal Biography"
+              description="Preserve your life story, accomplishments, family history, and lessons learned with AI assistance."
+            />
+            <FeatureCard
+              icon={<MessageSquare className="w-6 h-6" />}
+              title="Legacy Messages"
+              description="Write heartfelt letters to loved ones with AI assistance. Share your thoughts and final messages."
+            />
+            <FeatureCard
+              icon={<Baby className="w-6 h-6" />}
+              title="Children's Wishes"
+              description="Leave special messages and wishes for your children to be shared at meaningful moments."
+            />
+            <FeatureCard
+              icon={<Gift className="w-6 h-6" />}
+              title="Family Legacy"
+              description="Preserve family traditions, recipes, stories, heirlooms, and memories for future generations."
+            />
+            <FeatureCard
+              icon={<FolderLock className="w-6 h-6" />}
+              title="Secure Documents"
+              description="Upload and store important documents securely. Wills, insurance policies, deeds, and more."
+            />
+            <FeatureCard
+              icon={<Key className="w-6 h-6" />}
+              title="Digital Accounts"
+              description="Securely store account information, passwords, and access details for your digital life."
+            />
+            <FeatureCard
+              icon={<DollarSign className="w-6 h-6" />}
+              title="Assets & Financial"
+              description="Document your assets, insurance policies, financial accounts, and important contacts."
             />
             <FeatureCard
               icon={<Shield className="w-6 h-6" />}
               title="Bank-Level Security"
-              description="Your information is encrypted with industry-leading security. We use enterprise-grade encryption to protect your data."
+              description="Your information is encrypted with industry-leading security. Enterprise-grade protection."
             />
             <FeatureCard
               icon={<Users className="w-6 h-6" />}
@@ -152,19 +221,14 @@ export default function HomePage() {
               description="Choose who can access your information with granular permissions. Control exactly what each contact can view."
             />
             <FeatureCard
-              icon={<MessageSquare className="w-6 h-6" />}
-              title="Personal Letters"
-              description="Write heartfelt letters to loved ones with AI assistance. Share your thoughts, memories, and final messages."
-            />
-            <FeatureCard
-              icon={<FolderLock className="w-6 h-6" />}
-              title="Secure Documents"
-              description="Upload and store important documents securely. Wills, insurance policies, deeds, and more—all in one place."
-            />
-            <FeatureCard
               icon={<Sparkles className="w-6 h-6" />}
               title="AI-Powered Tools"
-              description="Get personalized guidance with AI-assisted planning. Checklists, letter writing, and preference suggestions."
+              description="Get personalized guidance with AI-assisted planning, writing, and preference suggestions."
+            />
+            <FeatureCard
+              icon={<Lock className="w-6 h-6" />}
+              title="Release Settings"
+              description="Control when and how your information is shared. Set executor codes and release mechanisms."
             />
           </div>
         </div>
@@ -228,6 +292,8 @@ export default function HomePage() {
                 <BenefitItem text="Ensure your wishes are known and respected" />
                 <BenefitItem text="Protect your digital legacy and accounts" />
                 <BenefitItem text="Leave meaningful messages for those you love" />
+                <BenefitItem text="Plan your funeral exactly as you envision it" />
+                <BenefitItem text="Preserve your life story for future generations" />
               </ul>
               <Link
                 href="/auth/signup"
@@ -239,15 +305,17 @@ export default function HomePage() {
             </div>
             <div className="relative">
               <div className="bg-gradient-to-br from-[#FCFAF7] to-white rounded-2xl p-8 shadow-2xl border border-gray-100">
-                <div className="space-y-6">
-                  <FeatureHighlight icon={<CheckCircle2 />} text="Will Questionnaire Planning" />
-                  <FeatureHighlight icon={<CheckCircle2 />} text="Funeral Planning & Preferences" />
-                  <FeatureHighlight icon={<CheckCircle2 />} text="Digital Account Management" />
-                  <FeatureHighlight icon={<CheckCircle2 />} text="Asset Documentation" />
+                <div className="space-y-4">
+                  <FeatureHighlight icon={<CheckCircle2 />} text="End-of-Life Directives & Checklist" />
+                  <FeatureHighlight icon={<CheckCircle2 />} text="Funeral Planning & Cost Calculator" />
+                  <FeatureHighlight icon={<CheckCircle2 />} text="Personal Biography with AI Assistance" />
+                  <FeatureHighlight icon={<CheckCircle2 />} text="Visual Planning Boards & Moodboards" />
                   <FeatureHighlight icon={<CheckCircle2 />} text="Legacy Messages & Letters" />
-                  <FeatureHighlight icon={<CheckCircle2 />} text="Medical & Legal Contacts" />
+                  <FeatureHighlight icon={<CheckCircle2 />} text="Children's Wishes & Family Legacy" />
+                  <FeatureHighlight icon={<CheckCircle2 />} text="Digital Accounts & Assets" />
+                  <FeatureHighlight icon={<CheckCircle2 />} text="Will Questionnaire & Legal Planning" />
                   <FeatureHighlight icon={<CheckCircle2 />} text="Trusted Contact Management" />
-                  <FeatureHighlight icon={<CheckCircle2 />} text="AI-Powered Assistance" />
+                  <FeatureHighlight icon={<CheckCircle2 />} text="Secure Document Storage" />
                 </div>
               </div>
             </div>
@@ -286,8 +354,16 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             <div className="col-span-1 md:col-span-2">
-              <div className="flex items-center space-x-2 mb-4">
-                <Heart className="w-6 h-6 text-[#A5B99A]" fill="currentColor" />
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="relative w-8 h-8 flex-shrink-0">
+                  <Image
+                    src="/logo.png"
+                    alt="Going Home Logo"
+                    width={32}
+                    height={32}
+                    className="object-contain"
+                  />
+                </div>
                 <h3 className="text-xl font-bold">Going Home</h3>
               </div>
               <p className="text-gray-400 text-sm max-w-md">

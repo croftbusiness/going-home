@@ -45,6 +45,9 @@ export async function POST(request: Request) {
         break;
 
       case 'expand':
+        if (!content || content.trim().length === 0) {
+          return NextResponse.json({ error: 'Please write something first before expanding' }, { status: 400 });
+        }
         prompt = `The user has written this for their ${section} section:
         
 "${content}"
@@ -65,6 +68,9 @@ Add depth, context, and richness to help tell their story more fully. Keep it au
         break;
 
       case 'improve':
+        if (!content || content.trim().length === 0) {
+          return NextResponse.json({ error: 'Please write something first before improving' }, { status: 400 });
+        }
         prompt = `The user has written this for their ${section} section:
         
 "${content}"
@@ -98,8 +104,19 @@ Return the improved version.`;
     return NextResponse.json({ result });
   } catch (error: any) {
     console.error('Biography AI error:', error);
+    
+    // Provide more helpful error messages
+    let errorMessage = 'Failed to generate AI content';
+    if (error.message?.includes('OPENAI_API_KEY')) {
+      errorMessage = 'AI service is not configured. Please contact support.';
+    } else if (error.message?.includes('rate limit')) {
+      errorMessage = 'AI service is temporarily busy. Please try again in a moment.';
+    } else if (error.message) {
+      errorMessage = error.message;
+    }
+    
     return NextResponse.json(
-      { error: error.message || 'Failed to generate AI content' },
+      { error: errorMessage },
       { status: 500 }
     );
   }

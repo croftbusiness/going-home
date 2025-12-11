@@ -10,7 +10,7 @@ import type { OnboardingConversationRequest, OnboardingResponse } from '@/types/
  * explains each section, and helps them complete their profile.
  */
 
-// Define onboarding flow steps
+// Simplified onboarding flow - just 3 simple questions
 const ONBOARDING_STEPS: Array<{
   id: string;
   section: string;
@@ -23,80 +23,24 @@ const ONBOARDING_STEPS: Array<{
   {
     id: 'welcome',
     section: 'welcome',
-    question: 'Welcome to Going Home. This is a safe space to organize your important information. Would you like a gentle walkthrough?',
+    question: 'Welcome to Going Home! This is your secure space to organize what matters most. Ready to get started?',
     explanation: 'We\'ll help you step-by-step. You can skip any section and come back later.',
     fieldType: 'select',
-    options: ['Yes, guide me', 'I\'d like to explore on my own'],
+    options: ['Yes, let\'s begin', 'I\'ll explore on my own'],
   },
   {
-    id: 'personal-basics',
-    section: 'personal_details',
-    question: 'Let\'s start with the basics. What name would you like us to use? (Your preferred name or full legal name)',
-    explanation: 'This helps us personalize your experience. You can update this anytime.',
-    fieldName: 'preferred_name',
-    fieldType: 'text',
-  },
-  {
-    id: 'personal-dob',
-    section: 'personal_details',
-    question: 'What is your date of birth?',
-    explanation: 'This helps with legal documentation and planning.',
-    fieldName: 'date_of_birth',
-    fieldType: 'date',
-  },
-  {
-    id: 'personal-address',
-    section: 'personal_details',
-    question: 'What is your current address?',
-    explanation: 'This helps with estate planning and legal matters.',
-    fieldName: 'address',
-    fieldType: 'text',
-  },
-  {
-    id: 'emergency-contact',
-    section: 'personal_details',
-    question: 'Who should be your emergency contact? (Name and relationship)',
-    explanation: 'This person can be notified in case of emergencies.',
-    fieldName: 'emergency_contact_name',
-    fieldType: 'text',
-  },
-  {
-    id: 'trusted-contacts-intro',
+    id: 'trusted-contact',
     section: 'trusted_contacts',
-    question: 'Would you like to add trusted contacts who can access your information after you pass?',
-    explanation: 'These are people you trust to handle your affairs. You can add multiple contacts.',
-    fieldType: 'select',
-    options: ['Yes, I\'ll add some', 'Not right now'],
-  },
-  {
-    id: 'funeral-preferences',
-    section: 'funeral_preferences',
-    question: 'Have you thought about funeral or memorial service preferences?',
-    explanation: 'This helps your loved ones honor your wishes. You can be as detailed or brief as you like.',
-    fieldType: 'select',
-    options: ['Yes, I have preferences', 'Not yet, but I\'d like help', 'I\'ll skip this for now'],
-  },
-  {
-    id: 'documents',
-    section: 'documents',
-    question: 'Do you have important documents to upload? (Wills, IDs, insurance policies, deeds, etc.)',
-    explanation: 'Storing documents securely helps your executor when the time comes.',
-    fieldType: 'select',
-    options: ['Yes, I\'ll upload some', 'Not right now'],
-  },
-  {
-    id: 'letters',
-    section: 'letters',
-    question: 'Would you like to write letters to loved ones? These can be shared after you pass.',
-    explanation: 'Letters are a beautiful way to leave messages of love, wisdom, and closure.',
-    fieldType: 'select',
-    options: ['Yes, I\'d like to write some', 'Maybe later', 'Not for me'],
+    question: 'Who should be your primary trusted contact? (This person can access your information when needed)',
+    explanation: 'This is someone you trust to handle your affairs. You can add more contacts later.',
+    fieldName: 'primary_contact_name',
+    fieldType: 'text',
   },
   {
     id: 'complete',
     section: 'complete',
-    question: 'You\'re all set! You can always add more information later. Is there anything else you\'d like help with?',
-    explanation: 'Take your time. This is your journey, and we\'re here to support you whenever you need.',
+    question: 'Perfect! You\'re all set to start organizing your information.',
+    explanation: 'Take your time exploring the dashboard. You can add information at your own pace.',
   },
 ];
 
@@ -125,38 +69,30 @@ export async function POST(request: Request) {
     if (userResponse && currentStepData.fieldName) {
       const supabase = createServerClient();
 
-      // Save the response to the appropriate table
-      if (currentStepData.section === 'personal_details') {
-        // Check if personal details exist
+      // Save the response to trusted contacts if it's the primary contact
+      if (currentStepData.section === 'trusted_contacts' && currentStepData.fieldName === 'primary_contact_name') {
+        // Check if trusted contact exists
         const { data: existing } = await supabase
-          .from('personal_details')
+          .from('trusted_contacts')
           .select('id')
           .eq('user_id', auth.userId)
+          .eq('is_primary', true)
           .maybeSingle();
 
-        const updateData: any = { user_id: auth.userId };
-        updateData[currentStepData.fieldName!] = userResponse;
+        const contactData: any = {
+          user_id: auth.userId,
+          name: userResponse,
+          is_primary: true,
+          relationship: 'Primary Contact',
+        };
 
         if (existing) {
           await supabase
-            .from('personal_details')
-            .update(updateData)
-            .eq('user_id', auth.userId);
+            .from('trusted_contacts')
+            .update(contactData)
+            .eq('id', existing.id);
         } else {
-          // Set required fields with defaults
-          updateData.full_name = userResponse; // Fallback
-          updateData.date_of_birth = '1900-01-01'; // Temporary
-          updateData.address = '';
-          updateData.city = '';
-          updateData.state = '';
-          updateData.zip_code = '';
-          updateData.phone = '';
-          updateData.email = '';
-          updateData.emergency_contact_name = '';
-          updateData.emergency_contact_phone = '';
-          updateData.emergency_contact_relationship = '';
-
-          await supabase.from('personal_details').insert(updateData);
+          await supabase.from('trusted_contacts').insert(contactData);
         }
       }
 
@@ -164,11 +100,11 @@ export async function POST(request: Request) {
       stepIndex++;
     } else if (userResponse) {
       // Non-field question - move to next based on response
-      if (userResponse.toLowerCase().includes('yes') || userResponse.toLowerCase().includes('guide')) {
+      if (userResponse.toLowerCase().includes('yes') || userResponse.toLowerCase().includes('begin') || userResponse.toLowerCase().includes('let\'s')) {
         stepIndex++;
-      } else if (userResponse.toLowerCase().includes('skip') || userResponse.toLowerCase().includes('later')) {
-        // Skip related steps
-        stepIndex += 2;
+      } else if (userResponse.toLowerCase().includes('explore') || userResponse.toLowerCase().includes('own')) {
+        // Skip to complete
+        stepIndex = ONBOARDING_STEPS.length - 1;
       } else {
         stepIndex++;
       }

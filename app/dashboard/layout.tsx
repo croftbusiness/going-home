@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
   User,
   FileText,
@@ -148,15 +149,22 @@ export default function DashboardLayout({
         <div className="flex flex-col h-full">
           {/* Logo/Header */}
           <div className="flex items-center justify-between p-6 border-b border-gray-200/50 bg-white/50 backdrop-blur-sm">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#A5B99A] to-[#93B0C8] flex items-center justify-center shadow-md">
-                <Heart className="w-5 h-5 text-white" fill="currentColor" />
+            <Link href="/dashboard" className="flex items-center space-x-3 group">
+              <div className="relative w-10 h-10 flex-shrink-0">
+                <Image
+                  src="/logo.png"
+                  alt="Going Home Logo"
+                  width={40}
+                  height={40}
+                  className="object-contain"
+                  priority
+                />
               </div>
               <div>
                 <h1 className="text-lg font-bold text-[#2C2A29] tracking-tight">Going Home</h1>
                 <p className="text-xs text-[#2C2A29] opacity-50 font-medium">Secure Planning</p>
               </div>
-            </div>
+            </Link>
             <button
               onClick={() => setSidebarOpen(false)}
               className="lg:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
@@ -282,7 +290,18 @@ export default function DashboardLayout({
             >
               <Menu className="w-6 h-6 text-[#2C2A29]" />
             </button>
-            <h1 className="text-lg font-semibold text-[#2C2A29]">Going Home</h1>
+            <Link href="/dashboard" className="flex items-center space-x-2">
+              <div className="relative w-8 h-8 flex-shrink-0">
+                <Image
+                  src="/logo.png"
+                  alt="Going Home Logo"
+                  width={32}
+                  height={32}
+                  className="object-contain"
+                />
+              </div>
+              <h1 className="text-lg font-semibold text-[#2C2A29]">Going Home</h1>
+            </Link>
             <div className="w-10" /> {/* Spacer */}
           </div>
         </header>

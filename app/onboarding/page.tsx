@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import Image from 'next/image';
 import { Heart, Sparkles, ArrowRight, CheckCircle2, User, Users } from 'lucide-react';
 
 interface OnboardingData {
@@ -127,17 +129,23 @@ export default function OnboardingPage() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#FAF9F7] via-[#FCFAF7] to-[#FAF9F7] flex items-center justify-center px-4">
         <div className="max-w-2xl w-full text-center">
-          {/* Animated Heart Icon */}
+          {/* Animated Logo */}
           <div className={`mb-8 transition-all duration-700 ${
             introAnimation >= 1 
               ? 'opacity-100 scale-100 translate-y-0' 
               : 'opacity-0 scale-50 translate-y-10'
           }`}>
             <div className="relative inline-block">
-              <Heart 
-                className="w-24 h-24 text-[#A5B99A] mx-auto animate-pulse" 
-                fill="currentColor"
-              />
+              <div className="relative w-24 h-24 mx-auto">
+                <Image
+                  src="/logo.png"
+                  alt="Going Home Logo"
+                  width={96}
+                  height={96}
+                  className="object-contain animate-pulse"
+                  priority
+                />
+              </div>
               <Sparkles 
                 className={`w-8 h-8 text-[#93B0C8] absolute -top-2 -right-2 transition-all duration-500 ${
                   introAnimation >= 2 ? 'opacity-100 scale-100 rotate-12' : 'opacity-0 scale-0'

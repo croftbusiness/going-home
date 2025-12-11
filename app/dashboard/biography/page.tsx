@@ -205,9 +205,16 @@ export default function BiographyPage() {
         }),
       });
 
-      if (!response.ok) throw new Error('Failed to generate AI content');
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to generate AI content');
+      }
 
       const data = await response.json();
+      if (!data.result) {
+        throw new Error('No content generated. Please try again.');
+      }
+      
       if (action === 'expand' || action === 'improve') {
         handleChange(sectionId as keyof Biography, data.result);
       } else {
@@ -216,9 +223,9 @@ export default function BiographyPage() {
           [sectionId]: data.result,
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('AI action failed:', error);
-      setError('Failed to generate AI content. Please try again.');
+      setError(error.message || 'Failed to generate AI content. Please try again.');
     } finally {
       setAiLoading(null);
     }
