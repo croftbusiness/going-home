@@ -303,6 +303,25 @@ export default function LettersPage() {
 
               <div>
                 <label className="block text-sm font-medium text-[#2C2A29] mb-1">
+                  Letter Type *
+                </label>
+                <select
+                  value={formData.letterCategory}
+                  onChange={(e) => setFormData({ ...formData, letterCategory: e.target.value as any })}
+                  className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent mb-4"
+                >
+                  <option value="in_case_i_pass">In Case I Pass Unexpectedly</option>
+                  <option value="birthday">Birthday Letter</option>
+                  <option value="milestone">Milestone Letter (Graduation, Wedding, etc.)</option>
+                  <option value="encouragement">Words of Encouragement</option>
+                  <option value="final_words">Final Words</option>
+                  <option value="love_letter">Love Letter</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-[#2C2A29] mb-1">
                   Title *
                 </label>
                 <input
@@ -314,6 +333,93 @@ export default function LettersPage() {
                   className="w-full px-4 py-3 text-base bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent touch-target"
                 />
               </div>
+
+              <div>
+                <label className="block text-sm font-medium text-[#2C2A29] mb-1">
+                  When Should This Letter Be Released? *
+                </label>
+                <select
+                  value={formData.releaseType}
+                  onChange={(e) => setFormData({ 
+                    ...formData, 
+                    releaseType: e.target.value as any,
+                    releaseDate: e.target.value !== 'on_date' ? '' : formData.releaseDate,
+                    milestoneType: e.target.value !== 'on_milestone' ? 'birthday' : formData.milestoneType,
+                    milestoneDate: e.target.value !== 'on_milestone' ? '' : formData.milestoneDate,
+                  })}
+                  className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent"
+                >
+                  <option value="after_death">After I Pass Away</option>
+                  <option value="on_date">On a Specific Date</option>
+                  <option value="on_milestone">On a Life Milestone</option>
+                  <option value="immediate">Immediately (they can read now)</option>
+                </select>
+              </div>
+
+              {formData.releaseType === 'on_date' && (
+                <div>
+                  <label className="block text-sm font-medium text-[#2C2A29] mb-1">
+                    Release Date *
+                  </label>
+                  <input
+                    type="date"
+                    value={formData.releaseDate}
+                    onChange={(e) => setFormData({ ...formData, releaseDate: e.target.value })}
+                    required
+                    className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent"
+                  />
+                </div>
+              )}
+
+              {formData.releaseType === 'on_milestone' && (
+                <>
+                  <div>
+                    <label className="block text-sm font-medium text-[#2C2A29] mb-1">
+                      Milestone Type *
+                    </label>
+                    <select
+                      value={formData.milestoneType}
+                      onChange={(e) => setFormData({ ...formData, milestoneType: e.target.value as any })}
+                      className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent mb-4"
+                    >
+                      <option value="birthday">Birthday</option>
+                      <option value="graduation">Graduation</option>
+                      <option value="wedding">Wedding</option>
+                      <option value="first_child">First Child</option>
+                      <option value="anniversary">Anniversary</option>
+                      <option value="custom">Custom Milestone</option>
+                    </select>
+                  </div>
+                  {formData.milestoneType === 'custom' && (
+                    <div className="mb-4">
+                      <label className="block text-sm font-medium text-[#2C2A29] mb-1">
+                        Describe the Milestone
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.milestoneDescription}
+                        onChange={(e) => setFormData({ ...formData, milestoneDescription: e.target.value })}
+                        placeholder="e.g., When you turn 25"
+                        className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent"
+                      />
+                    </div>
+                  )}
+                  <div>
+                    <label className="block text-sm font-medium text-[#2C2A29] mb-1">
+                      Milestone Date (if known)
+                    </label>
+                    <input
+                      type="date"
+                      value={formData.milestoneDate}
+                      onChange={(e) => setFormData({ ...formData, milestoneDate: e.target.value })}
+                      className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent"
+                    />
+                    <p className="text-xs text-[#2C2A29] opacity-60 mt-1">
+                      Leave blank if the date is unknown
+                    </p>
+                  </div>
+                </>
+              )}
 
               <div>
                 <div className="flex items-center justify-between mb-2">
