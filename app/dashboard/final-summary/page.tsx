@@ -67,6 +67,7 @@ export default function FinalSummaryPage() {
   const [summary, setSummary] = useState<any>(null);
   const [selectedSections, setSelectedSections] = useState<string[]>([]);
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
+  const [showSectionDetails, setShowSectionDetails] = useState<string | null>(null);
 
   useEffect(() => {
     loadSummary();
@@ -74,9 +75,16 @@ export default function FinalSummaryPage() {
 
   useEffect(() => {
     if (selectedTemplate && templates[selectedTemplate as keyof typeof templates]) {
-      setSelectedSections(templates[selectedTemplate as keyof typeof templates].sections);
+      const templateSections = templates[selectedTemplate as keyof typeof templates].sections;
+      // Only include sections that have data
+      const availableSections = templateSections.filter(sectionId => {
+        const key = sectionId as keyof typeof summary;
+        return summary && summary[key] !== null && summary[key] !== undefined &&
+               (Array.isArray(summary[key]) ? (summary[key] as any[]).length > 0 : true);
+      });
+      setSelectedSections(availableSections);
     }
-  }, [selectedTemplate]);
+  }, [selectedTemplate, summary]);
 
   const loadSummary = async () => {
     try {
@@ -114,6 +122,33 @@ export default function FinalSummaryPage() {
         : [...prev, sectionId]
     );
     setSelectedTemplate(null); // Clear template when manually selecting
+  };
+
+  const handleSelectAll = () => {
+    const availableSections = sectionOptions
+      .filter(section => {
+        const key = section.id as keyof typeof summary;
+        return summary && summary[key] !== null && summary[key] !== undefined &&
+               (Array.isArray(summary[key]) ? (summary[key] as any[]).length > 0 : true);
+      })
+      .map(s => s.id);
+    setSelectedSections(availableSections);
+    setSelectedTemplate(null);
+  };
+
+  const handleClearAll = () => {
+    setSelectedSections([]);
+    setSelectedTemplate(null);
+  };
+
+  const getTemplateSections = (templateKey: string) => {
+    const template = templates[templateKey as keyof typeof templates];
+    if (!template) return [];
+    return template.sections.filter(sectionId => {
+      const key = sectionId as keyof typeof summary;
+      return summary && summary[key] !== null && summary[key] !== undefined &&
+             (Array.isArray(summary[key]) ? (summary[key] as any[]).length > 0 : true);
+    });
   };
 
   const handleTemplateSelect = (templateKey: string) => {
@@ -220,31 +255,102 @@ export default function FinalSummaryPage() {
 
           {/* Template Presets */}
           <div className="mb-8">
-            <h3 className="text-sm font-semibold text-[#2C2A29] mb-4 uppercase tracking-wider">Quick Templates</h3>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-semibold text-[#2C2A29] uppercase tracking-wider">Quick Templates</h3>
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={handleSelectAll}
+                  className="text-xs text-[#A5B99A] hover:text-[#93B0C8] font-medium px-3 py-1 hover:bg-[#A5B99A]/10 rounded-lg transition-colors"
+                >
+                  Select All
+                </button>
+                <span className="text-gray-300">|</span>
+                <button
+                  onClick={handleClearAll}
+                  className="text-xs text-gray-500 hover:text-gray-700 font-medium px-3 py-1 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  Clear All
+                </button>
+              </div>
+            </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {Object.entries(templates).map(([key, template]) => {
                 const TemplateIcon = template.icon;
                 const isSelected = selectedTemplate === key;
+                const templateSections = getTemplateSections(key);
+                const allSectionsAvailable = templateSections.length === template.sections.length;
+                
                 return (
-                  <button
+                  <div
                     key={key}
-                    onClick={() => handleTemplateSelect(key)}
-                    className={`p-4 rounded-xl border-2 transition-all text-left ${
+                    className={`relative rounded-xl border-2 transition-all ${
                       isSelected
                         ? 'border-[#A5B99A] bg-[#A5B99A]/10 shadow-lg'
                         : 'border-gray-200 hover:border-[#A5B99A]/50 hover:shadow-md'
                     }`}
                   >
-                    <div className="flex items-start justify-between mb-2">
-                      <TemplateIcon className={`w-5 h-5 ${isSelected ? 'text-[#A5B99A]' : 'text-gray-400'}`} />
-                      {isSelected && <CheckCircle2 className="w-5 h-5 text-[#A5B99A]" />}
-                    </div>
-                    <h4 className="font-semibold text-[#2C2A29] mb-1">{template.name}</h4>
-                    <p className="text-xs text-[#2C2A29] opacity-70">{template.description}</p>
-                    <p className="text-xs text-[#A5B99A] mt-2 font-medium">
-                      {template.sections.length} sections
-                    </p>
-                  </button>
+                    <button
+                      onClick={() => handleTemplateSelect(key)}
+                      className="w-full p-4 text-left"
+                    >
+                      <div className="flex items-start justify-between mb-2">
+                        <TemplateIcon className={`w-5 h-5 ${isSelected ? 'text-[#A5B99A]' : 'text-gray-400'}`} />
+                        {isSelected && <CheckCircle2 className="w-5 h-5 text-[#A5B99A]" />}
+                      </div>
+                      <h4 className="font-semibold text-[#2C2A29] mb-1">{template.name}</h4>
+                      <p className="text-xs text-[#2C2A29] opacity-70 mb-2">{template.description}</p>
+                      <div className="flex items-center justify-between">
+                        <p className="text-xs text-[#A5B99A] font-medium">
+                          {templateSections.length} of {template.sections.length} available
+                        </p>
+                        {!allSectionsAvailable && (
+                          <span className="text-xs text-orange-600 bg-orange-50 px-2 py-0.5 rounded">
+                            Partial
+                          </span>
+                        )}
+                      </div>
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setShowSectionDetails(showSectionDetails === key ? null : key);
+                      }}
+                      className="w-full px-4 pb-3 text-left border-t border-gray-200 pt-2"
+                    >
+                      <span className="text-xs text-[#A5B99A] hover:text-[#93B0C8] font-medium flex items-center">
+                        {showSectionDetails === key ? 'Hide' : 'Show'} included sections
+                        <span className={`ml-1 transition-transform ${showSectionDetails === key ? 'rotate-180' : ''}`}>▼</span>
+                      </span>
+                    </button>
+                    {showSectionDetails === key && (
+                      <div className="px-4 pb-4 border-t border-gray-200 pt-3 space-y-1">
+                        {template.sections.map((sectionId) => {
+                          const section = sectionOptions.find(s => s.id === sectionId);
+                          const hasData = summary && summary[sectionId as keyof typeof summary] !== null && 
+                                         summary[sectionId as keyof typeof summary] !== undefined &&
+                                         (Array.isArray(summary[sectionId as keyof typeof summary]) 
+                                           ? (summary[sectionId as keyof typeof summary] as any[]).length > 0
+                                           : true);
+                          if (!section) return null;
+                          return (
+                            <div
+                              key={sectionId}
+                              className={`flex items-center space-x-2 text-xs ${
+                                hasData ? 'text-[#2C2A29]' : 'text-gray-400 line-through'
+                              }`}
+                            >
+                              {hasData ? (
+                                <CheckCircle2 className="w-3 h-3 text-[#A5B99A]" />
+                              ) : (
+                                <Circle className="w-3 h-3 text-gray-300" />
+                              )}
+                              <span>{section.label}</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
                 );
               })}
             </div>
@@ -253,23 +359,51 @@ export default function FinalSummaryPage() {
           {/* Custom Section Selection */}
           <div className="mb-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-semibold text-[#2C2A29] uppercase tracking-wider">Custom Selection</h3>
-              <button
-                onClick={() => {
-                  const availableSections = sectionOptions
-                    .filter(section => {
-                      const key = section.id as keyof typeof summary;
-                      return summary[key] !== null && summary[key] !== undefined;
-                    })
-                    .map(s => s.id);
-                  setSelectedSections(availableSections);
-                  setSelectedTemplate(null);
-                }}
-                className="text-xs text-[#A5B99A] hover:text-[#93B0C8] font-medium"
-              >
-                Select All Available
-              </button>
+              <div>
+                <h3 className="text-sm font-semibold text-[#2C2A29] uppercase tracking-wider mb-1">Custom Selection</h3>
+                <p className="text-xs text-[#2C2A29] opacity-60">
+                  {selectedTemplate ? 'Template selected - customize below or start fresh' : 'Manually select sections for your custom report'}
+                </p>
+              </div>
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={handleSelectAll}
+                  className="text-xs text-[#A5B99A] hover:text-[#93B0C8] font-medium px-3 py-1.5 hover:bg-[#A5B99A]/10 rounded-lg transition-colors border border-[#A5B99A]/20"
+                >
+                  Select All
+                </button>
+                <button
+                  onClick={handleClearAll}
+                  className="text-xs text-gray-500 hover:text-gray-700 font-medium px-3 py-1.5 hover:bg-gray-100 rounded-lg transition-colors border border-gray-200"
+                >
+                  Clear
+                </button>
+              </div>
             </div>
+            
+            {selectedTemplate && (
+              <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg flex items-start space-x-3">
+                <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-blue-900">
+                    Template "{templates[selectedTemplate as keyof typeof templates].name}" is selected
+                  </p>
+                  <p className="text-xs text-blue-700 mt-1">
+                    You can customize by checking/unchecking sections below. Unchecking all will clear the template selection.
+                  </p>
+                </div>
+                <button
+                  onClick={() => {
+                    setSelectedTemplate(null);
+                    setSelectedSections([]);
+                  }}
+                  className="text-xs text-blue-600 hover:text-blue-800 font-medium px-2 py-1 hover:bg-blue-100 rounded transition-colors"
+                >
+                  Clear Template
+                </button>
+              </div>
+            )}
+
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {sectionOptions.map((section) => {
                 const Icon = section.icon;
@@ -279,23 +413,48 @@ export default function FinalSummaryPage() {
                                  ? (summary[section.id as keyof typeof summary] as any[]).length > 0
                                  : true);
                 const isSelected = selectedSections.includes(section.id);
+                const isInSelectedTemplate = selectedTemplate 
+                  ? templates[selectedTemplate as keyof typeof templates].sections.includes(section.id)
+                  : false;
                 
-                if (!hasData) return null;
+                if (!hasData) {
+                  return (
+                    <div
+                      key={section.id}
+                      className="flex items-start space-x-3 p-3 rounded-lg border-2 border-gray-100 bg-gray-50 opacity-50"
+                    >
+                      <input
+                        type="checkbox"
+                        disabled
+                        className="mt-1 w-4 h-4 text-gray-300 border-gray-200 rounded"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center space-x-2 mb-1">
+                          <div className={`p-1.5 ${section.color} bg-opacity-10 rounded`}>
+                            <Icon className={`w-4 h-4 ${section.color.replace('bg-', 'text-')}`} />
+                          </div>
+                          <span className="font-medium text-sm text-gray-400">{section.label}</span>
+                        </div>
+                        <p className="text-xs text-gray-400">No data available</p>
+                      </div>
+                    </div>
+                  );
+                }
 
                 return (
                   <label
                     key={section.id}
-                    className={`flex items-start space-x-3 p-3 rounded-lg border-2 cursor-pointer transition-all ${
+                    className={`flex items-start space-x-3 p-3 rounded-lg border-2 cursor-pointer transition-all relative ${
                       isSelected
-                        ? 'border-[#A5B99A] bg-[#A5B99A]/5'
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
+                        ? 'border-[#A5B99A] bg-[#A5B99A]/5 shadow-sm'
+                        : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50/50'
+                    } ${isInSelectedTemplate && selectedTemplate ? 'ring-2 ring-blue-200' : ''}`}
                   >
                     <input
                       type="checkbox"
                       checked={isSelected}
                       onChange={() => handleSectionToggle(section.id)}
-                      className="mt-1 w-4 h-4 text-[#A5B99A] border-gray-300 rounded focus:ring-[#A5B99A]"
+                      className="mt-1 w-4 h-4 text-[#A5B99A] border-gray-300 rounded focus:ring-[#A5B99A] cursor-pointer"
                     />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center space-x-2 mb-1">
@@ -303,9 +462,17 @@ export default function FinalSummaryPage() {
                           <Icon className={`w-4 h-4 ${section.color.replace('bg-', 'text-')}`} />
                         </div>
                         <span className="font-medium text-sm text-[#2C2A29]">{section.label}</span>
+                        {isInSelectedTemplate && selectedTemplate && (
+                          <span className="text-xs text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded font-medium">
+                            In Template
+                          </span>
+                        )}
                       </div>
                       <p className="text-xs text-[#2C2A29] opacity-60">{section.description}</p>
                     </div>
+                    {isSelected && (
+                      <CheckCircle2 className="w-5 h-5 text-[#A5B99A] absolute top-2 right-2" />
+                    )}
                   </label>
                 );
               })}
@@ -313,32 +480,56 @@ export default function FinalSummaryPage() {
           </div>
 
           {/* Export Button */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-gray-200">
-            <div className="text-sm text-[#2C2A29] opacity-70">
-              {selectedSections.length > 0 ? (
-                <span className="font-medium text-[#A5B99A]">{selectedSections.length}</span>
-              ) : (
-                <span className="text-red-600">0</span>
-              )}{' '}
-              section{selectedSections.length !== 1 ? 's' : ''} selected
+          <div className="pt-6 border-t border-gray-200">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-4">
+              <div className="flex items-center space-x-4">
+                <div className="text-sm text-[#2C2A29]">
+                  <span className="font-semibold">Selected: </span>
+                  {selectedSections.length > 0 ? (
+                    <span className="font-bold text-[#A5B99A] text-lg">{selectedSections.length}</span>
+                  ) : (
+                    <span className="font-bold text-red-600 text-lg">0</span>
+                  )}{' '}
+                  <span className="opacity-70">section{selectedSections.length !== 1 ? 's' : ''}</span>
+                </div>
+                {selectedTemplate && (
+                  <div className="text-xs text-blue-600 bg-blue-50 px-3 py-1 rounded-full font-medium">
+                    Using "{templates[selectedTemplate as keyof typeof templates].name}" template
+                  </div>
+                )}
+                {!selectedTemplate && selectedSections.length > 0 && (
+                  <div className="text-xs text-gray-600 bg-gray-50 px-3 py-1 rounded-full font-medium">
+                    Custom selection
+                  </div>
+                )}
+              </div>
+              <button
+                onClick={handleExportPDF}
+                disabled={exporting || selectedSections.length === 0}
+                className="w-full sm:w-auto px-8 py-3 bg-gradient-to-r from-[#A5B99A] to-[#93B0C8] text-white rounded-xl font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+              >
+                {exporting ? (
+                  <>
+                    <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
+                    <span>Generating PDF...</span>
+                  </>
+                ) : (
+                  <>
+                    <FileDown className="w-5 h-5" />
+                    <span>Download PDF</span>
+                  </>
+                )}
+              </button>
             </div>
-            <button
-              onClick={handleExportPDF}
-              disabled={exporting || selectedSections.length === 0}
-              className="w-full sm:w-auto px-8 py-3 bg-gradient-to-r from-[#A5B99A] to-[#93B0C8] text-white rounded-xl font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
-            >
-              {exporting ? (
-                <>
-                  <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
-                  <span>Generating PDF...</span>
-                </>
-              ) : (
-                <>
-                  <FileDown className="w-5 h-5" />
-                  <span>Download PDF</span>
-                </>
-              )}
-            </button>
+            
+            {selectedSections.length === 0 && (
+              <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg flex items-start space-x-3">
+                <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+                <p className="text-sm text-yellow-800">
+                  Please select at least one section or choose a template to generate your PDF.
+                </p>
+              </div>
+            )}
           </div>
 
           {error && (
