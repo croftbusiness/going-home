@@ -33,6 +33,7 @@ import {
   PenTool,
   Settings,
   LayoutDashboard,
+  Gift,
 } from 'lucide-react';
 
 // Organized navigation with sections and unique icons
@@ -46,6 +47,7 @@ const navigation = [
   { name: 'Trusted Contacts', href: '/dashboard/trusted-contacts', icon: Users, section: 'primary' },
   
   // Planning & Legacy
+  { name: 'Family Legacy', href: '/dashboard/family-legacy', icon: Gift, section: 'planning' },
   { name: 'Funeral Planning', href: '/dashboard/funeral-planning', icon: Sparkles, section: 'planning' },
   { name: 'Legacy Messages', href: '/dashboard/legacy-messages', icon: Video, section: 'planning' },
   { name: 'Will Questionnaire', href: '/dashboard/will-questionnaire', icon: FileQuestion, section: 'planning' },
