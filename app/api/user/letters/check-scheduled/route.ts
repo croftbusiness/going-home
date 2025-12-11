@@ -68,7 +68,7 @@ export async function POST(request: Request) {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${internalApiKey}`,
+            'x-internal-api-key': internalApiKey,
           },
           body: JSON.stringify({ 
             letterId: letter.id,

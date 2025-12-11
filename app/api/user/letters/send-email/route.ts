@@ -10,17 +10,39 @@ import { requireAuth, createServerClient } from '@/lib/auth';
  */
 export async function POST(request: Request) {
   try {
-    const auth = await requireAuth();
-    if ('error' in auth) {
-      return NextResponse.json({ error: auth.error }, { status: auth.status });
-    }
-
-    const supabase = createServerClient();
-    const { letterId } = await request.json();
+    // Parse request body first
+    const body = await request.json();
+    const { letterId, userId: providedUserId } = body;
 
     if (!letterId) {
       return NextResponse.json({ error: 'Letter ID required' }, { status: 400 });
     }
+
+    // Check for internal service call (from executor verify or cron job)
+    const internalApiKey = request.headers.get('x-internal-api-key');
+    const authHeader = request.headers.get('authorization');
+    const isInternalCall = (internalApiKey && internalApiKey === process.env.INTERNAL_API_KEY) ||
+                          (authHeader?.startsWith('Bearer ') && authHeader === `Bearer ${process.env.INTERNAL_API_KEY}`);
+    
+    // Determine userId - must be assigned in all code paths
+    let userId: string;
+    
+    if (isInternalCall) {
+      // For internal calls, use provided userId from body
+      if (!providedUserId) {
+        return NextResponse.json({ error: 'User ID required for internal calls' }, { status: 400 });
+      }
+      userId = providedUserId;
+    } else {
+      // Regular authenticated user
+      const auth = await requireAuth();
+      if ('error' in auth) {
+        return NextResponse.json({ error: auth.error }, { status: auth.status });
+      }
+      userId = auth.userId;
+    }
+
+    const supabase = createServerClient();
 
     // Get letter with recipient info
     const { data: letter, error: letterError } = await supabase

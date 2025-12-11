@@ -21,6 +21,9 @@ interface Letter {
   milestoneDate?: string;
   milestoneDescription?: string;
   letterCategory?: 'in_case_i_pass' | 'birthday' | 'milestone' | 'encouragement' | 'final_words' | 'love_letter' | 'other';
+  autoEmailEnabled?: boolean;
+  emailSent?: boolean;
+  emailSentAt?: string;
   createdAt: string;
 }
 
@@ -217,6 +220,7 @@ export default function LettersPage() {
                     milestoneDate: '',
                     milestoneDescription: '',
                     letterCategory: 'other' as const,
+                    autoEmailEnabled: false,
                   });
                 }}
                 className="w-full sm:w-auto px-4 py-2.5 bg-[#A5B99A] text-white rounded-lg hover:bg-[#93B0C8] transition-colors flex items-center justify-center space-x-2 text-sm sm:text-base"

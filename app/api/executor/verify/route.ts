@@ -141,6 +141,7 @@ export async function POST(request: Request) {
 
           if (lettersToSend && lettersToSend.length > 0) {
             // Send each letter via email in background (don't await to avoid blocking)
+            const internalApiKey = process.env.INTERNAL_API_KEY;
             Promise.all(
               lettersToSend.map(async (letter) => {
                 try {
@@ -148,9 +149,12 @@ export async function POST(request: Request) {
                     method: 'POST',
                     headers: { 
                       'Content-Type': 'application/json',
-                      // Use service role or internal auth token here
+                      'x-internal-api-key': internalApiKey || 'internal-key',
                     },
-                    body: JSON.stringify({ letterId: letter.id }),
+                    body: JSON.stringify({ 
+                      letterId: letter.id,
+                      userId: releaseSettings.user_id,
+                    }),
                   });
                 } catch (emailErr) {
                   console.error(`Failed to send email for letter ${letter.id}:`, emailErr);
