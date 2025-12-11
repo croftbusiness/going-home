@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Music, Sparkles, Loader2, CheckCircle, Plus, X } from 'lucide-react';
+import { ArrowLeft, Music, Sparkles, Loader2, CheckCircle, Plus, X, Heart } from 'lucide-react';
 import { getPlaylist, generatePlaylist } from '@/lib/api/funeral';
 import type { PlaylistInput } from '@/types/funeral';
 
@@ -138,10 +138,28 @@ export default function PlaylistPage() {
               <h2 className="text-xl font-semibold text-[#2C2A29] mb-2">
                 Create your perfect soundtrack
               </h2>
-              <p className="text-sm sm:text-base text-[#2C2A29] opacity-70 leading-relaxed">
+              <p className="text-sm sm:text-base text-[#2C2A29] opacity-70 leading-relaxed mb-4">
                 Share your favorite songs, genres, and musical preferences. We'll create personalized playlists 
                 for your ceremony, photo slideshow, and reception gathering.
               </p>
+              
+              {/* Why This Helps Loved Ones */}
+              <div className="mt-4 p-4 bg-gradient-to-br from-[#A5B99A]/10 to-[#93B0C8]/10 rounded-lg border border-[#A5B99A]/20">
+                <div className="flex items-start space-x-3">
+                  <Heart className="w-5 h-5 text-[#A5B99A] flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h3 className="text-sm font-semibold text-[#2C2A29] mb-1">
+                      Why This Helps Your Loved Ones
+                    </h3>
+                    <p className="text-xs text-[#2C2A29] opacity-80 leading-relaxed">
+                      Music has the power to comfort, celebrate, and connect. By choosing your songs now, you're 
+                      ensuring the music played honors your memory exactly as you'd want. Your family won't have 
+                      to guess what songs were meaningful to you or worry about choosing the wrong music. Every 
+                      song becomes a tribute to your life and a source of comfort for those who gather to remember you.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -405,5 +423,6 @@ export default function PlaylistPage() {
     </div>
   );
 }
+
 
 

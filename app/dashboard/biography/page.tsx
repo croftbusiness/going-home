@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { BookOpen, Save } from 'lucide-react';
+import { BookOpen, Save, Heart } from 'lucide-react';
 
 interface Biography {
   lifeStory?: string;
@@ -126,6 +126,27 @@ export default function BiographyPage() {
               Biography saved successfully!
             </div>
           )}
+          
+          {/* Why This Helps Loved Ones */}
+          <div className="bg-gradient-to-br from-white via-[#FCFAF7] to-white rounded-xl p-4 sm:p-6 mb-4 sm:mb-6 shadow-sm border border-gray-100">
+            <div className="flex items-start space-x-3 sm:space-x-4">
+              <div className="p-2 sm:p-3 bg-[#A5B99A] bg-opacity-10 rounded-xl flex-shrink-0">
+                <Heart className="w-5 h-5 sm:w-6 sm:h-6 text-[#A5B99A]" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-base sm:text-lg font-semibold text-[#2C2A29] mb-2">
+                  Why This Helps Your Loved Ones
+                </h3>
+                <p className="text-xs sm:text-sm text-[#2C2A29] opacity-70 leading-relaxed">
+                  Your biography preserves your story for generations to come. By documenting your life journey, 
+                  accomplishments, family history, faith story, and lessons learned, you're creating a precious 
+                  legacy. Future generations will be able to know who you were, what mattered to you, and the 
+                  wisdom you gained. This biography helps your family celebrate you authentically, share your 
+                  story with others, and ensures your memory lives on in a meaningful way long after you're gone.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
         <form onSubmit={handleSubmit} className="bg-white rounded-xl p-4 sm:p-6 lg:p-8 shadow-sm border border-gray-200 space-y-6 sm:space-y-8">

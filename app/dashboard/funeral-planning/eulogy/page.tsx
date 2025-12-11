@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Sparkles, Loader2, Plus, X } from 'lucide-react';
+import { ArrowLeft, Sparkles, Loader2, Plus, X, Heart } from 'lucide-react';
 import { generateEulogy } from '@/lib/api/funeral';
 import type { EulogyInput } from '@/types/funeral';
 
@@ -91,10 +91,29 @@ export default function EulogyPage() {
               <h2 className="text-xl font-semibold text-[#2C2A29] mb-2">
                 Create a meaningful tribute
               </h2>
-              <p className="text-sm sm:text-base text-[#2C2A29] opacity-70 leading-relaxed">
+              <p className="text-sm sm:text-base text-[#2C2A29] opacity-70 leading-relaxed mb-4">
                 Share your life story and highlights. Our AI will help craft a beautiful eulogy that 
                 honors your journey, celebrates your accomplishments, and brings comfort to those who love you.
               </p>
+              
+              {/* Why This Helps Loved Ones */}
+              <div className="mt-4 p-4 bg-gradient-to-br from-[#A5B99A]/10 to-[#93B0C8]/10 rounded-lg border border-[#A5B99A]/20">
+                <div className="flex items-start space-x-3">
+                  <Heart className="w-5 h-5 text-[#A5B99A] flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h3 className="text-sm font-semibold text-[#2C2A29] mb-1">
+                      Why This Helps Your Loved Ones
+                    </h3>
+                    <p className="text-xs text-[#2C2A29] opacity-80 leading-relaxed">
+                      Writing a eulogy is one of the hardest tasks your family will face. By sharing your story 
+                      and highlights now, you're giving them a foundation to work from. They won't have to struggle 
+                      to remember important moments or worry about missing something meaningful. Your eulogy becomes 
+                      a gift that helps them celebrate you authentically while reducing the emotional burden of 
+                      writing during their grief.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -308,5 +327,6 @@ export default function EulogyPage() {
     </div>
   );
 }
+
 
 

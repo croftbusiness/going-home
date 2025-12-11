@@ -173,6 +173,27 @@ export default function FuneralStoryPage() {
           </div>
         </div>
 
+        {/* Why This Helps Loved Ones */}
+        <div className="bg-gradient-to-br from-white via-[#FCFAF7] to-white rounded-xl p-6 mb-6 shadow-sm border border-gray-100">
+          <div className="flex items-start space-x-4">
+            <div className="p-3 bg-[#A5B99A] bg-opacity-10 rounded-xl flex-shrink-0">
+              <Heart className="w-6 h-6 text-[#A5B99A]" />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-lg font-semibold text-[#2C2A29] mb-2">
+                Why This Helps Your Loved Ones
+              </h3>
+              <p className="text-sm text-[#2C2A29] opacity-70 leading-relaxed">
+                Creating your funeral story now gives your family a complete guide to honor you exactly as you wish. 
+                Instead of struggling to remember what you might have wanted, they'll have your exact preferences 
+                for atmosphere, music, readings, and messages. This removes guesswork and decision fatigue during 
+                an already difficult time, allowing them to focus on celebrating your life rather than worrying 
+                about getting the details right.
+              </p>
+            </div>
+          </div>
+        </div>
+
         {error && (
           <div className="bg-red-50 text-red-700 px-4 py-3 rounded-lg mb-4 sm:mb-6 text-sm sm:text-base">{error}</div>
         )}

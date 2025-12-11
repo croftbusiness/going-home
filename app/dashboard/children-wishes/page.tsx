@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Baby, Plus, Trash2, Edit2, Save, X } from 'lucide-react';
+import { Baby, Plus, Trash2, Edit2, Save, X, Heart } from 'lucide-react';
 
 interface ChildrenWish {
   id?: string;
@@ -128,6 +128,28 @@ export default function ChildrenWishesPage() {
           {error && (
             <div className="bg-red-50 text-red-700 px-4 py-3 rounded-lg mb-6">{error}</div>
           )}
+          
+          {/* Why This Helps Loved Ones */}
+          <div className="bg-gradient-to-br from-white via-[#FCFAF7] to-white rounded-xl p-6 mb-6 shadow-sm border border-gray-100">
+            <div className="flex items-start space-x-4">
+              <div className="p-3 bg-[#A5B99A] bg-opacity-10 rounded-xl flex-shrink-0">
+                <Heart className="w-6 h-6 text-[#A5B99A]" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold text-[#2C2A29] mb-2">
+                  Why This Helps Your Loved Ones
+                </h3>
+                <p className="text-sm text-[#2C2A29] opacity-70 leading-relaxed">
+                  Your children will carry your words with them throughout their lives. By writing messages 
+                  for milestones, sharing your values, and documenting guardian preferences now, you're 
+                  giving them a lasting connection to you. These messages become treasured keepsakes that 
+                  provide comfort, guidance, and love when they need it most—on birthdays, graduations, 
+                  weddings, and other important moments. Your words will help them feel your presence and 
+                  know how deeply you loved them, even when you're not physically there.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
         {showAddForm && (

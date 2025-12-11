@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Mail, Sparkles, Loader2, Plus, Edit2, CheckCircle } from 'lucide-react';
+import { ArrowLeft, Mail, Sparkles, Loader2, Plus, Edit2, CheckCircle, Heart } from 'lucide-react';
 import { getLetters, generateLetter, updateLetter } from '@/lib/api/funeral';
 import type { FuneralLetter } from '@/types/funeral';
 
@@ -198,10 +198,29 @@ export default function FuneralLettersPage() {
               <h2 className="text-xl font-semibold text-[#2C2A29] mb-2">
                 Share your heart with those you love
               </h2>
-              <p className="text-sm sm:text-base text-[#2C2A29] opacity-70 leading-relaxed">
+              <p className="text-sm sm:text-base text-[#2C2A29] opacity-70 leading-relaxed mb-4">
                 Write personal letters to be read at your service. These messages will bring comfort, 
                 love, and encouragement to those who matter most to you.
               </p>
+              
+              {/* Why This Helps Loved Ones */}
+              <div className="mt-4 p-4 bg-gradient-to-br from-[#A5B99A]/10 to-[#93B0C8]/10 rounded-lg border border-[#A5B99A]/20">
+                <div className="flex items-start space-x-3">
+                  <Heart className="w-5 h-5 text-[#A5B99A] flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h3 className="text-sm font-semibold text-[#2C2A29] mb-1">
+                      Why This Helps Your Loved Ones
+                    </h3>
+                    <p className="text-xs text-[#2C2A29] opacity-80 leading-relaxed">
+                      Your words have the power to comfort, heal, and bring closure. By writing these letters now, 
+                      you're giving your loved ones a precious gift—your own voice speaking directly to them during 
+                      their time of need. These letters become treasured keepsakes that they can return to again and 
+                      again, finding new comfort and connection with you long after the service. Your words will 
+                      help them feel your love and presence even when you're not physically there.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -440,5 +459,6 @@ export default function FuneralLettersPage() {
     </div>
   );
 }
+
 
 

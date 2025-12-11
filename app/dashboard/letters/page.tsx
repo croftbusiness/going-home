@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Plus, Mail, Edit, Trash2, Sparkles, Wand2 } from 'lucide-react';
+import { ArrowLeft, Plus, Mail, Edit, Trash2, Sparkles, Wand2, Heart } from 'lucide-react';
 import Link from 'next/link';
 import AILetterGenerator from '@/components/ai/AILetterGenerator';
 import LegacyMessageCoach from '@/components/ai/LegacyMessageCoach';
@@ -234,6 +234,30 @@ export default function LettersPage() {
       </header>
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+        {/* Why This Helps Loved Ones */}
+        {!showForm && !showAIGenerator && (
+          <div className="bg-gradient-to-br from-white via-[#FCFAF7] to-white rounded-xl p-6 mb-6 shadow-sm border border-gray-100">
+            <div className="flex items-start space-x-4">
+              <div className="p-3 bg-[#A5B99A] bg-opacity-10 rounded-xl flex-shrink-0">
+                <Heart className="w-6 h-6 text-[#A5B99A]" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold text-[#2C2A29] mb-2">
+                  Why This Helps Your Loved Ones
+                </h3>
+                <p className="text-sm text-[#2C2A29] opacity-70 leading-relaxed">
+                  Your written words have the power to comfort, heal, and guide long after you're gone. By writing 
+                  letters now, you're giving your loved ones a precious gift—your own voice speaking directly to 
+                  them when they need it most. Whether released after your passing, on special dates, or at life 
+                  milestones, these letters become treasured keepsakes that help them feel your love and presence. 
+                  Your words will provide comfort during grief, encouragement during challenges, and connection 
+                  during important moments, ensuring your love continues to touch their lives.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {error && (
           <div className="bg-red-50 text-red-700 px-4 py-3 rounded-lg mb-4">{error}</div>
         )}

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, BookText, Sparkles, Loader2 } from 'lucide-react';
+import { ArrowLeft, BookText, Sparkles, Loader2, Heart } from 'lucide-react';
 import { getScript, generateScript } from '@/lib/api/funeral';
 import type { CeremonyScriptInput } from '@/types/funeral';
 
@@ -108,10 +108,29 @@ export default function CeremonyScriptPage() {
               <h2 className="text-xl font-semibold text-[#2C2A29] mb-2">
                 Create a comforting ceremony flow
               </h2>
-              <p className="text-sm sm:text-base text-[#2C2A29] opacity-70 leading-relaxed">
+              <p className="text-sm sm:text-base text-[#2C2A29] opacity-70 leading-relaxed mb-4">
                 Our AI will help create a ceremony script with opening words, optional prayers and readings, 
                 transitions, and closing blessings—all in a tone that brings comfort and peace.
               </p>
+              
+              {/* Why This Helps Loved Ones */}
+              <div className="mt-4 p-4 bg-gradient-to-br from-[#A5B99A]/10 to-[#93B0C8]/10 rounded-lg border border-[#A5B99A]/20">
+                <div className="flex items-start space-x-3">
+                  <Heart className="w-5 h-5 text-[#A5B99A] flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h3 className="text-sm font-semibold text-[#2C2A29] mb-1">
+                      Why This Helps Your Loved Ones
+                    </h3>
+                    <p className="text-xs text-[#2C2A29] opacity-80 leading-relaxed">
+                      Planning a ceremony flow can feel overwhelming when you're grieving. By creating your script 
+                      now, you're giving your family a complete roadmap for the service. They won't have to worry 
+                      about what to say, when to pause, or how to transition between moments. Your script ensures 
+                      the ceremony flows smoothly and honors you exactly as you envisioned, allowing them to focus 
+                      on being present rather than managing logistics.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -339,5 +358,6 @@ export default function CeremonyScriptPage() {
     </div>
   );
 }
+
 
 

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { FileText, Edit, Download, ArrowLeft } from 'lucide-react';
+import { FileText, Edit, Download, ArrowLeft, Heart } from 'lucide-react';
 import { getWillQuestionnaire, exportWillQuestionnaire } from '@/lib/api/willQuestionnaire';
 
 export default function WillQuestionnairePage() {
@@ -93,6 +93,28 @@ export default function WillQuestionnairePage() {
                 <strong>Legal Disclaimer:</strong> Going Home does not provide legal advice or create legally binding documents. 
                 This questionnaire is for informational and planning purposes only. Please consult with a qualified attorney 
                 to create a legally valid will.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Why This Helps Loved Ones */}
+        <div className="bg-gradient-to-br from-white via-[#FCFAF7] to-white rounded-xl p-6 mb-6 shadow-sm border border-gray-100">
+          <div className="flex items-start space-x-4">
+            <div className="p-3 bg-[#A5B99A] bg-opacity-10 rounded-xl flex-shrink-0">
+              <Heart className="w-6 h-6 text-[#A5B99A]" />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-lg font-semibold text-[#2C2A29] mb-2">
+                Why This Helps Your Loved Ones
+              </h3>
+              <p className="text-sm text-[#2C2A29] opacity-70 leading-relaxed">
+                Creating a will is one of the most important gifts you can give your family. By documenting your 
+                wishes now, you're preventing confusion, conflict, and legal complications during an already difficult 
+                time. Your family won't have to guess what you wanted or make stressful decisions about your assets. 
+                This questionnaire helps you organize your thoughts and preferences, making it easier for your attorney 
+                to create a will that honors your wishes exactly as you intended, giving your family peace of mind 
+                and protecting what matters most to you.
               </p>
             </div>
           </div>
@@ -193,5 +215,6 @@ export default function WillQuestionnairePage() {
     </div>
   );
 }
+
 
 

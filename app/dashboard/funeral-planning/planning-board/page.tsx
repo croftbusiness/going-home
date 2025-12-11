@@ -347,11 +347,29 @@ export default function PlanningBoardPage() {
               <h2 className="text-xl font-bold text-[#2C2A29] mb-2">
                 Build Your Personal Vision Board
               </h2>
-              <p className="text-sm text-[#2C2A29] opacity-70 leading-relaxed">
+              <p className="text-sm text-[#2C2A29] opacity-70 leading-relaxed mb-4">
                 Upload images of caskets, urns, flowers, colors, outfits, and photos that inspire you. 
                 This visual board helps you express your preferences in a personal, meaningful way. 
                 Think of it like Pinterest—collect what speaks to you, and we'll help bring your vision to life.
               </p>
+              
+              {/* Why This Helps Loved Ones */}
+              <div className="mt-4 p-4 bg-gradient-to-br from-[#A5B99A]/10 to-[#93B0C8]/10 rounded-lg border border-[#A5B99A]/20">
+                <div className="flex items-start space-x-3">
+                  <Heart className="w-5 h-5 text-[#A5B99A] flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h3 className="text-sm font-semibold text-[#2C2A29] mb-1">
+                      Why This Helps Your Loved Ones
+                    </h3>
+                    <p className="text-xs text-[#2C2A29] opacity-80 leading-relaxed">
+                      During an already difficult time, your family won't have to guess what you wanted. 
+                      This visual guide removes uncertainty and decision fatigue, giving them confidence 
+                      that they're honoring your wishes exactly as you envisioned. They'll have peace 
+                      of mind knowing every choice reflects your personal style and preferences.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Palette, Sparkles, Loader2, CheckCircle } from 'lucide-react';
+import { ArrowLeft, Palette, Sparkles, Loader2, CheckCircle, Heart } from 'lucide-react';
 import { getMoodboard, generateMoodboard } from '@/lib/api/funeral';
 import type { MoodboardInput } from '@/types/funeral';
 
@@ -130,10 +130,28 @@ export default function MoodboardPage() {
               <h2 className="text-xl font-semibold text-[#2C2A29] mb-2">
                 Create your visual vision
               </h2>
-              <p className="text-sm sm:text-base text-[#2C2A29] opacity-70 leading-relaxed">
+              <p className="text-sm sm:text-base text-[#2C2A29] opacity-70 leading-relaxed mb-4">
                 Share your preferences for colors, flowers, style, and atmosphere. 
                 We'll create a beautiful moodboard and guide that helps bring your vision to life.
               </p>
+              
+              {/* Why This Helps Loved Ones */}
+              <div className="mt-4 p-4 bg-gradient-to-br from-[#A5B99A]/10 to-[#93B0C8]/10 rounded-lg border border-[#A5B99A]/20">
+                <div className="flex items-start space-x-3">
+                  <Heart className="w-5 h-5 text-[#A5B99A] flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h3 className="text-sm font-semibold text-[#2C2A29] mb-1">
+                      Why This Helps Your Loved Ones
+                    </h3>
+                    <p className="text-xs text-[#2C2A29] opacity-80 leading-relaxed">
+                      When planning your service, your family wants to honor you perfectly but may feel overwhelmed 
+                      by choices. Your moodboard gives them clear direction on colors, flowers, and atmosphere, 
+                      ensuring the service feels authentically you. They'll have confidence knowing every detail 
+                      reflects your personal style and creates the exact feeling you wanted.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -413,5 +431,6 @@ export default function MoodboardPage() {
     </div>
   );
 }
+
 
 

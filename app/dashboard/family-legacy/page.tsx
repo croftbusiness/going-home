@@ -186,9 +186,31 @@ export default function FamilyLegacyPage() {
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#2C2A29] mb-3">
             Family Legacy
           </h1>
-          <p className="text-base sm:text-lg text-[#2C2A29] opacity-70 max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg text-[#2C2A29] opacity-70 max-w-2xl mx-auto mb-6">
             Preserve the meaningful moments, traditions, and wisdom that will comfort your loved ones
           </p>
+          
+          {/* Why This Helps Loved Ones */}
+          <div className="bg-gradient-to-br from-white via-[#FCFAF7] to-white rounded-xl p-6 max-w-3xl mx-auto shadow-sm border border-gray-100">
+            <div className="flex items-start space-x-4">
+              <div className="p-3 bg-[#A5B99A] bg-opacity-10 rounded-xl flex-shrink-0">
+                <Heart className="w-6 h-6 text-[#A5B99A]" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold text-[#2C2A29] mb-2">
+                  Why This Helps Your Loved Ones
+                </h3>
+                <p className="text-sm text-[#2C2A29] opacity-70 leading-relaxed">
+                  Your family legacy is more than memories—it's the recipes, stories, traditions, advice, and 
+                  personal touches that make you uniquely you. By documenting these now, you're giving your 
+                  loved ones a way to keep you close. They'll be able to cook your favorite recipes, continue 
+                  your traditions, read your stories, and hear your advice whenever they need comfort or connection. 
+                  This legacy becomes a bridge between generations, ensuring your values, wisdom, and love continue 
+                  to shape your family long after you're gone.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Progress Indicator */}
@@ -255,5 +277,6 @@ export default function FamilyLegacyPage() {
     </div>
   );
 }
+
 
 

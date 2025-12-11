@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, Lightbulb, Plus, X, Loader2, Sparkles } from 'lucide-react';
+import { ArrowLeft, Lightbulb, Plus, X, Loader2, Sparkles, Heart } from 'lucide-react';
 import { getLifeThemes, analyzeLifeThemes } from '@/lib/api/funeral';
 
 export default function LifeThemesPage() {
@@ -123,11 +123,30 @@ export default function LifeThemesPage() {
               <h2 className="text-xl font-semibold text-[#2C2A29] mb-2">
                 What defines your life?
               </h2>
-              <p className="text-sm sm:text-base text-[#2C2A29] opacity-70 leading-relaxed">
+              <p className="text-sm sm:text-base text-[#2C2A29] opacity-70 leading-relaxed mb-4">
                 Share your key memories and values. Our AI will help identify the themes, lessons, 
                 and motifs that make your story unique. These themes will guide all your funeral planning 
                 to create a truly personalized experience.
               </p>
+              
+              {/* Why This Helps Loved Ones */}
+              <div className="mt-4 p-4 bg-gradient-to-br from-[#A5B99A]/10 to-[#93B0C8]/10 rounded-lg border border-[#A5B99A]/20">
+                <div className="flex items-start space-x-3">
+                  <Heart className="w-5 h-5 text-[#A5B99A] flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h3 className="text-sm font-semibold text-[#2C2A29] mb-1">
+                      Why This Helps Your Loved Ones
+                    </h3>
+                    <p className="text-xs text-[#2C2A29] opacity-80 leading-relaxed">
+                      Understanding your life themes helps your family celebrate you authentically. When they know 
+                      what truly mattered to you—your values, your defining moments, your life lessons—they can 
+                      create a service that genuinely reflects who you were. This clarity removes uncertainty and 
+                      helps them make decisions with confidence, knowing they're honoring the essence of your 
+                      life story rather than just going through the motions.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -345,5 +364,6 @@ export default function LifeThemesPage() {
     </div>
   );
 }
+
 
 

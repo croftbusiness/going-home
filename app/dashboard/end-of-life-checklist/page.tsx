@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { CheckSquare, Save } from 'lucide-react';
+import { CheckSquare, Save, Heart } from 'lucide-react';
 
 interface EndOfLifeChecklist {
   organDonationPreference?: string;
@@ -162,6 +162,28 @@ export default function EndOfLifeChecklistPage() {
               Checklist saved successfully!
             </div>
           )}
+          
+          {/* Why This Helps Loved Ones */}
+          <div className="bg-gradient-to-br from-white via-[#FCFAF7] to-white rounded-xl p-6 mb-6 shadow-sm border border-gray-100">
+            <div className="flex items-start space-x-4">
+              <div className="p-3 bg-[#A5B99A] bg-opacity-10 rounded-xl flex-shrink-0">
+                <Heart className="w-6 h-6 text-[#A5B99A]" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold text-[#2C2A29] mb-2">
+                  Why This Helps Your Loved Ones
+                </h3>
+                <p className="text-sm text-[#2C2A29] opacity-70 leading-relaxed">
+                  Your final checklist provides clear guidance for your family during an overwhelming time. 
+                  By documenting your organ donation wishes, last words, prayers, scriptures, songs, and 
+                  special instructions now, you're ensuring nothing important is forgotten. Your family won't 
+                  have to guess what you wanted or worry about missing something meaningful. This checklist 
+                  becomes their roadmap, giving them confidence that they're honoring your wishes completely 
+                  and allowing them to focus on celebrating your life rather than managing details.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
         <form onSubmit={handleSubmit} className="bg-white rounded-xl p-8 shadow-sm border border-gray-200 space-y-8">

@@ -197,12 +197,32 @@ export default function EndOfLifeDirectivesPage() {
 
         {/* Introduction */}
         <div className="bg-[#FCFAF7] rounded-xl p-6 mb-8 shadow-sm border border-gray-200">
-          <p className="text-[#2C2A29] leading-relaxed">
+          <p className="text-[#2C2A29] leading-relaxed mb-4">
             This is your space to thoughtfully document your wishes for end-of-life care. 
             Like a birth plan, but for life's final stage, this guide helps ensure your 
             preferences are honored with dignity and respect. Take your time, and know that 
             you can update these preferences at any time.
           </p>
+          
+          {/* Why This Helps Loved Ones */}
+          <div className="mt-4 p-4 bg-gradient-to-br from-[#A5B99A]/10 to-[#93B0C8]/10 rounded-lg border border-[#A5B99A]/20">
+            <div className="flex items-start space-x-3">
+              <Heart className="w-5 h-5 text-[#A5B99A] flex-shrink-0 mt-0.5" />
+              <div>
+                <h3 className="text-sm font-semibold text-[#2C2A29] mb-1">
+                  Why This Helps Your Loved Ones
+                </h3>
+                <p className="text-xs text-[#2C2A29] opacity-80 leading-relaxed">
+                  During your final days, your family will face countless difficult decisions. By documenting 
+                  your preferences now, you're removing the burden of guessing what you would want. They won't 
+                  have to wonder about pain management, visitors, spiritual care, or life-sustaining treatments. 
+                  Your clear directives give them peace of mind, knowing they're honoring your wishes exactly 
+                  as you intended, allowing them to focus on being present with you rather than making stressful 
+                  medical decisions.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Sections Grid */}

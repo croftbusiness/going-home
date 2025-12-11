@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { Video, Plus, Trash2, Play, Upload, Camera, Mic, X, ArrowLeft, Check, FileVideo, FileAudio, Sparkles } from 'lucide-react';
+import { Video, Plus, Trash2, Play, Upload, Camera, Mic, X, ArrowLeft, Check, FileVideo, FileAudio, Sparkles, Heart } from 'lucide-react';
 import Link from 'next/link';
 
 interface LegacyMessage {
@@ -411,6 +411,30 @@ export default function LegacyMessagesPage() {
       </header>
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12">
+        {/* Why This Helps Loved Ones */}
+        {!showAddForm && (
+          <div className="bg-gradient-to-br from-white via-[#FCFAF7] to-white rounded-xl p-6 mb-6 shadow-sm border border-gray-100">
+            <div className="flex items-start space-x-4">
+              <div className="p-3 bg-[#A5B99A] bg-opacity-10 rounded-xl flex-shrink-0">
+                <Heart className="w-6 h-6 text-[#A5B99A]" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold text-[#2C2A29] mb-2">
+                  Why This Helps Your Loved Ones
+                </h3>
+                <p className="text-sm text-[#2C2A29] opacity-70 leading-relaxed">
+                  Your voice, your face, your presence—these are irreplaceable gifts. By recording video or audio 
+                  messages now, you're giving your loved ones the ability to see and hear you whenever they need 
+                  comfort, guidance, or connection. These messages become treasured keepsakes that help them feel 
+                  your presence during birthdays, holidays, milestones, and difficult moments. Your voice will 
+                  continue to bring them love, encouragement, and wisdom long after you're gone, creating a lasting 
+                  bond that transcends time.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {error && (
           <div className="bg-red-50 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded-lg mb-6 text-sm sm:text-base shadow-sm">
             {error}
