@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Music, Search, Loader2, CheckCircle2 } from 'lucide-react';
 import TrackPlayer from './music/TrackPlayer';
 
@@ -20,8 +20,6 @@ interface Track {
 interface Playlist {
   id: string;
   name: string;
-  description?: string;
-  images?: Array<{ url: string }>;
   tracks?: {
     total: number;
   };
@@ -34,29 +32,19 @@ interface SpotifyIntegrationProps {
   onTrackSave?: (track: Track) => void;
 }
 
-// Helper function to safely convert track to string
 const trackToString = (track: any): string | null => {
   if (!track || typeof track !== 'object') return null;
-  
-  // Check if it's an error object (has reason property)
   if ('reason' in track) return null;
-  
-  // Must have name and artist
   if (!track.name || !track.artist) return null;
-  
-  // Ensure name and artist are strings
   const name = typeof track.name === 'string' ? track.name : String(track.name || '');
   const artist = typeof track.artist === 'string' ? track.artist : String(track.artist || '');
-  
   if (!name || !artist) return null;
-  
   return `${name} - ${artist}`;
 };
 
-// Helper to validate track object
 const isValidTrack = (track: any): track is Track => {
   if (!track || typeof track !== 'object') return false;
-  if ('reason' in track) return false; // Error object
+  if ('reason' in track) return false;
   if (!track.id || !track.name || !track.artist) return false;
   if (typeof track.id !== 'string' || typeof track.name !== 'string' || typeof track.artist !== 'string') return false;
   return true;
@@ -72,6 +60,7 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
   const [searchResults, setSearchResults] = useState<Track[]>([]);
   const [searching, setSearching] = useState(false);
   const [activeTab, setActiveTab] = useState<'playlists' | 'search'>('playlists');
+  const tracksSectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     checkConnection();
@@ -134,7 +123,6 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
       const response = await fetch(`/api/spotify/playlist-tracks?playlistId=${playlistId}`);
       if (response.ok) {
         const data = await response.json();
-        // Filter and validate all tracks
         const validTracks = (data.tracks || [])
           .filter(isValidTrack)
           .map((track: any) => ({
@@ -148,6 +136,9 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
             duration_ms: typeof track.duration_ms === 'number' ? track.duration_ms : undefined,
           }));
         setPlaylistTracks(validTracks);
+        setTimeout(() => {
+          tracksSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
       } else if (response.status === 401) {
         const data = await response.json().catch(() => ({}));
         console.error('Authentication error:', data.error || 'Unauthorized');
@@ -172,7 +163,6 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
       const response = await fetch(`/api/spotify/search?q=${encodeURIComponent(searchQuery)}`);
       if (response.ok) {
         const data = await response.json();
-        // Filter and validate all tracks
         const validTracks = (data.tracks || [])
           .filter(isValidTrack)
           .map((track: any) => ({
@@ -190,7 +180,6 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
         const data = await response.json().catch(() => ({}));
         console.error('Service unavailable:', data.error || 'Spotify service unavailable');
         setSearchResults([]);
-        // Show error message but don't change connection status
       } else {
         setSearchResults([]);
       }
@@ -203,27 +192,16 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
   };
 
   const handleSelectTrack = async (track: Track) => {
-    if (!isValidTrack(track)) {
-      console.error('Invalid track selected');
-      return;
-    }
+    if (!isValidTrack(track)) return;
     
     const songString = trackToString(track);
-    if (!songString) {
-      console.error('Could not convert track to string');
-      return;
-    }
+    if (!songString) return;
     
     if (selectedSongs.includes(songString)) {
-      // Remove if already selected
-      const newSongs = selectedSongs.filter(s => s !== songString);
-      onSongsChange(newSongs);
+      onSongsChange(selectedSongs.filter(s => s !== songString));
     } else {
-      // Add if not at max
       if (selectedSongs.length < maxSongs) {
-        const newSongs = [...selectedSongs, songString];
-        onSongsChange(newSongs);
-        // Save full track data if callback provided
+        onSongsChange([...selectedSongs, songString]);
         if (onTrackSave) {
           onTrackSave(track);
         }
@@ -237,285 +215,284 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
     return songString ? selectedSongs.includes(songString) : false;
   };
 
-
   if (loading && !isConnected) {
     return (
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <div className="flex items-center justify-center py-8">
-          <Loader2 className="w-6 h-6 animate-spin text-[#93B0C8]" />
-        </div>
+      <div style={{ padding: '16px', textAlign: 'center' }}>
+        <Loader2 className="w-6 h-6 animate-spin text-gray-400" style={{ margin: '0 auto' }} />
       </div>
     );
   }
 
   if (!isConnected) {
     return (
-      <div className="relative overflow-hidden bg-gradient-to-br from-[#1DB954] via-[#1ed760] to-[#1DB954] rounded-2xl p-6 sm:p-8 text-white shadow-2xl shadow-[#1DB954]/30">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.2),transparent_50%)]" />
-        <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0">
-          <div className="flex items-center space-x-4 flex-1 min-w-0">
-            <div className="relative">
-              <div className="absolute inset-0 bg-white/30 rounded-xl blur-lg animate-pulse" />
-              <div className="relative p-3 bg-white/20 rounded-xl backdrop-blur-sm">
-                <Music className="w-6 h-6 sm:w-7 sm:h-7 flex-shrink-0 drop-shadow-lg" />
-              </div>
-            </div>
-            <div className="min-w-0 flex-1">
-              <h3 className="font-bold text-lg sm:text-xl mb-1 drop-shadow-md">Connect to Spotify</h3>
-              <p className="text-sm sm:text-base opacity-95">Import your playlists and favorite songs</p>
-            </div>
+      <div style={{ padding: '16px', border: '1px solid #e5e7eb', borderRadius: '8px', backgroundColor: '#fff' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
+          <Music className="w-5 h-5 text-[#1DB954]" />
+          <div>
+            <div style={{ fontWeight: '600', fontSize: '14px', color: '#111827' }}>Connect to Spotify</div>
+            <div style={{ fontSize: '12px', color: '#6b7280' }}>Import your playlists and songs</div>
           </div>
-          <button
-            onClick={handleConnect}
-            className="w-full sm:w-auto px-8 py-4 sm:px-6 sm:py-3 min-h-[52px] bg-white text-[#1DB954] rounded-xl hover:bg-gray-50 active:scale-95 transition-all font-bold text-base sm:text-sm shadow-xl hover:shadow-2xl hover:scale-105"
-          >
-            Connect
-          </button>
         </div>
+        <button
+          onClick={handleConnect}
+          style={{
+            width: '100%',
+            padding: '8px 16px',
+            backgroundColor: '#1DB954',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '6px',
+            fontWeight: '500',
+            fontSize: '14px',
+            cursor: 'pointer'
+          }}
+        >
+          Connect
+        </button>
       </div>
     );
   }
 
   return (
-    <div className="bg-gradient-to-br from-white via-[#FAF9F7] to-white rounded-2xl border border-gray-200/40 shadow-xl shadow-gray-200/20 backdrop-blur-sm flex flex-col max-h-[70vh] w-full box-border" style={{ maxWidth: '100%', overflowX: 'hidden' }}>
-      {/* Header - Fixed at top */}
-      <div className="flex-shrink-0 p-4 sm:p-5 md:p-6 border-b border-gray-200/40 w-full box-border" style={{ maxWidth: '100%' }}>
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0 w-full box-border" style={{ maxWidth: '100%' }}>
-          <div className="flex items-center space-x-4 min-w-0 flex-shrink" style={{ maxWidth: 'calc(100% - 120px)' }}>
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-[#1DB954] to-[#1ed760] rounded-xl blur-md opacity-30 animate-pulse" />
-              <div className="relative p-2.5 sm:p-3 bg-gradient-to-br from-[#1DB954]/20 to-[#1ed760]/20 rounded-xl border border-[#1DB954]/30">
-                <Music className="w-5 h-5 sm:w-6 sm:h-6 text-[#1DB954] flex-shrink-0" />
-              </div>
-            </div>
-            <div className="min-w-0 overflow-hidden" style={{ maxWidth: '100%' }}>
-              <h3 className="font-bold text-base sm:text-lg text-[#2C2A29] bg-gradient-to-r from-[#2C2A29] to-[#2C2A29]/80 bg-clip-text truncate">
-                Select Songs from Spotify
-              </h3>
-              <p className="text-xs text-gray-500 mt-1 truncate">Browse your playlists or search for songs</p>
-            </div>
-          </div>
-          <div className="px-3 py-1.5 sm:py-2 bg-gradient-to-r from-[#A5B99A]/15 to-[#93B0C8]/15 rounded-full text-xs font-semibold text-[#2C2A29] border border-[#A5B99A]/30 shadow-sm whitespace-nowrap flex-shrink-0">
-            {selectedSongs.length} / {maxSongs}
-          </div>
-        </div>
+    <div style={{ border: '1px solid #e5e7eb', borderRadius: '8px', backgroundColor: '#fff', overflow: 'hidden', maxWidth: '100%', boxSizing: 'border-box' }}>
+      {/* Header */}
+      <div style={{ padding: '12px', borderBottom: '1px solid #e5e7eb', display: 'flex', justifyContent: 'space-between', alignItems: 'center', maxWidth: '100%', boxSizing: 'border-box' }}>
+        <div style={{ fontSize: '14px', fontWeight: '600', color: '#111827' }}>Select Songs</div>
+        <div style={{ fontSize: '12px', color: '#6b7280' }}>{selectedSongs.length}/{maxSongs}</div>
       </div>
 
-      {/* Tabs - Fixed at top */}
-      <div className="flex-shrink-0 flex space-x-2 border-b-2 border-gray-200/40 px-4 sm:px-5 md:px-6 w-full box-border" style={{ maxWidth: '100%' }}>
+      {/* Tabs */}
+      <div style={{ display: 'flex', borderBottom: '1px solid #e5e7eb', maxWidth: '100%', overflowX: 'hidden' }}>
         <button
           onClick={() => setActiveTab('playlists')}
-          className={`flex-1 sm:flex-none px-4 sm:px-5 md:px-6 py-2.5 sm:py-3 text-sm font-semibold transition-all duration-200 min-h-[44px] sm:min-h-[auto] relative ${
-            activeTab === 'playlists'
-              ? 'text-[#93B0C8]'
-              : 'text-gray-500 hover:text-gray-700 active:text-gray-900'
-          }`}
+          style={{
+            flex: 1,
+            padding: '10px',
+            fontSize: '14px',
+            fontWeight: '500',
+            border: 'none',
+            backgroundColor: activeTab === 'playlists' ? '#f3f4f6' : '#fff',
+            color: activeTab === 'playlists' ? '#1DB954' : '#6b7280',
+            cursor: 'pointer',
+            borderBottom: activeTab === 'playlists' ? '2px solid #1DB954' : 'none',
+            boxSizing: 'border-box'
+          }}
         >
-          <span className="relative z-10">My Playlists</span>
-          {activeTab === 'playlists' && (
-            <>
-              <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[#93B0C8] to-[#A5B99A] rounded-t-full" />
-              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#93B0C8] rounded-t-full opacity-50 blur-sm" />
-            </>
-          )}
+          Playlists
         </button>
         <button
           onClick={() => setActiveTab('search')}
-          className={`flex-1 sm:flex-none px-4 sm:px-5 md:px-6 py-2.5 sm:py-3 text-sm font-semibold transition-all duration-200 min-h-[44px] sm:min-h-[auto] relative ${
-            activeTab === 'search'
-              ? 'text-[#93B0C8]'
-              : 'text-gray-500 hover:text-gray-700 active:text-gray-900'
-          }`}
+          style={{
+            flex: 1,
+            padding: '10px',
+            fontSize: '14px',
+            fontWeight: '500',
+            border: 'none',
+            backgroundColor: activeTab === 'search' ? '#f3f4f6' : '#fff',
+            color: activeTab === 'search' ? '#1DB954' : '#6b7280',
+            cursor: 'pointer',
+            borderBottom: activeTab === 'search' ? '2px solid #1DB954' : 'none',
+            boxSizing: 'border-box'
+          }}
         >
-          <span className="relative z-10">Search Songs</span>
-          {activeTab === 'search' && (
-            <>
-              <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[#93B0C8] to-[#A5B99A] rounded-t-full" />
-              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#93B0C8] rounded-t-full opacity-50 blur-sm" />
-            </>
-          )}
+          Search
         </button>
       </div>
 
-      {/* Content Area - Scrollable */}
-      <div className="flex-1 overflow-y-auto p-4 sm:p-5 md:p-6 w-full box-border" style={{ maxWidth: '100%', overflowX: 'hidden' }}>
-        {/* Playlists Tab */}
+      {/* Content */}
+      <div style={{ maxHeight: '60vh', overflowY: 'auto', overflowX: 'hidden', maxWidth: '100%', boxSizing: 'border-box' }}>
         {activeTab === 'playlists' && (
-          <div className="h-full flex flex-col">
-            {playlists.length === 0 ? (
-              <div className="text-center py-8 text-gray-500">
-                <Music className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                <p>No playlists found</p>
-              </div>
-            ) : (
-              <>
-                <div className="space-y-3 sm:space-y-4 mb-6 w-full box-border" style={{ maxWidth: '100%' }}>
-                  {playlists.map((playlist) => (
-                    <button
-                      key={playlist.id}
-                      onClick={() => handlePlaylistSelect(playlist.id)}
-                      className={`group w-full max-w-full text-left p-3.5 sm:p-4 md:p-5 min-h-[60px] rounded-xl border-2 transition-all duration-200 active:scale-[0.97] ${
-                        selectedPlaylist === playlist.id
-                          ? 'border-[#93B0C8] bg-gradient-to-r from-[#93B0C8]/15 via-[#A5B99A]/10 to-[#93B0C8]/15 shadow-lg shadow-[#93B0C8]/20 scale-[1.02]'
-                          : 'border-gray-200/60 hover:border-[#93B0C8]/40 hover:bg-gradient-to-r hover:from-gray-50/80 hover:to-gray-50/50 hover:shadow-md active:bg-gray-50'
-                      }`}
-                    >
-                      <div className="font-semibold text-sm sm:text-base text-[#2C2A29] truncate mb-1">{String(playlist.name || 'Unknown Playlist')}</div>
-                      {playlist.tracks && (
-                        <div className="text-xs sm:text-sm text-gray-500 font-medium">
-                          {playlist.tracks.total} {playlist.tracks.total === 1 ? 'track' : 'tracks'}
-                        </div>
-                      )}
-                    </button>
-                  ))}
+          <div style={{ padding: '12px', maxWidth: '100%', boxSizing: 'border-box' }}>
+            {selectedPlaylist && playlistTracks.length > 0 && (
+              <div ref={tracksSectionRef} style={{ marginBottom: '16px', paddingBottom: '16px', borderBottom: '2px solid #1DB954' }}>
+                <div style={{ fontSize: '13px', fontWeight: '600', color: '#111827', marginBottom: '8px' }}>
+                  Songs ({playlistTracks.length})
                 </div>
-
-                {/* Playlist Tracks */}
-                {selectedPlaylist && playlistTracks.length > 0 && (
-                  <div className="pt-6 border-t-2 border-gray-200/40">
-                    <div className="mb-5">
-                      <div className="text-base sm:text-lg font-bold text-[#2C2A29] bg-gradient-to-r from-[#2C2A29] to-[#2C2A29]/80 bg-clip-text">
-                        Select songs from this playlist
-                      </div>
-                    </div>
-                    <div className="space-y-3 sm:space-y-4 w-full box-border" style={{ maxWidth: '100%' }}>
-                      {playlistTracks.map((track) => {
-                        if (!isValidTrack(track)) return null;
-                        return (
-                          <button
-                            key={track.id}
-                            onClick={() => handleSelectTrack(track)}
-                            className={`group w-full max-w-full text-left p-3 sm:p-4 md:p-5 min-h-[72px] rounded-xl border-2 transition-all duration-200 active:scale-[0.97] overflow-hidden ${
-                              isTrackSelected(track)
-                                ? 'border-[#A5B99A] bg-gradient-to-r from-[#A5B99A]/20 via-[#A5B99A]/10 to-[#A5B99A]/20 shadow-lg shadow-[#A5B99A]/20'
-                                : 'border-gray-200/60 hover:border-[#A5B99A]/40 hover:bg-gradient-to-r hover:from-gray-50/80 hover:to-gray-50/50 hover:shadow-md active:bg-gray-50'
-                            }`}
-                          >
-                            <div className="flex items-center justify-between gap-3 sm:gap-5 min-w-0 max-w-full">
-                              <div className="flex-1 min-w-0 pr-2">
-                                <div className="font-semibold text-sm sm:text-base text-[#2C2A29] truncate mb-1">
-                                  {String(track.name || 'Unknown')}
-                                </div>
-                                <div className="text-xs sm:text-sm text-gray-600 truncate font-medium">
-                                  {String(track.artist || 'Unknown Artist')}
-                                </div>
-                              </div>
-                              <div className="flex items-center space-x-3 sm:space-x-4 flex-shrink-0">
-                                <div
-                                  onClick={(e) => e.stopPropagation()}
-                                  className="relative w-[48px] h-[48px] sm:w-[56px] sm:h-[56px] flex-shrink-0"
-                                >
-                                  <div className="absolute inset-0 w-full h-full max-w-full max-h-full overflow-hidden rounded-full">
-                                    <TrackPlayer
-                                      trackId={track.id}
-                                      trackName={String(track.name || 'Unknown')}
-                                      artistName={String(track.artist || 'Unknown Artist')}
-                                      albumArtUrl={track.album_art_url}
-                                      spotifyUrl={track.external_urls?.spotify}
-                                      className="w-full h-full max-w-full max-h-full"
-                                    />
-                                  </div>
-                                </div>
-                                {isTrackSelected(track) && (
-                                  <div className="relative">
-                                    <div className="absolute inset-0 bg-[#A5B99A]/30 rounded-full blur-md animate-pulse" />
-                                    <CheckCircle2 className="relative w-6 h-6 sm:w-7 sm:h-7 text-[#A5B99A] flex-shrink-0 drop-shadow-md" />
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-              </>
-            )}
-          </div>
-        )}
-
-        {/* Search Tab */}
-        {activeTab === 'search' && (
-          <div className="h-full flex flex-col">
-            <div className="flex flex-col sm:flex-row gap-3 mb-6 flex-shrink-0">
-              <div className="relative flex-1">
-                <div className="absolute inset-0 bg-gradient-to-r from-[#A5B99A]/20 to-[#93B0C8]/20 rounded-xl blur-md opacity-50" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                  placeholder="Search for songs..."
-                  className="relative w-full px-5 py-4 sm:py-3 text-base border-2 border-gray-200/60 rounded-xl focus:ring-2 focus:ring-[#A5B99A] focus:border-[#A5B99A] bg-white/80 backdrop-blur-sm transition-all shadow-sm hover:shadow-md"
-                />
-              </div>
-              <button
-                onClick={handleSearch}
-                disabled={searching || !searchQuery.trim()}
-                className="px-6 py-4 sm:px-6 sm:py-3 min-h-[52px] sm:min-h-[auto] bg-gradient-to-r from-[#93B0C8] to-[#A5B99A] text-white rounded-xl hover:from-[#A5B99A] hover:to-[#93B0C8] active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 font-bold text-base shadow-lg hover:shadow-xl hover:scale-105"
-              >
-                {searching ? (
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                ) : (
-                  <Search className="w-5 h-5" />
-                )}
-                <span>Search</span>
-              </button>
-            </div>
-
-            {searchResults.length > 0 && (
-              <div className="flex-1 min-h-0">
-                <div className="space-y-3 sm:space-y-4 w-full box-border" style={{ maxWidth: '100%' }}>
-                  {searchResults.map((track) => {
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  {playlistTracks.map((track) => {
                     if (!isValidTrack(track)) return null;
                     return (
                       <button
                         key={track.id}
                         onClick={() => handleSelectTrack(track)}
-                        className={`group w-full max-w-full text-left p-3 sm:p-4 md:p-5 min-h-[72px] rounded-xl border-2 transition-all duration-200 active:scale-[0.97] overflow-hidden ${
-                          isTrackSelected(track)
-                            ? 'border-[#A5B99A] bg-gradient-to-r from-[#A5B99A]/20 via-[#A5B99A]/10 to-[#A5B99A]/20 shadow-lg shadow-[#A5B99A]/20'
-                            : 'border-gray-200/60 hover:border-[#A5B99A]/40 hover:bg-gradient-to-r hover:from-gray-50/80 hover:to-gray-50/50 hover:shadow-md active:bg-gray-50'
-                        }`}
+                        style={{
+                          width: '100%',
+                          padding: '8px',
+                          textAlign: 'left',
+                          border: isTrackSelected(track) ? '1px solid #1DB954' : '1px solid #e5e7eb',
+                          borderRadius: '6px',
+                          backgroundColor: isTrackSelected(track) ? '#f0fdf4' : '#fff',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          maxWidth: '100%',
+                          boxSizing: 'border-box'
+                        }}
                       >
-                        <div className="flex items-center justify-between gap-3 sm:gap-5 min-w-0 max-w-full">
-                          <div className="flex-1 min-w-0 pr-2">
-                            <div className="font-semibold text-sm sm:text-base text-[#2C2A29] truncate mb-1">
-                              {String(track.name || 'Unknown')}
-                            </div>
-                            <div className="text-xs sm:text-sm text-gray-600 truncate font-medium">
-                              {String(track.artist || 'Unknown Artist')}
-                            </div>
+                        <div style={{ width: '28px', height: '28px', flexShrink: 0, minWidth: '28px', maxWidth: '28px' }}>
+                          <TrackPlayer
+                            trackId={track.id}
+                            trackName={String(track.name || 'Unknown')}
+                            artistName={String(track.artist || 'Unknown Artist')}
+                            albumArtUrl={track.album_art_url}
+                            spotifyUrl={track.external_urls?.spotify}
+                            className="w-full h-full"
+                          />
+                        </div>
+                        <div style={{ flex: 1, minWidth: 0, overflow: 'hidden' }}>
+                          <div style={{ fontSize: '13px', fontWeight: '500', color: '#111827', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {String(track.name || 'Unknown')}
                           </div>
-                          <div className="flex items-center space-x-3 sm:space-x-4 flex-shrink-0">
-                            <div
-                              onClick={(e) => e.stopPropagation()}
-                              className="relative w-[56px] h-[56px] flex-shrink-0"
-                            >
-                              <div className="absolute inset-0 w-full h-full max-w-full max-h-full overflow-hidden rounded-full">
-                                <TrackPlayer
-                                  trackId={track.id}
-                                  trackName={String(track.name || 'Unknown')}
-                                  artistName={String(track.artist || 'Unknown Artist')}
-                                  albumArtUrl={track.album_art_url}
-                                  spotifyUrl={track.external_urls?.spotify}
-                                  className="w-full h-full max-w-full max-h-full"
-                                />
-                              </div>
-                            </div>
-                            {isTrackSelected(track) && (
-                              <div className="relative">
-                                <div className="absolute inset-0 bg-[#A5B99A]/30 rounded-full blur-md animate-pulse" />
-                                <CheckCircle2 className="relative w-6 h-6 sm:w-7 sm:h-7 text-[#A5B99A] flex-shrink-0 drop-shadow-md" />
-                              </div>
-                            )}
+                          <div style={{ fontSize: '12px', color: '#6b7280', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {String(track.artist || 'Unknown Artist')}
                           </div>
                         </div>
+                        {isTrackSelected(track) && (
+                          <CheckCircle2 className="w-5 h-5 text-[#1DB954]" style={{ flexShrink: 0, minWidth: '20px' }} />
+                        )}
                       </button>
                     );
                   })}
                 </div>
+              </div>
+            )}
+
+            {playlists.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '32px 0', color: '#6b7280', fontSize: '14px' }}>
+                <Music className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                <div>No playlists found</div>
+              </div>
+            ) : (
+              <div>
+                {selectedPlaylist && playlistTracks.length > 0 && (
+                  <div style={{ fontSize: '12px', fontWeight: '500', color: '#6b7280', marginBottom: '8px', textTransform: 'uppercase' }}>
+                    Your Playlists
+                  </div>
+                )}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  {playlists.map((playlist) => (
+                    <button
+                      key={playlist.id}
+                      onClick={() => handlePlaylistSelect(playlist.id)}
+                      style={{
+                        width: '100%',
+                        padding: '10px',
+                        textAlign: 'left',
+                        border: selectedPlaylist === playlist.id ? '1px solid #1DB954' : '1px solid #e5e7eb',
+                        borderRadius: '6px',
+                        backgroundColor: selectedPlaylist === playlist.id ? '#f0fdf4' : '#fff',
+                        cursor: 'pointer',
+                        maxWidth: '100%',
+                        boxSizing: 'border-box'
+                      }}
+                    >
+                      <div style={{ fontSize: '13px', fontWeight: '500', color: '#111827', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {String(playlist.name || 'Unknown')}
+                      </div>
+                      {playlist.tracks && (
+                        <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
+                          {playlist.tracks.total} tracks
+                        </div>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {activeTab === 'search' && (
+          <div style={{ padding: '12px', maxWidth: '100%', boxSizing: 'border-box' }}>
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', maxWidth: '100%' }}>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                placeholder="Search songs..."
+                style={{
+                  flex: 1,
+                  padding: '8px 12px',
+                  fontSize: '14px',
+                  border: '1px solid #e5e7eb',
+                  borderRadius: '6px',
+                  outline: 'none',
+                  maxWidth: 'calc(100% - 70px)',
+                  boxSizing: 'border-box'
+                }}
+              />
+              <button
+                onClick={handleSearch}
+                disabled={searching || !searchQuery.trim()}
+                style={{
+                  padding: '8px 16px',
+                  backgroundColor: '#1DB954',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '6px',
+                  fontWeight: '500',
+                  fontSize: '14px',
+                  cursor: searching || !searchQuery.trim() ? 'not-allowed' : 'pointer',
+                  opacity: searching || !searchQuery.trim() ? 0.5 : 1,
+                  minWidth: '60px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                {searching ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
+              </button>
+            </div>
+
+            {searchResults.length > 0 && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                {searchResults.map((track) => {
+                  if (!isValidTrack(track)) return null;
+                  return (
+                    <button
+                      key={track.id}
+                      onClick={() => handleSelectTrack(track)}
+                      style={{
+                        width: '100%',
+                        padding: '8px',
+                        textAlign: 'left',
+                        border: isTrackSelected(track) ? '1px solid #1DB954' : '1px solid #e5e7eb',
+                        borderRadius: '6px',
+                        backgroundColor: isTrackSelected(track) ? '#f0fdf4' : '#fff',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        maxWidth: '100%',
+                        boxSizing: 'border-box'
+                      }}
+                    >
+                      <div style={{ width: '28px', height: '28px', flexShrink: 0, minWidth: '28px', maxWidth: '28px' }}>
+                        <TrackPlayer
+                          trackId={track.id}
+                          trackName={String(track.name || 'Unknown')}
+                          artistName={String(track.artist || 'Unknown Artist')}
+                          albumArtUrl={track.album_art_url}
+                          spotifyUrl={track.external_urls?.spotify}
+                          className="w-full h-full"
+                        />
+                      </div>
+                      <div style={{ flex: 1, minWidth: 0, overflow: 'hidden' }}>
+                        <div style={{ fontSize: '13px', fontWeight: '500', color: '#111827', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          {String(track.name || 'Unknown')}
+                        </div>
+                        <div style={{ fontSize: '12px', color: '#6b7280', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          {String(track.artist || 'Unknown Artist')}
+                        </div>
+                      </div>
+                      {isTrackSelected(track) && (
+                        <CheckCircle2 className="w-5 h-5 text-[#1DB954]" style={{ flexShrink: 0, minWidth: '20px' }} />
+                      )}
+                    </button>
+                  );
+                })}
               </div>
             )}
           </div>

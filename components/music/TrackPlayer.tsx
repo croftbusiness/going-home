@@ -18,7 +18,6 @@ export default function TrackPlayer({
   spotifyUrl,
   className = '',
 }: TrackPlayerProps) {
-  // Simple icon-only button that always fits in container
   const fallbackUrl = spotifyUrl || `https://open.spotify.com/track/${trackId}`;
 
   return (
@@ -27,10 +26,11 @@ export default function TrackPlayer({
       target="_blank"
       rel="noopener noreferrer"
       onClick={(e) => e.stopPropagation()}
-      className={`w-full h-full flex items-center justify-center bg-gradient-to-br from-[#1DB954] to-[#1ed760] hover:from-[#1ed760] hover:to-[#1DB954] active:scale-95 transition-all rounded-full shadow-lg hover:shadow-xl ${className}`}
+      className={`w-full h-full flex items-center justify-center bg-[#1DB954] hover:bg-[#1ed760] active:scale-95 transition-colors rounded-full ${className}`}
+      style={{ maxWidth: '100%', maxHeight: '100%', boxSizing: 'border-box' }}
       aria-label={`Play ${trackName} by ${artistName} on Spotify`}
     >
-      <Play className="w-6 h-6 text-white fill-white" />
+      <Play className="w-3.5 h-3.5 text-white fill-white" style={{ maxWidth: '100%', maxHeight: '100%' }} />
     </a>
   );
 }
