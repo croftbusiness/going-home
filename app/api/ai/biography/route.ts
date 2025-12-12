@@ -113,10 +113,10 @@ Create a complete, polished biography from this content.`;
         } else if (sections && Object.keys(sections).length > 0) {
           // Generate from filled sections
           const sectionsText = Object.entries(sections)
-            .filter(([_, value]) => value && value.trim().length > 0)
+            .filter(([_, value]) => value && typeof value === 'string' && value.trim().length > 0)
             .map(([key, value]) => {
               const sectionName = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()).trim();
-              return `${sectionName}:\n${value}`;
+              return `${sectionName}:\n${value as string}`;
             })
             .join('\n\n');
           
