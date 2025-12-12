@@ -56,20 +56,23 @@ export default function SwipeCardFlow({ onComplete, onPause }: SwipeCardFlowProp
     try {
       setLoading(true);
       
-      // Wait for session to load first
-      await getOrCreateSession();
+      // Wait for session to load first - get the session from the hook
+      const currentSession = await getOrCreateSession();
       
       // Check if returning from a card (from_card=true)
       if (fromCard && cardId) {
         // User completed/engaged with a card, show completion state
         // Fetch card details to get title
         try {
-          const cardRes = await fetch(`/api/user/cards?session_id=${session?.id}`);
-          if (cardRes.ok) {
-            const cardData = await cardRes.json();
-            const card = cardData.cards?.find((c: Card) => c.id === cardId);
-            if (card) {
-              setCompletedCardTitle(card.title);
+          const sessionId = currentSession?.id || session?.id;
+          if (sessionId) {
+            const cardRes = await fetch(`/api/user/cards?session_id=${sessionId}`);
+            if (cardRes.ok) {
+              const cardData = await cardRes.json();
+              const card = cardData.cards?.find((c: Card) => c.id === cardId);
+              if (card) {
+                setCompletedCardTitle(card.title);
+              }
             }
           }
         } catch (err) {
@@ -81,8 +84,9 @@ export default function SwipeCardFlow({ onComplete, onPause }: SwipeCardFlowProp
         return;
       }
 
-      // Check if resuming existing session
-      if (session && hasPendingCards()) {
+      // Check if resuming existing session (use currentSession from above or session from hook)
+      const activeSession = currentSession || session;
+      if (activeSession && hasPendingCards()) {
         await loadSessionCards();
         setLoading(false);
         return;
@@ -98,17 +102,24 @@ export default function SwipeCardFlow({ onComplete, onPause }: SwipeCardFlowProp
   };
 
   const loadSessionCards = async () => {
-    if (!session) return;
+    const activeSession = session;
+    if (!activeSession) {
+      console.warn('No session available to load cards');
+      return;
+    }
 
     try {
-      const response = await fetch(`/api/user/cards?session_id=${session.id}`);
+      const response = await fetch(`/api/user/cards?session_id=${activeSession.id}`);
       if (response.ok) {
         const data = await response.json();
         setCards(data.cards || []);
         setCurrentIndex(0);
+      } else {
+        console.error('Failed to load session cards:', response.status);
       }
     } catch (error) {
       console.error('Error loading session cards:', error);
+      setError('Failed to load session cards');
     }
   };
 
@@ -398,6 +409,7 @@ export default function SwipeCardFlow({ onComplete, onPause }: SwipeCardFlowProp
       }, 500);
       return () => clearTimeout(timer);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cards.length, loading, preferenceChecked, showPreferencePrompt, showCompletionState, error]);
 
   if (cards.length === 0 && !loading && preferenceChecked && !showPreferencePrompt && !showCompletionState) {
