@@ -44,6 +44,7 @@ export default function LettersPage() {
   const [showForm, setShowForm] = useState(false);
   const [showAIGenerator, setShowAIGenerator] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [expandedLetterId, setExpandedLetterId] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     recipientId: '',
     recipientRelationship: '',
@@ -96,6 +97,24 @@ export default function LettersPage() {
     e.preventDefault();
     setError('');
 
+    // Client-side validation
+    if (contacts.length > 0 && !formData.recipientId) {
+      setError('Please select a recipient');
+      return;
+    }
+    if (!formData.title || formData.title.trim().length === 0) {
+      setError('Please enter a title');
+      return;
+    }
+    if (!formData.messageText || formData.messageText.trim().length === 0) {
+      setError('Please enter a message');
+      return;
+    }
+    if (formData.releaseType === 'on_date' && !formData.releaseDate) {
+      setError('Please select a release date');
+      return;
+    }
+
     try {
       const url = editingId ? `/api/user/letters?id=${editingId}` : '/api/user/letters';
       const method = editingId ? 'PUT' : 'POST';
@@ -106,7 +125,10 @@ export default function LettersPage() {
         body: JSON.stringify(formData),
       });
 
-      if (!response.ok) throw new Error('Failed to save letter');
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to save letter');
+      }
 
       await loadData();
       setSuccess(true);
@@ -127,8 +149,8 @@ export default function LettersPage() {
         autoEmailEnabled: true,
       });
       setTimeout(() => setSuccess(false), 3000);
-    } catch (error) {
-      setError('Failed to save letter');
+    } catch (error: any) {
+      setError(error.message || 'Failed to save letter');
     }
   };
 
@@ -175,9 +197,9 @@ export default function LettersPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAF9F7]">
+    <div className="min-h-screen bg-[#FAF9F7] overflow-x-hidden">
       <header className="bg-[#FCFAF7] border-b border-gray-200">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+        <div className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-8 py-3 sm:py-4 lg:py-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-center space-x-3 sm:space-x-4 min-w-0 flex-1">
               <Link href="/dashboard" className="p-2 hover:bg-white rounded-lg transition-colors flex-shrink-0">
@@ -234,7 +256,7 @@ export default function LettersPage() {
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+      <main className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-6 lg:py-8 overflow-x-hidden">
         {/* Why This Helps Loved Ones */}
         {!showForm && !showAIGenerator && (
           <div className="bg-gradient-to-br from-white via-[#FCFAF7] to-white rounded-xl p-6 mb-6 shadow-sm border border-gray-100">
@@ -296,11 +318,11 @@ export default function LettersPage() {
         )}
 
         {showForm && (
-          <div className="bg-[#FCFAF7] rounded-lg p-6 shadow-sm mb-6">
-            <h2 className="text-lg font-medium text-[#2C2A29] mb-4">
+          <div className="bg-[#FCFAF7] rounded-lg p-4 sm:p-6 shadow-sm mb-6 overflow-x-hidden">
+            <h2 className="text-base sm:text-lg font-medium text-[#2C2A29] mb-4">
               {editingId ? 'Edit Letter' : 'Write a New Letter'}
             </h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4" noValidate>
               <div>
                 <label className="block text-sm font-medium text-[#2C2A29] mb-1">
                   Recipient *
@@ -321,7 +343,7 @@ export default function LettersPage() {
                       });
                     }}
                     required
-                    className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent cursor-pointer"
+                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent cursor-pointer text-sm sm:text-base min-h-[44px] touch-target"
                   >
                     <option value="">Select recipient</option>
                     {contacts.map(contact => (
@@ -362,7 +384,7 @@ export default function LettersPage() {
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                   required
                   placeholder="e.g., A Message for My Daughter"
-                  className="w-full px-4 py-3 text-base bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent touch-target"
+                  className="w-full px-3 sm:px-4 py-3 sm:py-3.5 text-sm sm:text-base bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent touch-target min-h-[44px]"
                 />
               </div>
 
@@ -397,8 +419,8 @@ export default function LettersPage() {
                     type="date"
                     value={formData.releaseDate}
                     onChange={(e) => setFormData({ ...formData, releaseDate: e.target.value })}
-                    required
-                    className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent"
+                    required={formData.releaseType === 'on_date'}
+                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-sm sm:text-base min-h-[44px] touch-target"
                   />
                 </div>
               )}
@@ -412,7 +434,7 @@ export default function LettersPage() {
                     <select
                       value={formData.milestoneType}
                       onChange={(e) => setFormData({ ...formData, milestoneType: e.target.value as any })}
-                      className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent mb-4"
+                      className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent mb-4 text-sm sm:text-base min-h-[44px] touch-target"
                     >
                       <option value="birthday">Birthday</option>
                       <option value="graduation">Graduation</option>
@@ -432,7 +454,7 @@ export default function LettersPage() {
                         value={formData.milestoneDescription}
                         onChange={(e) => setFormData({ ...formData, milestoneDescription: e.target.value })}
                         placeholder="e.g., When you turn 25"
-                        className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent"
+                        className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-sm sm:text-base min-h-[44px] touch-target"
                       />
                     </div>
                   )}
@@ -444,7 +466,7 @@ export default function LettersPage() {
                       type="date"
                       value={formData.milestoneDate}
                       onChange={(e) => setFormData({ ...formData, milestoneDate: e.target.value })}
-                      className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent"
+                      className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-sm sm:text-base min-h-[44px] touch-target"
                     />
                     <p className="text-xs text-[#2C2A29] opacity-60 mt-1">
                       Leave blank if the date is unknown
@@ -477,7 +499,7 @@ export default function LettersPage() {
                   required
                   rows={8}
                   placeholder="Write your heartfelt message here..."
-                  className="w-full px-4 py-3 text-base bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent mb-4 touch-target resize-y"
+                  className="w-full px-3 sm:px-4 py-3 sm:py-3.5 text-sm sm:text-base bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent mb-4 touch-target resize-y break-words overflow-wrap-anywhere"
                 />
                 <LegacyMessageCoach
                   initialText={formData.messageText}
@@ -506,20 +528,20 @@ export default function LettersPage() {
                 </div>
               )}
 
-              <div className="flex justify-end space-x-4 pt-4">
+              <div className="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-4 pt-4">
                 <button
                   type="button"
                   onClick={() => {
                     setShowForm(false);
                     setEditingId(null);
                   }}
-                  className="px-6 py-2 border border-gray-300 text-[#2C2A29] rounded-lg hover:bg-gray-50"
+                  className="w-full sm:w-auto px-6 py-3 border border-gray-300 text-[#2C2A29] rounded-lg hover:bg-gray-50 transition-colors text-sm sm:text-base font-medium touch-target min-h-[44px]"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2 bg-[#A5B99A] text-white rounded-lg hover:bg-[#93B0C8] transition-colors"
+                  className="w-full sm:w-auto px-6 py-3 bg-[#A5B99A] text-white rounded-lg hover:bg-[#93B0C8] transition-colors text-sm sm:text-base font-medium touch-target min-h-[44px]"
                 >
                   {editingId ? 'Update Letter' : 'Save Letter'}
                 </button>
@@ -538,40 +560,67 @@ export default function LettersPage() {
           </div>
         ) : (
           <div className="space-y-4">
-            {letters.map((letter) => (
-              <div key={letter.id} className="bg-[#FCFAF7] rounded-lg p-6 shadow-sm">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-2 mb-2">
-                      <Mail className="w-5 h-5 text-[#A5B99A]" />
-                      <h3 className="font-medium text-[#2C2A29]">{letter.title}</h3>
+            {letters.map((letter) => {
+              const isExpanded = expandedLetterId === letter.id;
+              return (
+                <div 
+                  key={letter.id} 
+                  className="bg-[#FCFAF7] rounded-lg shadow-sm overflow-hidden"
+                >
+                  <div 
+                    className="p-4 sm:p-6 cursor-pointer"
+                    onClick={() => setExpandedLetterId(isExpanded ? null : letter.id)}
+                  >
+                    <div className="flex items-start justify-between gap-3 sm:gap-4">
+                      <div className="flex-1 min-w-0 overflow-hidden">
+                        <div className="flex items-center space-x-2 mb-2">
+                          <Mail className="w-5 h-5 text-[#A5B99A] flex-shrink-0" />
+                          <h3 className="font-medium text-[#2C2A29] text-base sm:text-lg break-words overflow-wrap-anywhere">{letter.title}</h3>
+                        </div>
+                        <p className="text-sm text-[#2C2A29] opacity-70 mb-2 break-words overflow-wrap-anywhere">
+                          To: {letter.recipientName || 'Unknown'} ({letter.recipientRelationship})
+                        </p>
+                        {!isExpanded ? (
+                          <p className="text-sm text-[#2C2A29] line-clamp-3 break-words overflow-wrap-anywhere">{letter.messageText}</p>
+                        ) : (
+                          <div className="mt-4 pt-4 border-t border-gray-200 overflow-x-hidden">
+                            <p className="text-sm sm:text-base text-[#2C2A29] whitespace-pre-wrap break-words overflow-wrap-anywhere word-break-break-word max-w-full">
+                              {letter.messageText}
+                            </p>
+                          </div>
+                        )}
+                        <p className="text-xs text-[#2C2A29] opacity-50 mt-3 break-words overflow-wrap-anywhere">
+                          {new Date(letter.createdAt).toLocaleDateString()}
+                          {letter.visibleAfterDeath && ' • Only visible after death'}
+                        </p>
+                      </div>
+                      <div className="flex items-start space-x-2 flex-shrink-0">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleEdit(letter);
+                          }}
+                          className="p-2.5 text-[#93B0C8] hover:bg-white rounded-lg transition-colors touch-target min-h-[44px] min-w-[44px] flex items-center justify-center flex-shrink-0"
+                          aria-label="Edit letter"
+                        >
+                          <Edit className="w-5 h-5" />
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDelete(letter.id);
+                          }}
+                          className="p-2.5 text-red-500 hover:bg-white rounded-lg transition-colors touch-target min-h-[44px] min-w-[44px] flex items-center justify-center flex-shrink-0"
+                          aria-label="Delete letter"
+                        >
+                          <Trash2 className="w-5 h-5" />
+                        </button>
+                      </div>
                     </div>
-                    <p className="text-sm text-[#2C2A29] opacity-70 mb-2">
-                      To: {letter.recipientName || 'Unknown'} ({letter.recipientRelationship})
-                    </p>
-                    <p className="text-sm text-[#2C2A29] line-clamp-3">{letter.messageText}</p>
-                    <p className="text-xs text-[#2C2A29] opacity-50 mt-3">
-                      {new Date(letter.createdAt).toLocaleDateString()}
-                      {letter.visibleAfterDeath && ' • Only visible after death'}
-                    </p>
-                  </div>
-                  <div className="flex items-center space-x-2 ml-4">
-                    <button
-                      onClick={() => handleEdit(letter)}
-                      className="p-2 text-[#93B0C8] hover:bg-white rounded-lg transition-colors"
-                    >
-                      <Edit className="w-5 h-5" />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(letter.id)}
-                      className="p-2 text-red-500 hover:bg-white rounded-lg transition-colors"
-                    >
-                      <Trash2 className="w-5 h-5" />
-                    </button>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </main>
