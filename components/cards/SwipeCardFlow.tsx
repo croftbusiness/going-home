@@ -137,14 +137,19 @@ export default function SwipeCardFlow({ onComplete, onPause }: SwipeCardFlowProp
       const response = await fetch('/api/user/cards');
       
       if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error('Failed to fetch cards:', response.status, errorData);
         throw new Error('Failed to fetch cards');
       }
 
       const data = await response.json();
       const fetchedCards = data.cards || [];
       
+      console.log('Fetched cards:', fetchedCards.length, fetchedCards);
+      
       if (fetchedCards.length === 0) {
         // No cards available, go to dashboard
+        console.log('No cards available, redirecting to dashboard');
         onComplete();
         return;
       }

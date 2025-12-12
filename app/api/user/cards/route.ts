@@ -61,12 +61,27 @@ export async function GET(request: Request) {
 
     // Get cards that aren't snoozed and haven't been shown recently
     const now = new Date().toISOString();
-    const { data: availableCards } = await db
+    let { data: availableCards } = await db
       .from('user_cards')
       .select('*')
       .eq('user_id', userId)
       .or(`snoozed_until.is.null,snoozed_until.lt.${now}`)
       .order('priority', { ascending: false });
+
+    // If no cards exist, create default cards for this user
+    if (!availableCards || availableCards.length === 0) {
+      await createDefaultCards(db, userId, incompleteSections);
+      
+      // Fetch again after creating defaults
+      const { data: newCards } = await db
+        .from('user_cards')
+        .select('*')
+        .eq('user_id', userId)
+        .or(`snoozed_until.is.null,snoozed_until.lt.${now}`)
+        .order('priority', { ascending: false });
+      
+      availableCards = newCards;
+    }
 
     if (!availableCards || availableCards.length === 0) {
       return NextResponse.json({ cards: [] });
@@ -136,6 +151,92 @@ async function getIncompleteSections(db: any, userId: string): Promise<string[]>
   return incomplete;
 }
 
+async function createDefaultCards(db: any, userId: string, incompleteSections: string[]) {
+  const defaultCards = [];
+  
+  // Personal Details card (always create if incomplete)
+  if (incompleteSections.includes('personalDetails')) {
+    defaultCards.push({
+      user_id: userId,
+      card_type: 'action',
+      title: 'Complete Your Personal Details',
+      description: 'Add your name, address, and contact information to get started with your planning.',
+      linked_section: '/dashboard/personal-details',
+      priority: 10,
+      emotional_weight: 'light',
+    });
+  }
+  
+  // Documents card
+  if (incompleteSections.includes('documents')) {
+    defaultCards.push({
+      user_id: userId,
+      card_type: 'action',
+      title: 'Upload Important Documents',
+      description: 'Store your will, IDs, insurance papers, and other important documents securely.',
+      linked_section: '/dashboard/documents',
+      priority: 9,
+      emotional_weight: 'light',
+    });
+  }
+  
+  // Trusted Contacts card
+  if (incompleteSections.includes('trustedContacts')) {
+    defaultCards.push({
+      user_id: userId,
+      card_type: 'action',
+      title: 'Add Trusted Contacts',
+      description: 'Designate family members or friends who should have access to your information.',
+      linked_section: '/dashboard/trusted-contacts',
+      priority: 8,
+      emotional_weight: 'light',
+    });
+  }
+  
+  // Medical Contacts card
+  if (incompleteSections.includes('medicalContacts')) {
+    defaultCards.push({
+      user_id: userId,
+      card_type: 'action',
+      title: 'Add Medical & Legal Contacts',
+      description: 'Include your physician and attorney information for your loved ones.',
+      linked_section: '/dashboard/medical-contacts',
+      priority: 7,
+      emotional_weight: 'light',
+    });
+  }
+  
+  // Affirmation card (always add at least one)
+  defaultCards.push({
+    user_id: userId,
+    card_type: 'affirmation',
+    title: 'You\'re Taking Important Steps',
+    description: 'Planning ahead is a gift to your loved ones. Every detail you add helps ensure your wishes are honored.',
+    linked_section: null,
+    priority: 5,
+    emotional_weight: 'light',
+  });
+  
+  // Only create if we have cards to add
+  if (defaultCards.length > 0) {
+    try {
+      console.log(`Creating ${defaultCards.length} default cards for user ${userId}`);
+      const { error } = await db.from('user_cards').insert(defaultCards);
+      if (error) {
+        console.error('Error creating default cards:', error);
+        // Don't throw - cards might already exist
+      } else {
+        console.log('Successfully created default cards');
+      }
+    } catch (error) {
+      console.error('Error creating default cards:', error);
+      // Don't throw - cards might already exist
+    }
+  } else {
+    console.log('No default cards to create - all sections complete or no incomplete sections');
+  }
+}
+
 function selectCards(
   availableCards: any[],
   incompleteSections: string[],
@@ -176,18 +277,36 @@ function selectCards(
 
     // Prioritize action cards for incomplete sections
     if (card.card_type === 'action' && card.linked_section) {
-      const sectionKey = card.linked_section.replace('/dashboard/', '').replace(/-/g, '');
+      // Extract section key from linked_section (e.g., /dashboard/personal-details -> personalDetails)
+      const sectionPath = card.linked_section.replace('/dashboard/', '');
+      const sectionKey = sectionPath.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
+      
       // If section is incomplete, prioritize it
-      if (incompleteSections.includes(sectionKey) || incompleteSections.length === 0) {
+      if (incompleteSections.includes(sectionKey)) {
         selected.push(card);
         if (card.emotional_weight === 'heavy') hasHeavyCard = true;
         continue;
       }
+      // If section is complete, skip this action card
+      continue;
     }
 
-    // Add other cards
+    // Add non-action cards (affirmations, reflections) - always include these
     selected.push(card);
     if (card.emotional_weight === 'heavy') hasHeavyCard = true;
+  }
+
+  // Ensure at least one card is returned if any cards exist
+  // (This handles edge case where all action cards are filtered but affirmations exist)
+  if (selected.length === 0 && sortedCards.length > 0) {
+    // Fallback: add first non-action card
+    const firstNonAction = sortedCards.find(card => card.card_type !== 'action');
+    if (firstNonAction) {
+      selected.push(firstNonAction);
+    } else {
+      // Last resort: add first card regardless
+      selected.push(sortedCards[0]);
+    }
   }
 
   return selected.slice(0, maxCards);
