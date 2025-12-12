@@ -435,6 +435,7 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
                     </div>
                 </button>
               ))}
+              </div>
             </div>
           )}
         </div>
