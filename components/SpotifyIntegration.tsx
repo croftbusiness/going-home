@@ -397,7 +397,10 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
                           </div>
                         </div>
                         <div className="flex items-center space-x-3 sm:space-x-4 flex-shrink-0">
-                          <div onClick={(e) => e.stopPropagation()}>
+                          <div
+                            onClick={(e) => e.stopPropagation()}
+                            className="w-[56px] h-[56px] flex items-center justify-center overflow-hidden flex-shrink-0"
+                          >
                             <TrackPlayer
                               trackId={track.id}
                               trackName={String(track.name || 'Unknown')}
@@ -477,7 +480,10 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
                           </div>
                         </div>
                         <div className="flex items-center space-x-3 sm:space-x-4 flex-shrink-0">
-                          <div onClick={(e) => e.stopPropagation()}>
+                          <div
+                            onClick={(e) => e.stopPropagation()}
+                            className="w-[56px] h-[56px] flex items-center justify-center overflow-hidden flex-shrink-0"
+                          >
                             <TrackPlayer
                               trackId={track.id}
                               trackName={String(track.name || 'Unknown')}
