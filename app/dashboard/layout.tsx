@@ -52,40 +52,47 @@ const navigation = [
   { name: 'Important Documents', href: '/dashboard/documents', icon: Upload, section: 'primary' },
   { name: 'Emergency & Trusted Contacts', href: '/dashboard/trusted-contacts', icon: Users, section: 'primary' },
   
-  // Planning & Legacy
-  { name: 'Family Legacy', href: '/dashboard/family-legacy', icon: Gift, section: 'planning' },
-  { name: 'Life Event Planning', href: '/dashboard/life-event-planning', icon: Sparkles, section: 'planning' },
-  { name: 'Life Event Cost Calculator', href: '/dashboard/funeral-cost-calculator', icon: Calculator, section: 'planning' },
-  { name: 'My Music', href: '/dashboard/my-music', icon: Music, section: 'planning' },
-  { name: 'Legacy Messages', href: '/dashboard/legacy-messages', icon: Video, section: 'planning' },
-  { name: 'Will Questionnaire', href: '/dashboard/will-questionnaire', icon: FileQuestion, section: 'planning' },
-  { name: 'Biography', href: '/dashboard/biography', icon: BookOpen, section: 'planning' },
+  // Life Events & Memorial
+  { name: 'Life Event Planning', href: '/dashboard/life-event-planning', icon: Sparkles, section: 'lifeEvents' },
+  { name: 'Life Event Preferences', href: '/dashboard/funeral-preferences', icon: FileText, section: 'lifeEvents' },
+  { name: 'My Music', href: '/dashboard/my-music', icon: Music, section: 'lifeEvents' },
+  { name: 'Life Event Cost Calculator', href: '/dashboard/funeral-cost-calculator', icon: Calculator, section: 'lifeEvents' },
+  
+  // Legacy & Messages
+  { name: 'Family Legacy', href: '/dashboard/family-legacy', icon: Gift, section: 'legacy' },
+  { name: 'Legacy Messages', href: '/dashboard/legacy-messages', icon: Video, section: 'legacy' },
+  { name: 'Biography', href: '/dashboard/biography', icon: BookOpen, section: 'legacy' },
+  
+  // Health & Care
+  { name: 'Medical & Legal', href: '/dashboard/medical-contacts', icon: Stethoscope, section: 'health' },
+  { name: 'Care Preferences & Directives', href: '/dashboard/end-of-life-directives', icon: Heart, section: 'health' },
+  { name: 'Care Checklist', href: '/dashboard/end-of-life-checklist', icon: CheckSquare, section: 'health' },
   
   // Financial & Legal
   { name: 'Assets', href: '/dashboard/assets', icon: DollarSign, section: 'financial' },
   { name: 'Insurance & Financial', href: '/dashboard/insurance-financial', icon: CreditCard, section: 'financial' },
   { name: 'Digital Accounts', href: '/dashboard/digital-accounts', icon: Key, section: 'financial' },
-  { name: 'Medical & Legal', href: '/dashboard/medical-contacts', icon: Stethoscope, section: 'financial' },
+  { name: 'Will Questionnaire', href: '/dashboard/will-questionnaire', icon: FileQuestion, section: 'financial' },
   
   // Personal & Family
   { name: 'Children\'s Wishes', href: '/dashboard/children-wishes', icon: Baby, section: 'personal' },
   { name: 'Household Info', href: '/dashboard/household', icon: HomeIcon, section: 'personal' },
-  { name: 'Care Checklist', href: '/dashboard/end-of-life-checklist', icon: CheckSquare, section: 'personal' },
-  { name: 'Care Preferences & Directives', href: '/dashboard/end-of-life-directives', icon: Heart, section: 'personal' },
   
   // Administrative
   { name: 'Access Overview', href: '/dashboard/access-overview', icon: Users, section: 'admin' },
   { name: 'Shared With Me', href: '/dashboard/shared-with-me', icon: Eye, section: 'admin' },
-  { name: 'Account Settings', href: '/dashboard/account-settings', icon: Settings, section: 'admin' },
   { name: 'Complete Summary', href: '/dashboard/final-summary', icon: FileCheck, section: 'admin' },
   { name: 'Access Rules', href: '/dashboard/release-settings', icon: Shield, section: 'admin' },
+  { name: 'Account Settings', href: '/dashboard/account-settings', icon: Settings, section: 'admin' },
 ];
 
 const sectionLabels: Record<string, string> = {
   primary: 'Quick Start',
-  planning: 'Planning & Legacy',
+  lifeEvents: 'Life Events & Memorial',
+  legacy: 'Legacy & Messages',
+  health: 'Health & Care',
   financial: 'Financial & Legal',
-  personal: 'Personal & Care',
+  personal: 'Personal & Family',
   admin: 'Settings',
 };
 

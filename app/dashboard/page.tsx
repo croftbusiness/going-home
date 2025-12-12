@@ -409,8 +409,6 @@ export default function DashboardPage() {
     },
   ];
 
-  const incompleteSections = sections.filter(s => !s.completed);
-
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#FAF9F7] via-white to-[#FAF9F7]">
@@ -571,11 +569,11 @@ export default function DashboardPage() {
         </div>
 
         {/* AI Checklist */}
-        <div className="mb-10">
+        <div className="mb-8 sm:mb-12">
           <AIChecklist />
         </div>
 
-        {/* Granted Access Section */}
+        {/* Granted Access Section - Show up to 3 */}
         {grantedAccess.length > 0 && (
           <div className="mb-8 sm:mb-12">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-3">
@@ -584,19 +582,21 @@ export default function DashboardPage() {
                   <Eye className="w-5 h-5 sm:w-6 sm:h-6 text-[#93B0C8]" />
                 </div>
                 <div>
-                  <h2 className="text-2xl sm:text-3xl font-bold text-[#2C2A29]">Granted Access</h2>
+                  <h2 className="text-xl sm:text-2xl font-bold text-[#2C2A29]">Granted Access</h2>
                   <p className="text-sm text-[#2C2A29] opacity-60 mt-0.5">People who have shared their information with you</p>
                 </div>
               </div>
-              <div className="flex items-center space-x-2 px-4 py-2 bg-[#93B0C8]/10 rounded-full">
-                <Users className="w-4 h-4 text-[#93B0C8]" />
-                <span className="text-sm font-semibold text-[#2C2A29]">
-                  {grantedAccess.length} {grantedAccess.length === 1 ? 'person' : 'people'}
-                </span>
-              </div>
+              {grantedAccess.length > 3 && (
+                <Link
+                  href="/dashboard/shared-with-me"
+                  className="text-sm text-[#93B0C8] hover:text-[#A5B99A] transition-colors font-medium"
+                >
+                  View All ({grantedAccess.length})
+                </Link>
+              )}
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-              {grantedAccess.map((access) => {
+              {grantedAccess.slice(0, 3).map((access) => {
                 const permissionCount = Object.values(access.permissions).filter(Boolean).length;
                 return (
                   <div
@@ -717,69 +717,7 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* Quick Actions / Next Steps */}
-        {incompleteSections.length > 0 && (
-          <div className="mb-8 sm:mb-12">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-3">
-              <div className="flex items-center space-x-3">
-                <div className="p-2 bg-gradient-to-br from-[#A5B99A]/20 to-[#93B0C8]/20 rounded-xl">
-                  <Zap className="w-5 h-5 sm:w-6 sm:h-6 text-[#A5B99A]" />
-                </div>
-                <div>
-                  <h2 className="text-2xl sm:text-3xl font-bold text-[#2C2A29]">Next Steps</h2>
-                  <p className="text-sm text-[#2C2A29] opacity-60 mt-0.5">Recommended actions to continue</p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-2 px-4 py-2 bg-[#A5B99A]/10 rounded-full">
-                <Circle className="w-2 h-2 fill-[#A5B99A] text-[#A5B99A]" />
-                <span className="text-sm font-semibold text-[#2C2A29]">
-                  {incompleteSections.length} remaining
-                </span>
-              </div>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-              {incompleteSections.slice(0, 3).map((section, index) => {
-                const Icon = section.icon;
-                return (
-                  <Link
-                    key={section.href}
-                    href={section.href}
-                    className="group relative bg-white/80 backdrop-blur-sm rounded-2xl p-6 sm:p-7 border border-gray-200/50 hover:border-[#A5B99A] hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden"
-                  >
-                    {/* Number badge */}
-                    <div className="absolute top-4 right-4 w-8 h-8 bg-gradient-to-br from-[#A5B99A] to-[#93B0C8] rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg">
-                      {index + 1}
-                    </div>
-                    
-                    {/* Gradient overlay on hover */}
-                    <div className={`absolute inset-0 bg-gradient-to-br ${section.bgColor} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}></div>
-                    
-                    <div className="relative z-10">
-                      <div className="flex items-start justify-between mb-4">
-                        <div className={`p-3 ${section.bgColor} rounded-xl shadow-md group-hover:scale-110 transition-transform duration-300`}>
-                          <Icon className={`w-6 h-6 sm:w-7 sm:h-7 ${section.color.replace('bg-', 'text-')}`} />
-                        </div>
-                        <ArrowRight className="w-5 h-5 text-[#2C2A29] opacity-0 group-hover:opacity-100 group-hover:translate-x-2 transition-all flex-shrink-0" />
-                      </div>
-                      <h3 className="font-bold text-[#2C2A29] mb-2 text-lg sm:text-xl group-hover:text-[#93B0C8] transition-colors">
-                        {section.title}
-                      </h3>
-                      <p className="text-sm text-[#2C2A29] opacity-70 leading-relaxed">
-                        {section.description}
-                      </p>
-                      <div className="mt-4 flex items-center text-xs sm:text-sm font-semibold text-[#A5B99A] opacity-0 group-hover:opacity-100 transition-opacity">
-                        Get Started
-                        <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                      </div>
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        {/* All Sections */}
+        {/* All Sections - Organized by Category */}
         <div>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-3">
             <div className="flex items-center space-x-3">
@@ -787,7 +725,7 @@ export default function DashboardPage() {
                 <FileCheck className="w-5 h-5 sm:w-6 sm:h-6 text-[#93B0C8]" />
               </div>
               <div>
-                <h2 className="text-2xl sm:text-3xl font-bold text-[#2C2A29]">All Sections</h2>
+                <h2 className="text-xl sm:text-2xl font-bold text-[#2C2A29]">All Sections</h2>
                 <p className="text-sm text-[#2C2A29] opacity-60 mt-0.5">This helps the people you love know what to do</p>
               </div>
             </div>
@@ -800,54 +738,94 @@ export default function DashboardPage() {
               </div>
             </div>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
-            {sections.map((section) => {
-              const Icon = section.icon;
+          
+          {/* Group sections by category for better organization */}
+          {(() => {
+            const categories = {
+              'Essential': sections.filter(s => 
+                ['Personal Details', 'Emergency & Trusted Contacts', 'Medical & Legal', 'Important Documents', 'Insurance & Financial'].includes(s.title)
+              ),
+              'Care & Preferences': sections.filter(s => 
+                ['Care Preferences & Directives', 'Care Checklist', 'Life Event Preferences'].includes(s.title)
+              ),
+              'Legacy & Messages': sections.filter(s => 
+                ['Messages & Guidance', 'Legacy Messages', 'Biography', 'Family Legacy', 'Children\'s Wishes'].includes(s.title)
+              ),
+              'Planning & Tools': sections.filter(s => 
+                ['Life Event Planning', 'Life Event Cost Calculator', 'Will Questionnaire', 'My Music'].includes(s.title)
+              ),
+              'Financial & Legal': sections.filter(s => 
+                ['Assets', 'Digital Accounts'].includes(s.title)
+              ),
+              'Other': sections.filter(s => 
+                !['Personal Details', 'Emergency & Trusted Contacts', 'Medical & Legal', 'Important Documents', 'Insurance & Financial', 
+                  'Care Preferences & Directives', 'Care Checklist', 'Life Event Preferences',
+                  'Messages & Guidance', 'Legacy Messages', 'Biography', 'Family Legacy', 'Children\'s Wishes',
+                  'Life Event Planning', 'Life Event Cost Calculator', 'Will Questionnaire', 'My Music',
+                  'Assets', 'Digital Accounts'].includes(s.title)
+              ),
+            };
+
+            return Object.entries(categories).map(([categoryName, categorySections]) => {
+              if (categorySections.length === 0) return null;
+              
               return (
-                <Link
-                  key={section.href}
-                  href={section.href}
-                  className="group relative bg-white/80 backdrop-blur-sm rounded-2xl p-5 sm:p-6 border border-gray-200/50 hover:border-[#A5B99A] hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 flex flex-col overflow-hidden"
-                >
-                  {/* Gradient overlay on hover */}
-                  <div className={`absolute inset-0 bg-gradient-to-br ${section.bgColor} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}></div>
-                  
-                  <div className="relative z-10">
-                    <div className="flex items-start justify-between mb-4">
-                      <div className={`p-3 ${section.bgColor} rounded-xl shadow-md group-hover:scale-110 group-hover:rotate-3 transition-all duration-300`}>
-                        <Icon className={`w-6 h-6 sm:w-7 sm:h-7 ${section.color.replace('bg-', 'text-')}`} />
-                      </div>
-                      {section.completed ? (
-                        <div className="flex flex-col items-end space-y-1 flex-shrink-0">
-                          <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 text-[#A5B99A] drop-shadow-lg" />
-                          <span className="text-xs text-[#A5B99A] font-bold hidden sm:inline-block">Done</span>
-                        </div>
-                      ) : (
-                        <div className="relative">
-                          <Circle className="w-5 h-5 sm:w-6 sm:h-6 text-gray-300 flex-shrink-0" />
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
+                <div key={categoryName} className="mb-8 sm:mb-10">
+                  <h3 className="text-lg sm:text-xl font-semibold text-[#2C2A29] mb-4 opacity-80">
+                    {categoryName}
+                  </h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
+                    {categorySections.map((section) => {
+                      const Icon = section.icon;
+                      return (
+                        <Link
+                          key={section.href}
+                          href={section.href}
+                          className="group relative bg-white/80 backdrop-blur-sm rounded-2xl p-5 sm:p-6 border border-gray-200/50 hover:border-[#A5B99A] hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 flex flex-col overflow-hidden"
+                        >
+                          {/* Gradient overlay on hover */}
+                          <div className={`absolute inset-0 bg-gradient-to-br ${section.bgColor} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}></div>
+                          
+                          <div className="relative z-10">
+                            <div className="flex items-start justify-between mb-4">
+                              <div className={`p-3 ${section.bgColor} rounded-xl shadow-md group-hover:scale-110 group-hover:rotate-3 transition-all duration-300`}>
+                                <Icon className={`w-6 h-6 sm:w-7 sm:h-7 ${section.color.replace('bg-', 'text-')}`} />
+                              </div>
+                              {section.completed ? (
+                                <div className="flex flex-col items-end space-y-1 flex-shrink-0">
+                                  <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 text-[#A5B99A] drop-shadow-lg" />
+                                  <span className="text-xs text-[#A5B99A] font-bold hidden sm:inline-block">Done</span>
+                                </div>
+                              ) : (
+                                <div className="relative">
+                                  <Circle className="w-5 h-5 sm:w-6 sm:h-6 text-gray-300 flex-shrink-0" />
+                                  <div className="absolute inset-0 flex items-center justify-center">
+                                    <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                            <h3 className="text-base sm:text-lg font-bold text-[#2C2A29] mb-2 group-hover:text-[#93B0C8] transition-colors leading-tight">
+                              {section.title}
+                            </h3>
+                            <p className="text-xs sm:text-sm text-[#2C2A29] opacity-70 mb-4 leading-relaxed flex-grow">
+                              {section.description}
+                            </p>
+                            <div className="flex items-center justify-between mt-auto pt-2 border-t border-gray-100 group-hover:border-[#A5B99A]/30 transition-colors">
+                              <span className={`text-xs sm:text-sm font-semibold ${section.completed ? 'text-[#A5B99A]' : 'text-[#2C2A29] opacity-60'} group-hover:text-[#A5B99A] transition-colors`}>
+                                {section.completed ? 'View Details' : 'Get Started'}
+                              </span>
+                              <ArrowRight className={`w-4 h-4 ${section.completed ? 'text-[#A5B99A]' : 'text-gray-400'} group-hover:text-[#A5B99A] group-hover:translate-x-1 transition-all`} />
+                            </div>
                           </div>
-                        </div>
-                      )}
-                    </div>
-                    <h3 className="text-base sm:text-lg font-bold text-[#2C2A29] mb-2 group-hover:text-[#93B0C8] transition-colors leading-tight">
-                      {section.title}
-                    </h3>
-                    <p className="text-xs sm:text-sm text-[#2C2A29] opacity-70 mb-4 leading-relaxed flex-grow">
-                      {section.description}
-                    </p>
-                    <div className="flex items-center justify-between mt-auto pt-2 border-t border-gray-100 group-hover:border-[#A5B99A]/30 transition-colors">
-                      <span className={`text-xs sm:text-sm font-semibold ${section.completed ? 'text-[#A5B99A]' : 'text-[#2C2A29] opacity-60'} group-hover:text-[#A5B99A] transition-colors`}>
-                        {section.completed ? 'View Details' : 'Get Started'}
-                      </span>
-                      <ArrowRight className={`w-4 h-4 ${section.completed ? 'text-[#A5B99A]' : 'text-gray-400'} group-hover:text-[#A5B99A] group-hover:translate-x-1 transition-all`} />
-                    </div>
+                        </Link>
+                      );
+                    })}
                   </div>
-                </Link>
+                </div>
               );
-            })}
-          </div>
+            }).filter(Boolean);
+          })()}
         </div>
       </div>
     </div>
