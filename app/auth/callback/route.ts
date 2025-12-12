@@ -119,7 +119,7 @@ export async function GET(request: Request) {
           .limit(1);
         
         if (availableCards && availableCards.length > 0) {
-          return NextResponse.redirect(new URL('/dashboard/cards', requestUrl.origin));
+          return NextResponse.redirect(new URL('/dashboard', requestUrl.origin));
         }
       }
     }

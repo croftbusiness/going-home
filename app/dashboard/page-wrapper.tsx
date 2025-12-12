@@ -28,7 +28,7 @@ export default function DashboardPageWrapper() {
           if (cardsResponse.ok) {
             const cardsData = await cardsResponse.json();
             if (cardsData.cards && cardsData.cards.length > 0) {
-              router.push('/dashboard/cards');
+              router.push('/dashboard');
               return;
             }
           }
