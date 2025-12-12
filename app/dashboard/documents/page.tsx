@@ -160,28 +160,36 @@ export default function DocumentsPage() {
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
         {error && (
-          <div className="bg-red-50 text-red-700 px-4 py-3 rounded-lg mb-4">{error}</div>
+          <div className="bg-red-50 text-red-700 px-3 sm:px-4 py-2 sm:py-3 rounded-lg mb-4 text-sm sm:text-base">{error}</div>
         )}
         {success && (
-          <div className="bg-[#EBD9B5] text-[#2C2A29] px-4 py-3 rounded-lg mb-4">
+          <div className="bg-[#EBD9B5] text-[#2C2A29] px-3 sm:px-4 py-2 sm:py-3 rounded-lg mb-4 text-sm sm:text-base">
             Operation completed successfully
           </div>
         )}
 
         {showUploadForm && (
-          <div className="bg-[#FCFAF7] rounded-lg p-6 shadow-sm mb-6">
-            <h2 className="text-lg font-medium text-[#2C2A29] mb-4">Upload New Document</h2>
+          <div className="bg-[#FCFAF7] rounded-lg p-4 sm:p-6 shadow-sm mb-4 sm:mb-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg sm:text-xl font-medium text-[#2C2A29]">Upload New Document</h2>
+              <button
+                onClick={() => setShowUploadForm(false)}
+                className="p-2 text-gray-500 hover:text-gray-700 sm:hidden"
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </button>
+            </div>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-[#2C2A29] mb-1">
+                <label className="block text-sm font-medium text-[#2C2A29] mb-2">
                   Document Type *
                 </label>
                 <select
                   value={uploadData.documentType}
                   onChange={(e) => setUploadData({ ...uploadData, documentType: e.target.value })}
-                  className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent"
+                  className="w-full px-4 py-3 text-base bg-white border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent touch-target"
                 >
                   <option value="">Select type</option>
                   <option value="will">Will</option>
@@ -192,7 +200,7 @@ export default function DocumentsPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-[#2C2A29] mb-1">
+                <label className="block text-sm font-medium text-[#2C2A29] mb-2">
                   Note (optional)
                 </label>
                 <input
@@ -200,11 +208,11 @@ export default function DocumentsPage() {
                   value={uploadData.note}
                   onChange={(e) => setUploadData({ ...uploadData, note: e.target.value })}
                   placeholder="Add any additional information about this document"
-                  className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent"
+                  className="w-full px-4 py-3 text-base bg-white border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-[#2C2A29] mb-1">
+                <label className="block text-sm font-medium text-[#2C2A29] mb-2">
                   File (PDF, JPG, PNG, DOCX) *
                 </label>
                 <input
@@ -212,13 +220,13 @@ export default function DocumentsPage() {
                   accept=".pdf,.jpg,.jpeg,.png,.docx"
                   onChange={handleFileUpload}
                   disabled={uploading}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  className="w-full px-4 py-3 text-base border-2 border-gray-300 rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#A5B99A] file:text-white hover:file:bg-[#93B0C8] touch-target"
                 />
               </div>
-              <div className="flex justify-end space-x-4">
+              <div className="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-4 pt-2">
                 <button
                   onClick={() => setShowUploadForm(false)}
-                  className="px-4 py-2 border border-gray-300 text-[#2C2A29] rounded-lg hover:bg-gray-50"
+                  className="w-full sm:w-auto px-6 py-3 border-2 border-gray-300 text-[#2C2A29] rounded-lg hover:bg-gray-50 transition-colors font-medium touch-target"
                 >
                   Cancel
                 </button>
@@ -228,72 +236,77 @@ export default function DocumentsPage() {
         )}
 
         {documents.length === 0 ? (
-          <div className="bg-[#FCFAF7] rounded-lg p-12 text-center">
-            <FileText className="w-12 h-12 text-[#A5B99A] mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-[#2C2A29] mb-2">No documents yet</h3>
-            <p className="text-[#2C2A29] opacity-70 mb-4">
+          <div className="bg-[#FCFAF7] rounded-lg p-8 sm:p-12 text-center">
+            <FileText className="w-12 h-12 sm:w-16 sm:h-16 text-[#A5B99A] mx-auto mb-4" />
+            <h3 className="text-lg sm:text-xl font-medium text-[#2C2A29] mb-2">No documents yet</h3>
+            <p className="text-sm sm:text-base text-[#2C2A29] opacity-70 mb-6">
               Upload important documents to keep them secure in one place
             </p>
             <button
               onClick={() => setShowUploadForm(true)}
-              className="px-6 py-2 bg-[#A5B99A] text-white rounded-lg hover:bg-[#93B0C8] transition-colors"
+              className="px-6 py-3 bg-[#A5B99A] text-white rounded-lg hover:bg-[#93B0C8] transition-colors font-medium text-base touch-target"
             >
               Upload Your First Document
             </button>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {documents.map((doc) => (
-              <div key={doc.id} className="space-y-4">
-                <div className="bg-[#FCFAF7] rounded-lg p-6 shadow-sm">
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-start space-x-4 flex-1">
-                      <FileText className="w-6 h-6 text-[#A5B99A] mt-1" />
-                      <div className="flex-1">
-                        <h3 className="font-medium text-[#2C2A29]">{doc.fileName}</h3>
+              <div key={doc.id} className="space-y-3 sm:space-y-4">
+                <div className="bg-[#FCFAF7] rounded-lg p-4 sm:p-6 shadow-sm">
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+                    <div className="flex items-start space-x-3 sm:space-x-4 flex-1 min-w-0">
+                      <FileText className="w-6 h-6 sm:w-8 sm:h-8 text-[#A5B99A] mt-1 flex-shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-medium text-base sm:text-lg text-[#2C2A29] break-words">{doc.fileName}</h3>
                         <p className="text-sm text-[#2C2A29] opacity-70 mt-1 capitalize">
                           {doc.documentType.replace('_', ' ')}
                         </p>
                         {doc.note && (
-                          <p className="text-sm text-[#2C2A29] opacity-70 mt-2">{doc.note}</p>
+                          <p className="text-sm text-[#2C2A29] opacity-70 mt-2 break-words">{doc.note}</p>
                         )}
                         <p className="text-xs text-[#2C2A29] opacity-50 mt-2">
                           {new Date(doc.createdAt).toLocaleDateString()} • {(doc.fileSize / 1024).toFixed(1)} KB
                         </p>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center justify-end sm:justify-start space-x-2 sm:space-x-2 pt-2 sm:pt-0 border-t sm:border-t-0 border-gray-200">
                       <button
                         onClick={() => setAnalyzingDocId(analyzingDocId === doc.id ? null : doc.id)}
-                        className={`p-2 rounded-lg transition-colors flex items-center space-x-1 ${
+                        className={`px-3 py-2.5 sm:p-2 rounded-lg transition-colors flex items-center space-x-1.5 sm:space-x-1 touch-target ${
                           analyzingDocId === doc.id
                             ? 'bg-[#93B0C8] text-white'
-                            : 'text-[#93B0C8] hover:bg-white'
+                            : 'text-[#93B0C8] hover:bg-white border border-[#93B0C8] sm:border-0'
                         }`}
                         title="Analyze with AI"
                       >
-                        <Sparkles className="w-4 h-4" />
-                        <span className="text-sm">AI</span>
+                        <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" />
+                        <span className="text-sm font-medium sm:hidden">AI Analyze</span>
+                        <span className="text-sm hidden sm:inline">AI</span>
                       </button>
                       <a
                         href={doc.fileUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="p-2 text-[#93B0C8] hover:bg-white rounded-lg transition-colors"
+                        className="px-3 py-2.5 sm:p-2 text-[#93B0C8] hover:bg-white rounded-lg transition-colors border border-[#93B0C8] sm:border-0 touch-target flex items-center space-x-1.5 sm:space-x-0"
+                        title="View document"
                       >
-                        <Eye className="w-5 h-5" />
+                        <Eye className="w-4 h-4 sm:w-5 sm:h-5" />
+                        <span className="text-sm font-medium sm:hidden">View</span>
                       </a>
                       <button
                         onClick={() => handleDelete(doc.id)}
-                        className="p-2 text-red-500 hover:bg-white rounded-lg transition-colors"
+                        className="px-3 py-2.5 sm:p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors border border-red-300 sm:border-0 touch-target flex items-center space-x-1.5 sm:space-x-0"
+                        title="Delete document"
                       >
-                        <Trash2 className="w-5 h-5" />
+                        <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
+                        <span className="text-sm font-medium sm:hidden">Delete</span>
                       </button>
                     </div>
                   </div>
                 </div>
                 {analyzingDocId === doc.id && (
-                  <div className="ml-4">
+                  <div className="ml-0 sm:ml-4">
                     <DocumentAnalyzer
                       documentId={doc.id}
                       onAnalyzeComplete={(summary) => {
