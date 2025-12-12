@@ -41,52 +41,61 @@ import {
   AlertCircle,
 } from 'lucide-react';
 
-// Organized navigation with sections and unique icons
-// Order: Most engaging/appealing items first, then organized by category
+// Preparedness-first navigation: 5 purpose-based sections
+// Organized by preparedness priority, not feature categories
 const navigation = [
-  // Primary/Quick Start
-  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, section: 'primary' },
-  { name: 'If Something Happens', href: '/dashboard/if-something-happens', icon: AlertCircle, section: 'primary' },
-  { name: 'Personal Details', href: '/dashboard/personal-details', icon: User, section: 'primary' },
-  { name: 'Messages & Guidance', href: '/dashboard/letters', icon: PenTool, section: 'primary' },
-  { name: 'Important Documents', href: '/dashboard/documents', icon: Upload, section: 'primary' },
-  { name: 'Emergency & Trusted Contacts', href: '/dashboard/trusted-contacts', icon: Users, section: 'primary' },
+  // 1️⃣ If Something Happens - PRIMARY, VISUALLY EMPHASIZED
+  { 
+    name: 'If Something Happens', 
+    href: '/dashboard/if-something-happens', 
+    icon: AlertCircle, 
+    section: 'preparedness',
+    primary: true, // Mark as primary for visual emphasis
+  },
   
-  // Planning & Legacy
-  { name: 'Family Legacy', href: '/dashboard/family-legacy', icon: Gift, section: 'planning' },
-  { name: 'Life Event Planning', href: '/dashboard/life-event-planning', icon: Sparkles, section: 'planning' },
-  { name: 'Life Event Cost Calculator', href: '/dashboard/funeral-cost-calculator', icon: Calculator, section: 'planning' },
-  { name: 'My Music', href: '/dashboard/my-music', icon: Music, section: 'planning' },
-  { name: 'Legacy Messages', href: '/dashboard/legacy-messages', icon: Video, section: 'planning' },
-  { name: 'Will Questionnaire', href: '/dashboard/will-questionnaire', icon: FileQuestion, section: 'planning' },
-  { name: 'Biography', href: '/dashboard/biography', icon: BookOpen, section: 'planning' },
+  // 2️⃣ People & Access - Who helps and who is allowed to act
+  { name: 'Emergency & Trusted Contacts', href: '/dashboard/trusted-contacts', icon: Users, section: 'people' },
+  { name: 'Access Overview', href: '/dashboard/access-overview', icon: Eye, section: 'people' },
+  { name: 'Shared With Me', href: '/dashboard/shared-with-me', icon: Users, section: 'people' },
+  { name: 'Access Rules', href: '/dashboard/release-settings', icon: Shield, section: 'people' },
   
-  // Financial & Legal
-  { name: 'Assets', href: '/dashboard/assets', icon: DollarSign, section: 'financial' },
-  { name: 'Insurance & Financial', href: '/dashboard/insurance-financial', icon: CreditCard, section: 'financial' },
-  { name: 'Digital Accounts', href: '/dashboard/digital-accounts', icon: Key, section: 'financial' },
-  { name: 'Medical & Legal', href: '/dashboard/medical-contacts', icon: Stethoscope, section: 'financial' },
+  // 3️⃣ Health & Care - How care decisions should be handled
+  { name: 'Medical & Legal', href: '/dashboard/medical-contacts', icon: Stethoscope, section: 'health' },
+  { name: 'Care Preferences & Directives', href: '/dashboard/end-of-life-directives', icon: Heart, section: 'health' },
+  { name: 'Care Checklist', href: '/dashboard/end-of-life-checklist', icon: CheckSquare, section: 'health' },
+  { name: 'Personal Details', href: '/dashboard/personal-details', icon: User, section: 'health' },
   
-  // Personal & Family
-  { name: 'Children\'s Wishes', href: '/dashboard/children-wishes', icon: Baby, section: 'personal' },
-  { name: 'Household Info', href: '/dashboard/household', icon: HomeIcon, section: 'personal' },
-  { name: 'Care Checklist', href: '/dashboard/end-of-life-checklist', icon: CheckSquare, section: 'personal' },
-  { name: 'Care Preferences & Directives', href: '/dashboard/end-of-life-directives', icon: Heart, section: 'personal' },
+  // 4️⃣ Documents & Finances - What information is needed to keep life functioning
+  { name: 'Important Documents', href: '/dashboard/documents', icon: Upload, section: 'documents' },
+  { name: 'Insurance & Financial', href: '/dashboard/insurance-financial', icon: CreditCard, section: 'documents' },
+  { name: 'Assets', href: '/dashboard/assets', icon: DollarSign, section: 'documents' },
+  { name: 'Digital Accounts', href: '/dashboard/digital-accounts', icon: Key, section: 'documents' },
+  { name: 'Will Questionnaire', href: '/dashboard/will-questionnaire', icon: FileQuestion, section: 'documents' },
   
-  // Administrative
-  { name: 'Access Overview', href: '/dashboard/access-overview', icon: Users, section: 'admin' },
-  { name: 'Shared With Me', href: '/dashboard/shared-with-me', icon: Eye, section: 'admin' },
-  { name: 'Account Settings', href: '/dashboard/account-settings', icon: Settings, section: 'admin' },
-  { name: 'Complete Summary', href: '/dashboard/final-summary', icon: FileCheck, section: 'admin' },
-  { name: 'Access Rules', href: '/dashboard/release-settings', icon: Shield, section: 'admin' },
+  // 5️⃣ Legacy & Wishes - Meaning, wishes, and remembrance (non-urgent)
+  { name: 'Messages & Guidance', href: '/dashboard/letters', icon: PenTool, section: 'legacy' },
+  { name: 'Life Event Planning', href: '/dashboard/life-event-planning', icon: Sparkles, section: 'legacy' },
+  { name: 'Family Legacy', href: '/dashboard/family-legacy', icon: Gift, section: 'legacy' },
+  { name: 'Biography', href: '/dashboard/biography', icon: BookOpen, section: 'legacy' },
+  { name: 'Legacy Messages', href: '/dashboard/legacy-messages', icon: Video, section: 'legacy' },
+  { name: 'Children\'s Wishes', href: '/dashboard/children-wishes', icon: Baby, section: 'legacy' },
+  { name: 'My Music', href: '/dashboard/my-music', icon: Music, section: 'legacy' },
+  { name: 'Life Event Preferences', href: '/dashboard/funeral-preferences', icon: Heart, section: 'legacy' },
+  { name: 'Life Event Cost Calculator', href: '/dashboard/funeral-cost-calculator', icon: Calculator, section: 'legacy' },
+  { name: 'Household Info', href: '/dashboard/household', icon: HomeIcon, section: 'legacy' },
+  
+  // Utility - Visually separated from preparedness flow
+  { name: 'Complete Summary', href: '/dashboard/final-summary', icon: FileCheck, section: 'utility' },
+  { name: 'Account Settings', href: '/dashboard/account-settings', icon: Settings, section: 'utility' },
 ];
 
 const sectionLabels: Record<string, string> = {
-  primary: 'Quick Start',
-  planning: 'Planning & Legacy',
-  financial: 'Financial & Legal',
-  personal: 'Personal & Care',
-  admin: 'Settings',
+  preparedness: '', // No label for primary section
+  people: 'People & Access',
+  health: 'Health & Care',
+  documents: 'Documents & Finances',
+  legacy: 'Legacy & Wishes',
+  utility: '', // Visually separated, no label needed
 };
 
 export default function DashboardLayout({
@@ -184,56 +193,71 @@ export default function DashboardLayout({
             <div className="space-y-6">
               {Object.entries(
                 navigation.reduce((acc, item) => {
-                  const section = item.section || 'primary';
+                  const section = item.section || 'preparedness';
                   if (!acc[section]) acc[section] = [];
                   acc[section].push(item);
                   return acc;
                 }, {} as Record<string, Array<typeof navigation[0]>>)
-              ).map(([section, items]) => (
-                <div key={section} className="space-y-1">
-                  {section !== 'primary' && (
-                    <div className="px-4 py-2 mb-2">
-                      <p className="text-xs font-semibold text-[#2C2A29] opacity-40 uppercase tracking-wider">
-                        {sectionLabels[section] || section}
-                      </p>
+              ).map(([section, items]) => {
+                const isPreparednessSection = section === 'preparedness';
+                const isUtilitySection = section === 'utility';
+                const sectionLabel = sectionLabels[section];
+                
+                return (
+                  <div key={section} className={isUtilitySection ? 'mt-8 pt-6 border-t border-gray-200/50' : ''}>
+                    {sectionLabel && (
+                      <div className="px-4 py-2 mb-2">
+                        <p className="text-xs font-semibold text-[#2C2A29] opacity-40 uppercase tracking-wider">
+                          {sectionLabel}
+                        </p>
+                      </div>
+                    )}
+                    <div className="space-y-1">
+                      {items.map((item) => {
+                        const Icon = item.icon;
+                        const isActive = pathname === item.href;
+                        const isPrimary = item.primary || false;
+                        
+                        return (
+                          <Link
+                            key={item.name}
+                            href={item.href}
+                            onClick={() => setSidebarOpen(false)}
+                            className={`
+                              group flex items-center space-x-3 px-4 py-3 sm:py-2.5 rounded-xl transition-all duration-200 relative touch-target min-h-[44px]
+                              ${isActive
+                                ? 'bg-gradient-to-r from-[#A5B99A] to-[#93B0C8] text-white shadow-md shadow-[#A5B99A]/20'
+                                : isPrimary
+                                ? 'text-[#2C2A29] hover:bg-[#A5B99A]/10 hover:text-[#A5B99A] font-semibold'
+                                : 'text-[#2C2A29] hover:bg-gray-50 hover:text-[#93B0C8]'
+                              }
+                              ${isPrimary ? 'mb-2' : ''}
+                            `}
+                          >
+                            <div className={`
+                              p-2 sm:p-1.5 rounded-lg transition-all flex-shrink-0
+                              ${isActive 
+                                ? 'bg-white/20' 
+                                : isPrimary
+                                ? 'bg-[#A5B99A]/10 group-hover:bg-[#A5B99A]/20'
+                                : 'bg-gray-100 group-hover:bg-[#A5B99A]/10'
+                              }
+                            `}>
+                              <Icon className={`w-5 h-5 sm:w-4 sm:h-4 ${isActive ? 'text-white' : isPrimary ? 'text-[#A5B99A]' : 'text-[#2C2A29] opacity-70'}`} />
+                            </div>
+                            <span className={`text-sm sm:text-base ${isActive ? 'text-white font-medium' : isPrimary ? 'text-[#2C2A29] font-semibold' : 'text-[#2C2A29] font-medium'} flex-1`}>
+                              {item.name}
+                            </span>
+                            {isActive && (
+                              <div className="absolute right-2 w-1.5 h-1.5 rounded-full bg-white/60" />
+                            )}
+                          </Link>
+                        );
+                      })}
                     </div>
-                  )}
-                  {items.map((item) => {
-                    const Icon = item.icon;
-                    const isActive = pathname === item.href;
-                    return (
-                      <Link
-                        key={item.name}
-                        href={item.href}
-                        onClick={() => setSidebarOpen(false)}
-                        className={`
-                          group flex items-center space-x-3 px-4 py-2.5 rounded-xl transition-all duration-200 relative
-                          ${isActive
-                            ? 'bg-gradient-to-r from-[#A5B99A] to-[#93B0C8] text-white shadow-md shadow-[#A5B99A]/20'
-                            : 'text-[#2C2A29] hover:bg-gray-50 hover:text-[#93B0C8]'
-                          }
-                        `}
-                      >
-                        <div className={`
-                          p-1.5 rounded-lg transition-all
-                          ${isActive 
-                            ? 'bg-white/20' 
-                            : 'bg-gray-100 group-hover:bg-[#A5B99A]/10'
-                          }
-                        `}>
-                          <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-[#2C2A29] opacity-70'}`} />
-                        </div>
-                        <span className={`text-sm font-medium ${isActive ? 'text-white' : 'text-[#2C2A29]'}`}>
-                          {item.name}
-                        </span>
-                        {isActive && (
-                          <div className="absolute right-2 w-1.5 h-1.5 rounded-full bg-white/60" />
-                        )}
-                      </Link>
-                    );
-                  })}
-                </div>
-              ))}
+                  </div>
+                );
+              })}
             </div>
           </nav>
 
