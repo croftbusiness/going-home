@@ -37,7 +37,7 @@ import {
   Calculator,
   Eye,
 } from 'lucide-react';
-import AIChecklist from '@/components/ai/AIChecklist';
+import LogicChecklist from '@/components/LogicChecklist';
 import ProfilePictureUpload from '@/components/ProfilePictureUpload';
 
 interface SectionStatus {
@@ -568,9 +568,9 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* AI Checklist */}
+        {/* Personalized Checklist */}
         <div className="mb-8 sm:mb-12">
-          <AIChecklist />
+          <LogicChecklist status={status} />
         </div>
 
         {/* Granted Access Section - Show up to 3 */}

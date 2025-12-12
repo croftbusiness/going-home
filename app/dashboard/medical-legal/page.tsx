@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Save, Plus, X, Stethoscope, Users, Scale, FileText, Heart, Pill, AlertTriangle, Droplet, ClipboardList } from 'lucide-react';
+import { ArrowLeft, Save, Plus, X, Stethoscope, Users, Scale, FileText, Heart, Pill, AlertTriangle, Droplet, ClipboardList, ChevronDown, ChevronUp } from 'lucide-react';
 import Link from 'next/link';
 
 interface MedicalInfo {
@@ -84,6 +84,7 @@ export default function MedicalContactsPage() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>('medical');
+  const [expandedSections, setExpandedSections] = useState<Set<Tab>>(new Set(['medical'])); // Mobile accordion state
   const [formData, setFormData] = useState<MedicalContactsData>({
     medicalInfo: {
       conditions: [],
@@ -367,6 +368,507 @@ export default function MedicalContactsPage() {
     { id: 'documents', label: 'Notes', icon: FileText },
   ];
 
+  const toggleSection = (tabId: Tab) => {
+    setExpandedSections(prev => {
+      const newSet = new Set<Tab>();
+      // If clicking the same section that's open, close it. Otherwise, open the new one (only one open at a time)
+      if (!prev.has(tabId)) {
+        newSet.add(tabId);
+      }
+      return newSet;
+    });
+    // Also update activeTab for desktop consistency
+    setActiveTab(tabId);
+  };
+
+  // Render functions for mobile accordion
+  const renderMedicalInfoContent = () => (
+    <div className="space-y-4">
+      {/* Conditions */}
+      <div className="bg-[#FAF9F7] rounded-lg p-4 border border-gray-200/30">
+        <div className="flex items-center space-x-2 mb-3">
+          <ClipboardList className="w-5 h-5 text-[#A5B99A]" />
+          <h3 className="text-base font-semibold text-[#2C2A29]">Medical Conditions</h3>
+        </div>
+        <div className="space-y-3">
+          {formData.medicalInfo.conditions.map((condition, index) => (
+            <div key={index} className="flex items-center gap-2">
+              <div className="flex-1 flex gap-2">
+                <select
+                  value={condition && !COMMON_CONDITIONS.includes(condition) ? 'Other' : condition}
+                  onChange={(e) => {
+                    if (e.target.value === 'Other') {
+                      updateCondition(index, '');
+                    } else {
+                      updateCondition(index, e.target.value);
+                    }
+                  }}
+                  className="flex-1 px-3 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] text-sm min-h-[44px]"
+                >
+                  <option value="">Select condition</option>
+                  {COMMON_CONDITIONS.map((cond) => (
+                    <option key={cond} value={cond}>{cond}</option>
+                  ))}
+                </select>
+                {condition && !COMMON_CONDITIONS.includes(condition) && (
+                  <input
+                    type="text"
+                    value={condition}
+                    onChange={(e) => updateCondition(index, e.target.value)}
+                    placeholder="Enter condition"
+                    className="flex-1 px-3 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] text-sm min-h-[44px]"
+                  />
+                )}
+              </div>
+              {(condition && COMMON_CONDITIONS.includes(condition) && condition !== 'Other') || (condition && !COMMON_CONDITIONS.includes(condition)) ? (
+                <button
+                  type="button"
+                  onClick={() => removeCondition(index)}
+                  className="p-3 text-[#2C2A29] opacity-60 hover:opacity-100 hover:bg-gray-100 rounded-lg min-h-[44px] min-w-[44px] flex items-center justify-center"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              ) : null}
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={addCondition}
+            className="w-full px-4 py-3 bg-[#A5B99A]/10 text-[#A5B99A] rounded-lg hover:bg-[#A5B99A]/20 flex items-center justify-center space-x-2 min-h-[44px] font-medium"
+          >
+            <Plus className="w-4 h-4" />
+            <span className="text-sm">Add Condition</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Medications */}
+      <div className="bg-[#FAF9F7] rounded-lg p-4 border border-gray-200/30">
+        <div className="flex items-center space-x-2 mb-3">
+          <Pill className="w-5 h-5 text-[#93B0C8]" />
+          <h3 className="text-base font-semibold text-[#2C2A29]">Medications</h3>
+        </div>
+        <div className="space-y-3">
+          {formData.medicalInfo.medications.map((medication, index) => (
+            <div key={index} className="p-3 bg-white rounded-lg border border-gray-200 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-medium text-[#2C2A29] opacity-70">Medication {index + 1}</span>
+                <button
+                  type="button"
+                  onClick={() => removeMedication(index)}
+                  className="p-2 text-[#2C2A29] opacity-60 hover:opacity-100 hover:bg-gray-100 rounded-lg min-h-[44px] min-w-[44px] flex items-center justify-center"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+              <input
+                type="text"
+                value={medication.name}
+                onChange={(e) => updateMedication(index, 'name', e.target.value)}
+                placeholder="Medication name"
+                className="w-full px-3 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] text-sm min-h-[44px]"
+              />
+              <div className="grid grid-cols-1 gap-2">
+                <input
+                  type="text"
+                  value={medication.dosage}
+                  onChange={(e) => updateMedication(index, 'dosage', e.target.value)}
+                  placeholder="Dosage (e.g., 10mg)"
+                  className="w-full px-3 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] text-sm min-h-[44px]"
+                />
+                <select
+                  value={medication.frequency}
+                  onChange={(e) => updateMedication(index, 'frequency', e.target.value)}
+                  className="w-full px-3 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] text-sm min-h-[44px]"
+                >
+                  <option value="">Select frequency</option>
+                  {MEDICATION_FREQUENCY.map((freq) => (
+                    <option key={freq} value={freq}>{freq}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={addMedication}
+            className="w-full px-4 py-3 bg-[#93B0C8]/10 text-[#93B0C8] rounded-lg hover:bg-[#93B0C8]/20 flex items-center justify-center space-x-2 min-h-[44px] font-medium"
+          >
+            <Plus className="w-4 h-4" />
+            <span className="text-sm">Add Medication</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Allergies */}
+      <div className="bg-[#FAF9F7] rounded-lg p-4 border border-gray-200/30">
+        <div className="flex items-center space-x-2 mb-3">
+          <AlertTriangle className="w-5 h-5 text-[#EBD9B5]" />
+          <h3 className="text-base font-semibold text-[#2C2A29]">Allergies</h3>
+        </div>
+        <div className="space-y-3">
+          {formData.medicalInfo.allergies.map((allergy, index) => (
+            <div key={index} className="flex items-center gap-2">
+              <div className="flex-1 flex gap-2">
+                <select
+                  value={allergy && !COMMON_ALLERGIES.includes(allergy) ? 'Other' : allergy}
+                  onChange={(e) => {
+                    if (e.target.value === 'Other') {
+                      updateAllergy(index, '');
+                    } else {
+                      updateAllergy(index, e.target.value);
+                    }
+                  }}
+                  className="flex-1 px-3 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] text-sm min-h-[44px]"
+                >
+                  <option value="">Select allergy</option>
+                  {COMMON_ALLERGIES.map((all) => (
+                    <option key={all} value={all}>{all}</option>
+                  ))}
+                </select>
+                {allergy && !COMMON_ALLERGIES.includes(allergy) && (
+                  <input
+                    type="text"
+                    value={allergy}
+                    onChange={(e) => updateAllergy(index, e.target.value)}
+                    placeholder="Enter allergy"
+                    className="flex-1 px-3 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] text-sm min-h-[44px]"
+                  />
+                )}
+              </div>
+              {(allergy && COMMON_ALLERGIES.includes(allergy) && allergy !== 'Other') || (allergy && !COMMON_ALLERGIES.includes(allergy)) ? (
+                <button
+                  type="button"
+                  onClick={() => removeAllergy(index)}
+                  className="p-3 text-[#2C2A29] opacity-60 hover:opacity-100 hover:bg-gray-100 rounded-lg min-h-[44px] min-w-[44px] flex items-center justify-center"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              ) : null}
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={addAllergy}
+            className="w-full px-4 py-3 bg-[#EBD9B5]/20 text-[#2C2A29] rounded-lg hover:bg-[#EBD9B5]/30 flex items-center justify-center space-x-2 min-h-[44px] font-medium"
+          >
+            <Plus className="w-4 h-4" />
+            <span className="text-sm">Add Allergy</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Blood Type & Organ Donor */}
+      <div className="bg-[#FAF9F7] rounded-lg p-4 border border-gray-200/30">
+        <div className="flex items-center space-x-2 mb-3">
+          <Droplet className="w-5 h-5 text-[#A5B99A]" />
+          <h3 className="text-base font-semibold text-[#2C2A29]">Blood Type & Organ Donor</h3>
+        </div>
+        <div className="space-y-3">
+          <div>
+            <label className="block text-sm font-medium text-[#2C2A29] mb-2">Blood Type</label>
+            <select
+              value={formData.medicalInfo.bloodType}
+              onChange={(e) => setFormData(prev => ({
+                ...prev,
+                medicalInfo: { ...prev.medicalInfo, bloodType: e.target.value },
+              }))}
+              className="w-full px-3 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] text-sm min-h-[44px]"
+            >
+              <option value="">Select blood type</option>
+              <option value="A+">A+</option>
+              <option value="A-">A-</option>
+              <option value="B+">B+</option>
+              <option value="B-">B-</option>
+              <option value="AB+">AB+</option>
+              <option value="AB-">AB-</option>
+              <option value="O+">O+</option>
+              <option value="O-">O-</option>
+            </select>
+          </div>
+          <div className="flex items-start space-x-3">
+            <input
+              type="checkbox"
+              id="organDonorMobile"
+              checked={formData.medicalInfo.organDonor}
+              onChange={(e) => setFormData(prev => ({
+                ...prev,
+                medicalInfo: { ...prev.medicalInfo, organDonor: e.target.checked },
+              }))}
+              className="w-5 h-5 mt-0.5 text-[#A5B99A] border-gray-300 rounded focus:ring-[#A5B99A] flex-shrink-0"
+            />
+            <label htmlFor="organDonorMobile" className="text-sm text-[#2C2A29] leading-relaxed cursor-pointer">
+              I am an organ donor
+            </label>
+          </div>
+          <div className="flex items-start space-x-3">
+            <input
+              type="checkbox"
+              id="dnrStatusMobile"
+              checked={formData.medicalInfo.dnrStatus}
+              onChange={(e) => setFormData(prev => ({
+                ...prev,
+                medicalInfo: { ...prev.medicalInfo, dnrStatus: e.target.checked },
+              }))}
+              className="w-5 h-5 mt-0.5 text-[#A5B99A] border-gray-300 rounded focus:ring-[#A5B99A] flex-shrink-0"
+            />
+            <label htmlFor="dnrStatusMobile" className="text-sm text-[#2C2A29] leading-relaxed cursor-pointer">
+              Do Not Resuscitate (DNR) order in place
+            </label>
+          </div>
+        </div>
+      </div>
+
+      {/* Advance Directive */}
+      <div className="bg-[#FAF9F7] rounded-lg p-4 border border-gray-200/30">
+        <h3 className="text-base font-semibold text-[#2C2A29] mb-3">Advance Directive / Living Will</h3>
+        <textarea
+          value={formData.medicalInfo.advanceDirective}
+          onChange={(e) => setFormData(prev => ({
+            ...prev,
+            medicalInfo: { ...prev.medicalInfo, advanceDirective: e.target.value },
+          }))}
+          placeholder="Details about your advance directive or living will..."
+          rows={4}
+          className="w-full px-3 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] text-sm resize-none min-h-[100px]"
+        />
+      </div>
+
+      {/* Other Medical Notes */}
+      <div className="bg-[#FAF9F7] rounded-lg p-4 border border-gray-200/30">
+        <h3 className="text-base font-semibold text-[#2C2A29] mb-3">Additional Medical Notes</h3>
+        <textarea
+          value={formData.medicalInfo.otherNotes}
+          onChange={(e) => setFormData(prev => ({
+            ...prev,
+            medicalInfo: { ...prev.medicalInfo, otherNotes: e.target.value },
+          }))}
+          placeholder="Any other important medical information..."
+          rows={4}
+          className="w-full px-3 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] text-sm resize-none min-h-[100px]"
+        />
+      </div>
+    </div>
+  );
+
+  const renderMedicalContactsContent = () => (
+    <div className="space-y-4">
+      <div className="bg-[#FAF9F7] rounded-lg p-4 border border-gray-200/30">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center space-x-2">
+            <Stethoscope className="w-5 h-5 text-[#93B0C8]" />
+            <h3 className="text-base font-semibold text-[#2C2A29]">Medical Contacts</h3>
+          </div>
+          <button
+            type="button"
+            onClick={addMedicalContact}
+            className="px-4 py-2 bg-[#93B0C8] text-white rounded-lg hover:bg-[#A5B99A] flex items-center space-x-2 min-h-[44px] font-medium"
+          >
+            <Plus className="w-4 h-4" />
+            <span className="text-sm">Add</span>
+          </button>
+        </div>
+        <div className="space-y-3">
+          {formData.medicalContacts.map((contact, index) => (
+            <div key={index} className="p-3 bg-white rounded-lg border border-gray-200 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-medium text-[#2C2A29] opacity-70">Contact {index + 1}</span>
+                <button
+                  type="button"
+                  onClick={() => removeMedicalContact(index)}
+                  className="p-2 text-[#2C2A29] opacity-60 hover:opacity-100 hover:bg-gray-100 rounded-lg min-h-[44px] min-w-[44px] flex items-center justify-center"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+              <input
+                type="text"
+                value={contact.name}
+                onChange={(e) => updateMedicalContact(index, 'name', e.target.value)}
+                placeholder="Name"
+                className="w-full px-3 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] text-sm min-h-[44px]"
+              />
+              <select
+                value={contact.specialty || ''}
+                onChange={(e) => updateMedicalContact(index, 'specialty', e.target.value)}
+                className="w-full px-3 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] text-sm min-h-[44px]"
+              >
+                <option value="">Select specialty</option>
+                {MEDICAL_SPECIALTIES.map((spec) => (
+                  <option key={spec} value={spec}>{spec}</option>
+                ))}
+              </select>
+              <input
+                type="tel"
+                value={contact.phone}
+                onChange={(e) => updateMedicalContact(index, 'phone', e.target.value)}
+                placeholder="Phone"
+                className="w-full px-3 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] text-sm min-h-[44px]"
+              />
+              <input
+                type="email"
+                value={contact.email}
+                onChange={(e) => updateMedicalContact(index, 'email', e.target.value)}
+                placeholder="Email (optional)"
+                className="w-full px-3 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] text-sm min-h-[44px]"
+              />
+              <input
+                type="text"
+                value={contact.address}
+                onChange={(e) => updateMedicalContact(index, 'address', e.target.value)}
+                placeholder="Address (optional)"
+                className="w-full px-3 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] text-sm min-h-[44px]"
+              />
+              <textarea
+                value={contact.notes}
+                onChange={(e) => updateMedicalContact(index, 'notes', e.target.value)}
+                placeholder="Notes (optional)"
+                rows={2}
+                className="w-full px-3 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] text-sm resize-none min-h-[80px]"
+              />
+            </div>
+          ))}
+          {formData.medicalContacts.length === 0 && (
+            <div className="text-center py-6 text-[#2C2A29] opacity-60">
+              <Stethoscope className="w-10 h-10 mx-auto mb-2 opacity-40" />
+              <p className="text-sm">No medical contacts added yet</p>
+              <button
+                type="button"
+                onClick={addMedicalContact}
+                className="mt-3 px-4 py-2 bg-[#93B0C8] text-white rounded-lg hover:bg-[#A5B99A] min-h-[44px] font-medium"
+              >
+                Add First Contact
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderLegalContactsContent = () => (
+    <div className="space-y-4">
+      <div className="bg-[#FAF9F7] rounded-lg p-4 border border-gray-200/30">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center space-x-2">
+            <Scale className="w-5 h-5 text-[#A5B99A]" />
+            <h3 className="text-base font-semibold text-[#2C2A29]">Legal Contacts</h3>
+          </div>
+          <button
+            type="button"
+            onClick={addLegalContact}
+            className="px-4 py-2 bg-[#A5B99A] text-white rounded-lg hover:bg-[#93B0C8] flex items-center space-x-2 min-h-[44px] font-medium"
+          >
+            <Plus className="w-4 h-4" />
+            <span className="text-sm">Add</span>
+          </button>
+        </div>
+        <div className="space-y-3">
+          {formData.legalContacts.map((contact, index) => (
+            <div key={index} className="p-3 bg-white rounded-lg border border-gray-200 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-medium text-[#2C2A29] opacity-70">Contact {index + 1}</span>
+                <button
+                  type="button"
+                  onClick={() => removeLegalContact(index)}
+                  className="p-2 text-[#2C2A29] opacity-60 hover:opacity-100 hover:bg-gray-100 rounded-lg min-h-[44px] min-w-[44px] flex items-center justify-center"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+              <select
+                value={contact.type}
+                onChange={(e) => updateLegalContact(index, 'type', e.target.value)}
+                className="w-full px-3 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] text-sm min-h-[44px]"
+              >
+                <option value="lawyer">Lawyer</option>
+                <option value="estate_attorney">Estate Attorney</option>
+                <option value="financial_advisor">Financial Advisor</option>
+                <option value="other">Other</option>
+              </select>
+              <input
+                type="text"
+                value={contact.name}
+                onChange={(e) => updateLegalContact(index, 'name', e.target.value)}
+                placeholder="Name"
+                className="w-full px-3 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] text-sm min-h-[44px]"
+              />
+              <input
+                type="tel"
+                value={contact.phone}
+                onChange={(e) => updateLegalContact(index, 'phone', e.target.value)}
+                placeholder="Phone"
+                className="w-full px-3 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] text-sm min-h-[44px]"
+              />
+              <input
+                type="email"
+                value={contact.email}
+                onChange={(e) => updateLegalContact(index, 'email', e.target.value)}
+                placeholder="Email (optional)"
+                className="w-full px-3 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] text-sm min-h-[44px]"
+              />
+              <input
+                type="text"
+                value={contact.address}
+                onChange={(e) => updateLegalContact(index, 'address', e.target.value)}
+                placeholder="Address (optional)"
+                className="w-full px-3 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] text-sm min-h-[44px]"
+              />
+              <textarea
+                value={contact.notes}
+                onChange={(e) => updateLegalContact(index, 'notes', e.target.value)}
+                placeholder="Notes (optional)"
+                rows={2}
+                className="w-full px-3 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] text-sm resize-none min-h-[80px]"
+              />
+            </div>
+          ))}
+          {formData.legalContacts.length === 0 && (
+            <div className="text-center py-6 text-[#2C2A29] opacity-60">
+              <Scale className="w-10 h-10 mx-auto mb-2 opacity-40" />
+              <p className="text-sm">No legal contacts added yet</p>
+              <button
+                type="button"
+                onClick={addLegalContact}
+                className="mt-3 px-4 py-2 bg-[#A5B99A] text-white rounded-lg hover:bg-[#93B0C8] min-h-[44px] font-medium"
+              >
+                Add First Contact
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderDocumentsContent = () => (
+    <div className="space-y-4">
+      <div className="bg-[#FAF9F7] rounded-lg p-4 border border-gray-200/30">
+        <div className="flex items-center space-x-2 mb-3">
+          <FileText className="w-5 h-5 text-[#93B0C8]" />
+          <h3 className="text-base font-semibold text-[#2C2A29]">Legal Notes</h3>
+        </div>
+        <p className="text-xs text-[#2C2A29] opacity-70 mb-3">
+          Additional legal information, document locations, or important notes
+        </p>
+        <textarea
+          value={formData.legalNotes}
+          onChange={(e) => setFormData(prev => ({ ...prev, legalNotes: e.target.value }))}
+          placeholder="Legal notes, document locations, or other important information..."
+          rows={8}
+          className="w-full px-3 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] text-sm resize-none min-h-[200px]"
+        />
+        <p className="mt-3 text-xs text-[#2C2A29] opacity-60 break-words">
+          Note: To upload legal documents, visit the{' '}
+          <Link href="/dashboard/documents" className="text-[#93B0C8] hover:text-[#A5B99A] underline">
+            Important Documents
+          </Link>{' '}
+          section.
+        </p>
+      </div>
+    </div>
+  );
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#FAF9F7] via-white to-[#FAF9F7]">
@@ -403,10 +905,10 @@ export default function MedicalContactsPage() {
         </div>
       </header>
 
-      {/* Tabs - Mobile Optimized */}
-      <div className="bg-white/95 backdrop-blur-sm border-b border-gray-200/50 sticky top-[64px] sm:top-[73px] z-10 shadow-sm">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 overflow-x-auto">
-          <div className="flex space-x-1 sm:space-x-2 min-w-max pb-1">
+      {/* Tabs - Desktop Only */}
+      <div className="hidden sm:block bg-white/95 backdrop-blur-sm border-b border-gray-200/50 sticky top-[73px] z-10 shadow-sm">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex space-x-2 min-w-max pb-1">
             {tabs.map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -415,7 +917,7 @@ export default function MedicalContactsPage() {
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   className={`
-                    flex items-center space-x-1.5 sm:space-x-2 px-3 sm:px-4 py-3 sm:py-3.5 
+                    flex items-center space-x-2 px-4 py-3.5 
                     rounded-t-lg transition-all duration-200 touch-target whitespace-nowrap min-h-[44px]
                     ${isActive 
                       ? 'bg-white border-t-2 border-l border-r border-[#A5B99A] text-[#A5B99A] font-medium shadow-sm' 
@@ -423,8 +925,8 @@ export default function MedicalContactsPage() {
                     }
                   `}
                 >
-                  <Icon className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
-                  <span className="text-xs sm:text-sm font-medium">{tab.label}</span>
+                  <Icon className="w-5 h-5 flex-shrink-0" />
+                  <span className="text-sm font-medium">{tab.label}</span>
                 </button>
               );
             })}
@@ -435,6 +937,47 @@ export default function MedicalContactsPage() {
       {/* Form Content */}
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
         <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6 pb-20 sm:pb-0">
+          {/* Mobile Accordion View */}
+          <div className="sm:hidden space-y-3">
+            {tabs.map((tab) => {
+              const Icon = tab.icon;
+              const isExpanded = expandedSections.has(tab.id);
+              return (
+                <div key={tab.id} className="bg-white/80 backdrop-blur-sm rounded-xl border border-gray-200/50 shadow-sm overflow-hidden">
+                  <button
+                    type="button"
+                    onClick={() => toggleSection(tab.id)}
+                    className="w-full flex items-center justify-between p-4 touch-target min-h-[44px]"
+                  >
+                    <div className="flex items-center space-x-3">
+                      <div className="p-2 bg-gradient-to-br from-[#A5B99A]/20 to-[#93B0C8]/20 rounded-lg">
+                        <Icon className={`w-5 h-5 ${isExpanded ? 'text-[#A5B99A]' : 'text-[#2C2A29] opacity-70'}`} />
+                      </div>
+                      <span className={`text-base font-semibold ${isExpanded ? 'text-[#A5B99A]' : 'text-[#2C2A29]'}`}>
+                        {tab.label}
+                      </span>
+                    </div>
+                    {isExpanded ? (
+                      <ChevronUp className="w-5 h-5 text-[#A5B99A]" />
+                    ) : (
+                      <ChevronDown className="w-5 h-5 text-[#2C2A29] opacity-50" />
+                    )}
+                  </button>
+                  {isExpanded && (
+                    <div className="px-4 pb-4 border-t border-gray-200/50 pt-4">
+                      {tab.id === 'medical' && renderMedicalInfoContent()}
+                      {tab.id === 'contacts' && renderMedicalContactsContent()}
+                      {tab.id === 'legal' && renderLegalContactsContent()}
+                      {tab.id === 'documents' && renderDocumentsContent()}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Desktop Tab View */}
+          <div className="hidden sm:block">
           {/* Medical Information Tab */}
           {activeTab === 'medical' && (
             <div className="space-y-4 sm:space-y-6">
@@ -930,6 +1473,7 @@ export default function MedicalContactsPage() {
               </div>
             </div>
           )}
+          </div>
 
           {/* Messages */}
           {error && (
