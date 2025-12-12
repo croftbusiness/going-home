@@ -381,13 +381,13 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
                     <button
                       key={track.id}
                       onClick={() => handleSelectTrack(track)}
-                      className={`group w-full text-left p-4 sm:p-5 min-h-[72px] rounded-xl border-2 transition-all duration-200 active:scale-[0.97] ${
+                      className={`group w-full text-left p-4 sm:p-5 min-h-[72px] rounded-xl border-2 transition-all duration-200 active:scale-[0.97] overflow-hidden ${
                         isTrackSelected(track)
                           ? 'border-[#A5B99A] bg-gradient-to-r from-[#A5B99A]/20 via-[#A5B99A]/10 to-[#A5B99A]/20 shadow-lg shadow-[#A5B99A]/20'
                           : 'border-gray-200/60 hover:border-[#A5B99A]/40 hover:bg-gradient-to-r hover:from-gray-50/80 hover:to-gray-50/50 hover:shadow-md active:bg-gray-50'
                       }`}
                     >
-                      <div className="flex items-center justify-between gap-4 sm:gap-5">
+                      <div className="flex items-center justify-between gap-4 sm:gap-5 min-w-0">
                         <div className="flex-1 min-w-0 pr-2">
                           <div className="font-semibold text-sm sm:text-base text-[#2C2A29] truncate mb-1">
                             {String(track.name || 'Unknown')}
@@ -399,15 +399,18 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
                         <div className="flex items-center space-x-3 sm:space-x-4 flex-shrink-0">
                           <div
                             onClick={(e) => e.stopPropagation()}
-                            className="w-[56px] h-[56px] flex items-center justify-center overflow-hidden flex-shrink-0"
+                            className="relative w-[56px] h-[56px] flex-shrink-0"
                           >
-                            <TrackPlayer
-                              trackId={track.id}
-                              trackName={String(track.name || 'Unknown')}
-                              artistName={String(track.artist || 'Unknown Artist')}
-                              albumArtUrl={track.album_art_url}
-                              spotifyUrl={track.external_urls?.spotify}
-                            />
+                            <div className="absolute inset-0 w-full h-full max-w-full max-h-full overflow-hidden rounded-full">
+                              <TrackPlayer
+                                trackId={track.id}
+                                trackName={String(track.name || 'Unknown')}
+                                artistName={String(track.artist || 'Unknown Artist')}
+                                albumArtUrl={track.album_art_url}
+                                spotifyUrl={track.external_urls?.spotify}
+                                className="w-full h-full max-w-full max-h-full"
+                              />
+                            </div>
                           </div>
                           {isTrackSelected(track) && (
                             <div className="relative">
@@ -464,13 +467,13 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
                     <button
                       key={track.id}
                       onClick={() => handleSelectTrack(track)}
-                      className={`group w-full text-left p-4 sm:p-5 min-h-[72px] rounded-xl border-2 transition-all duration-200 active:scale-[0.97] ${
+                      className={`group w-full text-left p-4 sm:p-5 min-h-[72px] rounded-xl border-2 transition-all duration-200 active:scale-[0.97] overflow-hidden ${
                         isTrackSelected(track)
                           ? 'border-[#A5B99A] bg-gradient-to-r from-[#A5B99A]/20 via-[#A5B99A]/10 to-[#A5B99A]/20 shadow-lg shadow-[#A5B99A]/20'
                           : 'border-gray-200/60 hover:border-[#A5B99A]/40 hover:bg-gradient-to-r hover:from-gray-50/80 hover:to-gray-50/50 hover:shadow-md active:bg-gray-50'
                       }`}
                     >
-                      <div className="flex items-center justify-between gap-4 sm:gap-5">
+                      <div className="flex items-center justify-between gap-4 sm:gap-5 min-w-0">
                         <div className="flex-1 min-w-0 pr-2">
                           <div className="font-semibold text-sm sm:text-base text-[#2C2A29] truncate mb-1">
                             {String(track.name || 'Unknown')}
@@ -482,15 +485,18 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
                         <div className="flex items-center space-x-3 sm:space-x-4 flex-shrink-0">
                           <div
                             onClick={(e) => e.stopPropagation()}
-                            className="w-[56px] h-[56px] flex items-center justify-center overflow-hidden flex-shrink-0"
+                            className="relative w-[56px] h-[56px] flex-shrink-0"
                           >
-                            <TrackPlayer
-                              trackId={track.id}
-                              trackName={String(track.name || 'Unknown')}
-                              artistName={String(track.artist || 'Unknown Artist')}
-                              albumArtUrl={track.album_art_url}
-                              spotifyUrl={track.external_urls?.spotify}
-                            />
+                            <div className="absolute inset-0 w-full h-full max-w-full max-h-full overflow-hidden rounded-full">
+                              <TrackPlayer
+                                trackId={track.id}
+                                trackName={String(track.name || 'Unknown')}
+                                artistName={String(track.artist || 'Unknown Artist')}
+                                albumArtUrl={track.album_art_url}
+                                spotifyUrl={track.external_urls?.spotify}
+                                className="w-full h-full max-w-full max-h-full"
+                              />
+                            </div>
                           </div>
                           {isTrackSelected(track) && (
                             <div className="relative">
