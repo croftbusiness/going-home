@@ -358,7 +358,7 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
               <p>No playlists found</p>
             </div>
           ) : (
-            <div className="space-y-2 max-h-64 overflow-y-auto">
+            <div className={`space-y-2 overflow-y-auto ${selectedPlaylist && playlistTracks.length > 0 ? 'max-h-32 sm:max-h-40' : 'max-h-64 sm:max-h-80'}`}>
               {playlists.map((playlist) => (
                 <button
                   key={playlist.id}
@@ -383,14 +383,15 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
           {/* Playlist Tracks */}
           {selectedPlaylist && playlistTracks.length > 0 && (
             <div className="mt-4 pt-4 border-t border-gray-200">
-              <div className="flex items-center justify-between mb-3">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-3">
                 <div className="text-sm font-medium text-[#2C2A29]">Select songs:</div>
                 <div className="text-xs text-gray-500 flex items-center space-x-1">
                   <Play className="w-3 h-3" />
-                  <span>Click play icon to preview</span>
+                  <span className="hidden sm:inline">Click play icon to preview</span>
+                  <span className="sm:hidden">Tap play to preview</span>
                 </div>
               </div>
-              <div className="space-y-2 max-h-64 overflow-y-auto">
+              <div className="space-y-2 max-h-[40vh] sm:max-h-64 md:max-h-80 overflow-y-auto">
                 {playlistTracks.map((track) => {
                   if (!isValidTrack(track)) return null;
                   return (
@@ -493,7 +494,7 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
                 <Play className="w-3 h-3" />
                 <span>Click play icon to preview songs (30-second previews)</span>
               </div>
-              <div className="space-y-2 max-h-96 overflow-y-auto">
+              <div className="space-y-2 max-h-[40vh] sm:max-h-96 overflow-y-auto">
                 {searchResults.map((track) => {
                   if (!isValidTrack(track)) return null;
                   return (
