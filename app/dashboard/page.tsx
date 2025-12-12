@@ -35,6 +35,7 @@ import {
   Zap,
   FolderHeart,
   Calculator,
+  Eye,
 } from 'lucide-react';
 import AIChecklist from '@/components/ai/AIChecklist';
 import ProfilePictureUpload from '@/components/ProfilePictureUpload';
@@ -65,6 +66,7 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [userName, setUserName] = useState('');
   const [profilePictureUrl, setProfilePictureUrl] = useState<string | null>(null);
+  const [grantedAccess, setGrantedAccess] = useState<any[]>([]);
   const [status, setStatus] = useState<SectionStatus>({
     personalDetails: false,
     medicalContacts: false,
@@ -108,9 +110,10 @@ export default function DashboardPage() {
         return;
       }
 
-      const [statusRes, personalRes] = await Promise.all([
+      const [statusRes, personalRes, grantedAccessRes] = await Promise.all([
         fetch('/api/user/status'),
         fetch('/api/user/personal-details'),
+        fetch('/api/user/granted-access'),
       ]);
       
       if (!statusRes.ok) {
@@ -141,6 +144,12 @@ export default function DashboardPage() {
       } else {
         // Fallback to email-based username if personal details fetch fails
         setUserName(statusData.userName || 'there');
+      }
+
+      // Load granted access
+      if (grantedAccessRes.ok) {
+        const grantedData = await grantedAccessRes.json();
+        setGrantedAccess(grantedData.grantedAccess || []);
       }
     } catch (error) {
       router.push('/auth/login');
@@ -547,6 +556,148 @@ export default function DashboardPage() {
         <div className="mb-10">
           <AIChecklist />
         </div>
+
+        {/* Granted Access Section */}
+        {grantedAccess.length > 0 && (
+          <div className="mb-8 sm:mb-12">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-3">
+              <div className="flex items-center space-x-3">
+                <div className="p-2 bg-gradient-to-br from-[#93B0C8]/20 to-[#A5B99A]/20 rounded-xl">
+                  <Eye className="w-5 h-5 sm:w-6 sm:h-6 text-[#93B0C8]" />
+                </div>
+                <div>
+                  <h2 className="text-2xl sm:text-3xl font-bold text-[#2C2A29]">Granted Access</h2>
+                  <p className="text-sm text-[#2C2A29] opacity-60 mt-0.5">People who have shared their information with you</p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-2 px-4 py-2 bg-[#93B0C8]/10 rounded-full">
+                <Users className="w-4 h-4 text-[#93B0C8]" />
+                <span className="text-sm font-semibold text-[#2C2A29]">
+                  {grantedAccess.length} {grantedAccess.length === 1 ? 'person' : 'people'}
+                </span>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+              {grantedAccess.map((access) => {
+                const permissionCount = Object.values(access.permissions).filter(Boolean).length;
+                return (
+                  <div
+                    key={access.contactId}
+                    className="group relative bg-white/80 backdrop-blur-sm rounded-2xl p-6 sm:p-7 border border-gray-200/50 hover:border-[#93B0C8] hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden cursor-pointer"
+                    onClick={() => {
+                      // Create simulation session and redirect to viewer dashboard
+                      const simulationSession = {
+                        contact: {
+                          id: access.contactId,
+                          name: access.ownerName,
+                          email: access.ownerEmail,
+                          role: access.myRole,
+                          relationship: access.relationship,
+                          ownerId: access.ownerId,
+                        },
+                        permissions: access.permissions,
+                        isSimulation: true,
+                      };
+                      localStorage.setItem('viewer_session', JSON.stringify(simulationSession));
+                      router.push('/viewer/dashboard?simulation=true');
+                    }}
+                  >
+                    {/* Gradient overlay on hover */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#93B0C8]/5 to-[#A5B99A]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    
+                    <div className="relative z-10">
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex items-center space-x-3">
+                          {access.ownerProfilePicture ? (
+                            <div className="relative w-12 h-12 sm:w-14 sm:h-14 rounded-full overflow-hidden border-2 border-[#93B0C8] shadow-sm flex-shrink-0">
+                              <img
+                                src={access.ownerProfilePicture}
+                                alt={access.ownerName}
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                          ) : (
+                            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-[#93B0C8] to-[#A5B99A] flex items-center justify-center text-white font-semibold text-lg sm:text-xl flex-shrink-0">
+                              {access.ownerName.charAt(0).toUpperCase()}
+                            </div>
+                          )}
+                          <div className="min-w-0 flex-1">
+                            <h3 className="font-bold text-[#2C2A29] text-base sm:text-lg truncate group-hover:text-[#93B0C8] transition-colors">
+                              {access.ownerName}
+                            </h3>
+                            <p className="text-xs sm:text-sm text-[#2C2A29] opacity-60">
+                              {access.relationship}
+                            </p>
+                          </div>
+                        </div>
+                        <ArrowRight className="w-5 h-5 text-[#2C2A29] opacity-0 group-hover:opacity-100 group-hover:translate-x-2 transition-all flex-shrink-0" />
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <div className="flex items-center space-x-2 text-xs sm:text-sm text-[#2C2A29] opacity-70">
+                          <span className="px-2 py-1 bg-[#93B0C8] bg-opacity-10 text-[#93B0C8] rounded-full font-medium">
+                            {access.myRole}
+                          </span>
+                          {access.ownerRole && (
+                            <span className="px-2 py-1 bg-[#A5B99A] bg-opacity-10 text-[#A5B99A] rounded-full font-medium">
+                              {access.ownerRole}
+                            </span>
+                          )}
+                        </div>
+                        
+                        {permissionCount > 0 ? (
+                          <div>
+                            <p className="text-xs text-[#2C2A29] opacity-50 mb-2">You can view:</p>
+                            <div className="flex flex-wrap gap-1.5">
+                              {access.permissions.canViewPersonalDetails && (
+                                <span className="px-2 py-0.5 bg-[#A5B99A] bg-opacity-10 text-[#A5B99A] rounded text-xs">
+                                  Personal
+                                </span>
+                              )}
+                              {access.permissions.canViewMedicalContacts && (
+                                <span className="px-2 py-0.5 bg-[#93B0C8] bg-opacity-10 text-[#93B0C8] rounded text-xs">
+                                  Medical
+                                </span>
+                              )}
+                              {access.permissions.canViewFuneralPreferences && (
+                                <span className="px-2 py-0.5 bg-[#A5B99A] bg-opacity-10 text-[#A5B99A] rounded text-xs">
+                                  Funeral
+                                </span>
+                              )}
+                              {access.permissions.canViewDocuments && (
+                                <span className="px-2 py-0.5 bg-[#93B0C8] bg-opacity-10 text-[#93B0C8] rounded text-xs">
+                                  Documents
+                                </span>
+                              )}
+                              {access.permissions.canViewLetters && (
+                                <span className="px-2 py-0.5 bg-[#A5B99A] bg-opacity-10 text-[#A5B99A] rounded text-xs">
+                                  Letters
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        ) : (
+                          <p className="text-xs text-[#2C2A29] opacity-50 italic">
+                            No specific permissions granted yet
+                          </p>
+                        )}
+                      </div>
+                      
+                      <div className="mt-4 pt-4 border-t border-gray-100 group-hover:border-[#93B0C8]/30 transition-colors">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs sm:text-sm font-semibold text-[#93B0C8] group-hover:text-[#A5B99A] transition-colors">
+                            View Information
+                          </span>
+                          <ArrowRight className="w-4 h-4 text-[#93B0C8] group-hover:translate-x-1 transition-all" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Quick Actions / Next Steps */}
         {incompleteSections.length > 0 && (

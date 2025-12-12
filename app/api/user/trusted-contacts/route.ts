@@ -19,6 +19,15 @@ export async function GET() {
 
     if (error) throw error;
 
+    // Fetch owner's profile picture
+    const { data: personalDetails } = await supabase
+      .from('personal_details')
+      .select('profile_picture_url')
+      .eq('user_id', auth.userId)
+      .maybeSingle();
+
+    const ownerProfilePictureUrl = personalDetails?.profile_picture_url || null;
+
     // Transform snake_case to camelCase for frontend
     const trustedContacts = (data || []).map(contact => ({
       id: contact.id,
@@ -34,9 +43,11 @@ export async function GET() {
       canViewFuneralPreferences: contact.can_view_funeral_preferences || false,
       canViewDocuments: contact.can_view_documents || false,
       canViewLetters: contact.can_view_letters || false,
+      avatarUrl: contact.profile_picture_url || null, // Trusted contact's own profile picture if they have one
+      ownerProfilePictureUrl: ownerProfilePictureUrl, // Owner's profile picture
     }));
 
-    return NextResponse.json({ trustedContacts });
+    return NextResponse.json({ trustedContacts, ownerProfilePictureUrl });
   } catch (error) {
     console.error('Trusted contacts GET error:', error);
     return NextResponse.json({ error: 'Failed to load' }, { status: 500 });

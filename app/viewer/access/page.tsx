@@ -138,9 +138,9 @@ export default function ViewerAccessPage() {
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
             <h3 className="text-lg font-semibold text-[#2C2A29] mb-4">Account Owner</h3>
             <div className="flex items-center space-x-4">
-              {ownerInfo.avatar_url ? (
+              {ownerInfo?.profile_picture_url ? (
                 <Image
-                  src={ownerInfo.avatar_url}
+                  src={ownerInfo.profile_picture_url}
                   alt={ownerInfo.preferred_name || ownerInfo.full_name || 'Owner'}
                   width={60}
                   height={60}

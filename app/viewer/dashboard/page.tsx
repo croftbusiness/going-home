@@ -338,12 +338,10 @@ function ViewerDashboardContent() {
           <div className="flex items-start space-x-4">
             {viewerProfilePicture ? (
               <div className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-[#A5B99A] shadow-sm flex-shrink-0">
-                <Image
+                <img
                   src={viewerProfilePicture}
                   alt={`${session.contact.name}'s profile`}
-                  fill
-                  className="object-cover"
-                  sizes="64px"
+                  className="w-full h-full object-cover"
                 />
               </div>
             ) : (
@@ -362,12 +360,10 @@ function ViewerDashboardContent() {
               <div className="flex items-center space-x-4 mb-3">
                 {ownerProfilePicture ? (
                   <div className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-[#93B0C8] shadow-sm flex-shrink-0">
-                    <Image
+                    <img
                       src={ownerProfilePicture}
                       alt={`${ownerName}'s profile`}
-                      fill
-                      className="object-cover"
-                      sizes="40px"
+                      className="w-full h-full object-cover"
                     />
                   </div>
                 ) : (

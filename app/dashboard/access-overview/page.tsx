@@ -20,6 +20,7 @@ interface TrustedContact {
   canViewDocuments: boolean;
   canViewLetters: boolean;
   avatarUrl?: string;
+  ownerProfilePictureUrl?: string;
 }
 
 export default function AccessOverviewPage() {
@@ -204,12 +205,10 @@ export default function AccessOverviewPage() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center space-x-3">
                           {contact.avatarUrl ? (
-                            <Image
+                            <img
                               src={contact.avatarUrl}
                               alt={contact.name}
-                              width={40}
-                              height={40}
-                              className="rounded-full object-cover"
+                              className="w-10 h-10 rounded-full object-cover"
                             />
                           ) : (
                             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#A5B99A] to-[#93B0C8] flex items-center justify-center text-white font-semibold">

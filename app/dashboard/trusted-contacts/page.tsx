@@ -16,9 +16,11 @@ interface TrustedContact {
   canViewMedicalContacts: boolean;
   canViewFuneralPreferences: boolean;
   canViewDocuments: boolean;
-    canViewLetters: boolean;
-    role?: string;
-    status?: string;
+  canViewLetters: boolean;
+  role?: string;
+  status?: string;
+  avatarUrl?: string;
+  ownerProfilePictureUrl?: string;
 }
 
 export default function TrustedContactsPage() {
@@ -249,8 +251,8 @@ export default function TrustedContactsPage() {
         )}
 
         {showForm && (
-          <div className="bg-[#FCFAF7] rounded-lg p-6 shadow-sm mb-6">
-            <h2 className="text-lg font-medium text-[#2C2A29] mb-2">
+          <div className="bg-[#FCFAF7] rounded-lg p-4 sm:p-6 shadow-sm mb-6">
+            <h2 className="text-base sm:text-lg font-medium text-[#2C2A29] mb-2">
               {editingId ? 'Edit Contact' : 'Add New Contact'}
             </h2>
             {!editingId && personalDetails?.emergencyContactName && formData.name === personalDetails.emergencyContactName && (
@@ -342,7 +344,7 @@ export default function TrustedContactsPage() {
                 <button
                   type="button"
                   onClick={() => setShowPermissions(!showPermissions)}
-                  className="flex items-center space-x-2 text-[#93B0C8] hover:text-[#A5B99A] transition-colors"
+                  className="w-full sm:w-auto flex items-center justify-center sm:justify-start space-x-2 px-4 py-3 min-h-[48px] text-[#93B0C8] hover:text-[#A5B99A] hover:bg-white rounded-lg transition-colors touch-target border border-gray-200 sm:border-0"
                 >
                   {showPermissions ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   <span className="text-sm font-medium">
@@ -352,70 +354,70 @@ export default function TrustedContactsPage() {
               </div>
 
               {showPermissions && (
-                <div className="border border-gray-200 rounded-lg p-4 space-y-3">
-                  <p className="text-sm text-[#2C2A29] opacity-70 mb-3">
+                <div className="border border-gray-200 rounded-lg p-4 sm:p-5 space-y-3 sm:space-y-4">
+                  <p className="text-xs sm:text-sm text-[#2C2A29] opacity-70 mb-3">
                     Select which information this contact can view after release is activated
                   </p>
-                  <label className="flex items-center space-x-3">
+                  <label className="flex items-center space-x-3 p-2 hover:bg-white rounded-lg transition-colors cursor-pointer touch-target">
                     <input
                       type="checkbox"
                       checked={formData.canViewPersonalDetails}
                       onChange={(e) => setFormData({ ...formData, canViewPersonalDetails: e.target.checked })}
-                      className="w-4 h-4 text-[#A5B99A] border-gray-300 rounded focus:ring-[#A5B99A]"
+                      className="w-5 h-5 sm:w-4 sm:h-4 text-[#A5B99A] border-gray-300 rounded focus:ring-[#A5B99A] cursor-pointer"
                     />
-                    <span className="text-sm text-[#2C2A29]">Personal Details</span>
+                    <span className="text-sm sm:text-base text-[#2C2A29]">Personal Details</span>
                   </label>
-                  <label className="flex items-center space-x-3">
+                  <label className="flex items-center space-x-3 p-2 hover:bg-white rounded-lg transition-colors cursor-pointer touch-target">
                     <input
                       type="checkbox"
                       checked={formData.canViewMedicalContacts}
                       onChange={(e) => setFormData({ ...formData, canViewMedicalContacts: e.target.checked })}
-                      className="w-4 h-4 text-[#A5B99A] border-gray-300 rounded focus:ring-[#A5B99A]"
+                      className="w-5 h-5 sm:w-4 sm:h-4 text-[#A5B99A] border-gray-300 rounded focus:ring-[#A5B99A] cursor-pointer"
                     />
-                    <span className="text-sm text-[#2C2A29]">Medical Contacts</span>
+                    <span className="text-sm sm:text-base text-[#2C2A29]">Medical Contacts</span>
                   </label>
-                  <label className="flex items-center space-x-3">
+                  <label className="flex items-center space-x-3 p-2 hover:bg-white rounded-lg transition-colors cursor-pointer touch-target">
                     <input
                       type="checkbox"
                       checked={formData.canViewFuneralPreferences}
                       onChange={(e) => setFormData({ ...formData, canViewFuneralPreferences: e.target.checked })}
-                      className="w-4 h-4 text-[#A5B99A] border-gray-300 rounded focus:ring-[#A5B99A]"
+                      className="w-5 h-5 sm:w-4 sm:h-4 text-[#A5B99A] border-gray-300 rounded focus:ring-[#A5B99A] cursor-pointer"
                     />
-                    <span className="text-sm text-[#2C2A29]">Funeral Preferences</span>
+                    <span className="text-sm sm:text-base text-[#2C2A29]">Funeral Preferences</span>
                   </label>
-                  <label className="flex items-center space-x-3">
+                  <label className="flex items-center space-x-3 p-2 hover:bg-white rounded-lg transition-colors cursor-pointer touch-target">
                     <input
                       type="checkbox"
                       checked={formData.canViewDocuments}
                       onChange={(e) => setFormData({ ...formData, canViewDocuments: e.target.checked })}
-                      className="w-4 h-4 text-[#A5B99A] border-gray-300 rounded focus:ring-[#A5B99A]"
+                      className="w-5 h-5 sm:w-4 sm:h-4 text-[#A5B99A] border-gray-300 rounded focus:ring-[#A5B99A] cursor-pointer"
                     />
-                    <span className="text-sm text-[#2C2A29]">Documents</span>
+                    <span className="text-sm sm:text-base text-[#2C2A29]">Documents</span>
                   </label>
-                  <label className="flex items-center space-x-3">
+                  <label className="flex items-center space-x-3 p-2 hover:bg-white rounded-lg transition-colors cursor-pointer touch-target">
                     <input
                       type="checkbox"
                       checked={formData.canViewLetters}
                       onChange={(e) => setFormData({ ...formData, canViewLetters: e.target.checked })}
-                      className="w-4 h-4 text-[#A5B99A] border-gray-300 rounded focus:ring-[#A5B99A]"
+                      className="w-5 h-5 sm:w-4 sm:h-4 text-[#A5B99A] border-gray-300 rounded focus:ring-[#A5B99A] cursor-pointer"
                     />
-                    <span className="text-sm text-[#2C2A29]">Letters</span>
+                    <span className="text-sm sm:text-base text-[#2C2A29]">Letters</span>
                   </label>
                 </div>
               )}
 
-              <div className="flex justify-end space-x-4">
+              <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 sm:gap-4 pt-4">
                 <button
                   type="button"
                   onClick={resetForm}
-                  className="px-6 py-2 border border-gray-300 text-[#2C2A29] rounded-lg hover:bg-gray-50 transition-colors"
+                  className="w-full sm:w-auto px-6 py-3 min-h-[48px] border border-gray-300 text-[#2C2A29] rounded-lg hover:bg-gray-50 transition-colors touch-target font-medium"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
-                  className="px-6 py-2 bg-[#A5B99A] text-white rounded-lg hover:bg-[#93B0C8] transition-colors disabled:opacity-50"
+                  className="w-full sm:w-auto px-6 py-3 min-h-[48px] bg-[#A5B99A] text-white rounded-lg hover:bg-[#93B0C8] transition-colors disabled:opacity-50 touch-target font-medium"
                 >
                   {saving ? 'Saving...' : editingId ? 'Update Contact' : 'Add Contact'}
                 </button>
@@ -425,62 +427,80 @@ export default function TrustedContactsPage() {
         )}
 
         {contacts.length === 0 ? (
-          <div className="bg-[#FCFAF7] rounded-lg p-12 text-center">
-            <Users className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-[#2C2A29] mb-2">No trusted contacts yet</h3>
-            <p className="text-[#2C2A29] opacity-70">
+          <div className="bg-[#FCFAF7] rounded-lg p-8 sm:p-12 text-center">
+            <Users className="w-12 h-12 sm:w-16 sm:h-16 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-base sm:text-lg font-medium text-[#2C2A29] mb-2">No trusted contacts yet</h3>
+            <p className="text-sm sm:text-base text-[#2C2A29] opacity-70 px-4">
               Add people who should have access to your information when the time comes
             </p>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {contacts.map((contact) => (
-              <div key={contact.id} className="bg-[#FCFAF7] rounded-lg p-6 shadow-sm">
-                <div className="flex items-start justify-between">
-                  <div className="flex items-start space-x-4 flex-1">
-                    <div className="p-3 bg-white rounded-lg">
-                      <Users className="w-6 h-6 text-[#A5B99A]" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-lg font-medium text-[#2C2A29] mb-1">{contact.name}</h3>
-                      <p className="text-sm text-[#2C2A29] opacity-70 mb-1">{contact.relationship}</p>
-                      <p className="text-sm text-[#2C2A29] opacity-60 mb-1">{contact.email}</p>
-                      <p className="text-sm text-[#2C2A29] opacity-60 mb-2">{contact.phone}</p>
-                      {contact.role && (
-                        <p className="text-xs text-[#A5B99A] font-medium mb-2">Role: {contact.role}</p>
-                      )}
-                      {contact.status && (
-                        <p className="text-xs text-[#93B0C8] mb-2">
-                          Status: <span className="capitalize">{contact.status}</span>
-                        </p>
-                      )}
+              <div key={contact.id} className="bg-[#FCFAF7] rounded-lg p-4 sm:p-6 shadow-sm">
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+                  <div className="flex items-start space-x-3 sm:space-x-4 flex-1 min-w-0">
+                    {contact.avatarUrl ? (
+                      <div className="relative w-12 h-12 sm:w-14 sm:h-14 rounded-full overflow-hidden border-2 border-[#A5B99A] shadow-sm flex-shrink-0">
+                        <img
+                          src={contact.avatarUrl}
+                          alt={contact.name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    ) : (
+                      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-[#A5B99A] to-[#93B0C8] flex items-center justify-center text-white font-semibold text-base sm:text-lg flex-shrink-0">
+                        {contact.name.charAt(0).toUpperCase()}
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-base sm:text-lg font-medium text-[#2C2A29] mb-1 truncate">{contact.name}</h3>
+                      <p className="text-xs sm:text-sm text-[#2C2A29] opacity-70 mb-1">{contact.relationship}</p>
+                      <a href={`mailto:${contact.email}`} className="text-xs sm:text-sm text-[#2C2A29] opacity-60 mb-1 block truncate hover:text-[#A5B99A] transition-colors">
+                        {contact.email}
+                      </a>
+                      <a href={`tel:${contact.phone}`} className="text-xs sm:text-sm text-[#2C2A29] opacity-60 mb-2 block hover:text-[#A5B99A] transition-colors">
+                        {contact.phone}
+                      </a>
+                      <div className="flex flex-wrap items-center gap-2 mb-2">
+                        {contact.role && (
+                          <span className="px-2 py-1 bg-[#A5B99A] bg-opacity-10 text-[#A5B99A] rounded-full text-xs font-medium">
+                            {contact.role}
+                          </span>
+                        )}
+                        {contact.status && (
+                          <span className="px-2 py-1 bg-[#93B0C8] bg-opacity-10 text-[#93B0C8] rounded-full text-xs font-medium capitalize">
+                            {contact.status}
+                          </span>
+                        )}
+                      </div>
                       {(contact.canViewPersonalDetails || contact.canViewMedicalContacts || 
                         contact.canViewFuneralPreferences || contact.canViewDocuments || contact.canViewLetters) && (
-                        <div className="mt-3 pt-3 border-t border-gray-200">
+                        <div className="mt-2 sm:mt-3 pt-2 sm:pt-3 border-t border-gray-200">
                           <p className="text-xs text-[#2C2A29] opacity-50 mb-2">Can access:</p>
-                          <div className="flex flex-wrap gap-2">
+                          <div className="flex flex-wrap gap-1.5 sm:gap-2">
                             {contact.canViewPersonalDetails && (
-                              <span className="px-2 py-1 bg-[#A5B99A] bg-opacity-10 text-[#A5B99A] rounded text-xs">
-                                Personal Details
+                              <span className="px-2 py-0.5 sm:py-1 bg-[#A5B99A] bg-opacity-10 text-[#A5B99A] rounded text-xs">
+                                Personal
                               </span>
                             )}
                             {contact.canViewMedicalContacts && (
-                              <span className="px-2 py-1 bg-[#93B0C8] bg-opacity-10 text-[#93B0C8] rounded text-xs">
+                              <span className="px-2 py-0.5 sm:py-1 bg-[#93B0C8] bg-opacity-10 text-[#93B0C8] rounded text-xs">
                                 Medical
                               </span>
                             )}
                             {contact.canViewFuneralPreferences && (
-                              <span className="px-2 py-1 bg-[#A5B99A] bg-opacity-10 text-[#A5B99A] rounded text-xs">
-                                Funeral Prefs
+                              <span className="px-2 py-0.5 sm:py-1 bg-[#A5B99A] bg-opacity-10 text-[#A5B99A] rounded text-xs">
+                                Funeral
                               </span>
                             )}
                             {contact.canViewDocuments && (
-                              <span className="px-2 py-1 bg-[#93B0C8] bg-opacity-10 text-[#93B0C8] rounded text-xs">
+                              <span className="px-2 py-0.5 sm:py-1 bg-[#93B0C8] bg-opacity-10 text-[#93B0C8] rounded text-xs">
                                 Documents
                               </span>
                             )}
                             {contact.canViewLetters && (
-                              <span className="px-2 py-1 bg-[#A5B99A] bg-opacity-10 text-[#A5B99A] rounded text-xs">
+                              <span className="px-2 py-0.5 sm:py-1 bg-[#A5B99A] bg-opacity-10 text-[#A5B99A] rounded text-xs">
                                 Letters
                               </span>
                             )}
@@ -489,11 +509,11 @@ export default function TrustedContactsPage() {
                       )}
                     </div>
                   </div>
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center justify-end sm:justify-start space-x-2 sm:space-x-2 border-t sm:border-t-0 border-gray-200 pt-3 sm:pt-0">
                     <button
                       onClick={() => handleSendInvite(contact.id)}
                       disabled={sendingInvite === contact.id}
-                      className="p-2 text-[#A5B99A] hover:bg-white rounded-lg transition-colors disabled:opacity-50"
+                      className="p-2.5 sm:p-2 min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 text-[#A5B99A] hover:bg-white rounded-lg transition-colors disabled:opacity-50 touch-target flex items-center justify-center"
                       title="Send invitation email"
                     >
                       {sendingInvite === contact.id ? (
@@ -504,13 +524,15 @@ export default function TrustedContactsPage() {
                     </button>
                     <button
                       onClick={() => handleEdit(contact)}
-                      className="p-2 text-[#93B0C8] hover:bg-white rounded-lg transition-colors"
+                      className="p-2.5 sm:p-2 min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 text-[#93B0C8] hover:bg-white rounded-lg transition-colors touch-target flex items-center justify-center"
+                      title="Edit contact"
                     >
                       <Edit className="w-5 h-5" />
                     </button>
                     <button
                       onClick={() => handleDelete(contact.id)}
-                      className="p-2 text-red-600 hover:bg-white rounded-lg transition-colors"
+                      className="p-2.5 sm:p-2 min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 text-red-600 hover:bg-white rounded-lg transition-colors touch-target flex items-center justify-center"
+                      title="Delete contact"
                     >
                       <Trash2 className="w-5 h-5" />
                     </button>

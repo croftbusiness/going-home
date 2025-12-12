@@ -36,6 +36,7 @@ import {
   LayoutDashboard,
   Gift,
   Calculator,
+  Eye,
 } from 'lucide-react';
 
 // Organized navigation with sections and unique icons
@@ -70,6 +71,7 @@ const navigation = [
   
   // Administrative
   { name: 'Access Overview', href: '/dashboard/access-overview', icon: Users, section: 'admin' },
+  { name: 'Shared With Me', href: '/dashboard/shared-with-me', icon: Eye, section: 'admin' },
   { name: 'Account Settings', href: '/dashboard/account-settings', icon: Settings, section: 'admin' },
   { name: 'Final Summary', href: '/dashboard/final-summary', icon: FileCheck, section: 'admin' },
   { name: 'Release Settings', href: '/dashboard/release-settings', icon: Shield, section: 'admin' },
@@ -241,14 +243,16 @@ export default function DashboardLayout({
               <div className="flex items-center space-x-3">
                 {profilePictureUrl ? (
                   <div className="relative w-11 h-11 rounded-full overflow-hidden border-2 border-[#A5B99A] shadow-sm flex-shrink-0">
-                    <Image
+                    <img
                       src={profilePictureUrl}
                       alt="Profile"
-                      fill
-                      className="object-cover"
-                      sizes="44px"
-                      onError={() => {
-                        // Fallback handled by conditional rendering below
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                        if (target.nextElementSibling) {
+                          (target.nextElementSibling as HTMLElement).style.display = 'flex';
+                        }
                       }}
                     />
                   </div>

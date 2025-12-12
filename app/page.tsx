@@ -73,6 +73,14 @@ export default function HomePage() {
             </Link>
             <div className="flex items-center space-x-2 sm:space-x-3">
               <Link
+                href="/viewer/login"
+                className="group inline-flex items-center space-x-2 px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-[#2C2A29] hover:text-[#93B0C8] transition-all duration-200 rounded-lg hover:bg-[#FCFAF7] border border-transparent hover:border-[#A5B99A]/20"
+                title="Trusted Viewer Login"
+              >
+                <Users className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                <span className="hidden sm:inline">Viewer Login</span>
+              </Link>
+              <Link
                 href="/auth/login"
                 className="group inline-flex items-center space-x-2 px-4 sm:px-5 py-2 sm:py-2.5 text-sm font-medium text-[#2C2A29] hover:text-[#93B0C8] transition-all duration-200 rounded-lg hover:bg-[#FCFAF7] border border-transparent hover:border-[#A5B99A]/20"
               >

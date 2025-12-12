@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { createClient } from '@/lib/supabase-browser';
-import { Lock } from 'lucide-react';
+import { Lock, Users } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -208,7 +208,22 @@ export default function LoginPage() {
           </div>
         </form>
 
-        <div className="mt-6 pt-6 border-t border-gray-200">
+        <div className="mt-6 pt-6 border-t border-gray-200 space-y-4">
+          <div className="text-center">
+            <p className="text-sm text-[#2C2A29] opacity-70 mb-3">
+              Are you a trusted contact?
+            </p>
+            <Link
+              href="/viewer/login"
+              className="inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 border border-[#93B0C8] rounded-md text-sm font-medium text-[#93B0C8] hover:bg-[#93B0C8] hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#93B0C8] transition-colors"
+            >
+              <Users className="w-4 h-4" />
+              Trusted Viewer Login
+            </Link>
+            <p className="text-xs text-[#2C2A29] opacity-60 mt-2">
+              Use the invitation link from your email
+            </p>
+          </div>
           <div className="text-center">
             <p className="text-sm text-[#2C2A29] opacity-70 mb-3">
               Are you an executor?
