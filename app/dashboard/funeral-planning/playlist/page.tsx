@@ -204,7 +204,7 @@ function PlaylistPageContent() {
           <div className="flex items-center space-x-3 sm:space-x-4">
             <Link
               href="/dashboard/funeral-planning"
-              className="p-2 hover:bg-white rounded-lg transition-colors flex-shrink-0 touch-target"
+              className="p-2.5 sm:p-2 min-w-[44px] min-h-[44px] flex items-center justify-center hover:bg-white rounded-lg transition-colors flex-shrink-0"
             >
               <ArrowLeft className="w-5 h-5 text-[#2C2A29]" />
             </Link>
@@ -222,26 +222,26 @@ function PlaylistPageContent() {
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
         {/* Intro */}
-        <div className="bg-gradient-to-br from-white via-[#FCFAF7] to-white rounded-xl p-6 sm:p-8 shadow-sm border border-gray-100 mb-6 sm:mb-8">
-          <div className="flex items-start space-x-4">
-            <div className="p-3 bg-[#A5B99A] bg-opacity-10 rounded-xl flex-shrink-0">
-              <Music className="w-6 h-6 text-[#A5B99A]" />
+        <div className="bg-gradient-to-br from-white via-[#FCFAF7] to-white rounded-xl p-4 sm:p-6 lg:p-8 shadow-sm border border-gray-100 mb-4 sm:mb-6 lg:mb-8">
+          <div className="flex flex-col sm:flex-row items-start space-y-3 sm:space-y-0 sm:space-x-4">
+            <div className="p-2.5 sm:p-3 bg-[#A5B99A] bg-opacity-10 rounded-xl flex-shrink-0">
+              <Music className="w-5 h-5 sm:w-6 sm:h-6 text-[#A5B99A]" />
             </div>
-            <div className="flex-1">
-              <h2 className="text-xl font-semibold text-[#2C2A29] mb-2">
+            <div className="flex-1 min-w-0">
+              <h2 className="text-lg sm:text-xl font-semibold text-[#2C2A29] mb-2">
                 Create your perfect soundtrack
               </h2>
-              <p className="text-sm sm:text-base text-[#2C2A29] opacity-70 leading-relaxed mb-4">
+              <p className="text-sm sm:text-base text-[#2C2A29] opacity-70 leading-relaxed mb-3 sm:mb-4">
                 Add your favorite songs from Spotify or enter them manually to create your personalized music playlist 
                 for your ceremony, photo slideshow, and reception gathering.
               </p>
               
               {/* Why This Helps Loved Ones */}
-              <div className="mt-4 p-4 bg-gradient-to-br from-[#A5B99A]/10 to-[#93B0C8]/10 rounded-lg border border-[#A5B99A]/20">
-                <div className="flex items-start space-x-3">
-                  <Heart className="w-5 h-5 text-[#A5B99A] flex-shrink-0 mt-0.5" />
-                  <div>
-                    <h3 className="text-sm font-semibold text-[#2C2A29] mb-1">
+              <div className="mt-3 sm:mt-4 p-3 sm:p-4 bg-gradient-to-br from-[#A5B99A]/10 to-[#93B0C8]/10 rounded-lg border border-[#A5B99A]/20">
+                <div className="flex items-start space-x-2 sm:space-x-3">
+                  <Heart className="w-4 h-4 sm:w-5 sm:h-5 text-[#A5B99A] flex-shrink-0 mt-0.5" />
+                  <div className="min-w-0 flex-1">
+                    <h3 className="text-xs sm:text-sm font-semibold text-[#2C2A29] mb-1">
                       Why This Helps Your Loved Ones
                     </h3>
                     <p className="text-xs text-[#2C2A29] opacity-80 leading-relaxed">
@@ -258,11 +258,11 @@ function PlaylistPageContent() {
         </div>
 
         {error && (
-          <div className="bg-red-50 text-red-700 px-4 py-3 rounded-lg mb-6 text-sm sm:text-base">{error}</div>
+          <div className="bg-red-50 text-red-700 px-4 py-3 rounded-lg mb-4 sm:mb-6 text-sm sm:text-base">{error}</div>
         )}
 
         {success && (
-          <div className="bg-green-50 text-green-700 px-4 py-3 rounded-lg mb-6 text-sm sm:text-base">
+          <div className="bg-green-50 text-green-700 px-4 py-3 rounded-lg mb-4 sm:mb-6 text-sm sm:text-base">
             Playlist saved successfully!
           </div>
         )}
@@ -345,11 +345,11 @@ function PlaylistPageContent() {
               </div>
 
               {/* Manual Entry */}
-              <div className="border-t border-gray-200 pt-4">
+              <div className="border-t border-gray-200 pt-4 mt-4">
                 <p className="text-sm text-[#2C2A29] opacity-70 mb-3">
                   Or add songs manually:
                 </p>
-                <div className="flex gap-2 mb-2">
+                <div className="flex flex-col sm:flex-row gap-2 mb-2">
                   <input
                     type="text"
                     value={currentSong}
@@ -360,32 +360,33 @@ function PlaylistPageContent() {
                         handleAddSong();
                       }
                     }}
-                    placeholder="e.g., Amazing Grace - Traditional, Over the Rainbow - Judy Garland..."
-                    className="flex-1 px-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent touch-target"
+                    placeholder="e.g., Amazing Grace - Traditional..."
+                    className="flex-1 px-4 py-3 text-base sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent"
                   />
                   <button
                     onClick={handleAddSong}
-                    className="px-4 py-3 bg-gray-100 text-[#2C2A29] rounded-lg hover:bg-gray-200 transition-colors touch-target"
+                    className="px-4 py-3 min-h-[48px] sm:min-h-[auto] bg-gray-100 text-[#2C2A29] rounded-lg hover:bg-gray-200 active:bg-gray-300 transition-colors flex items-center justify-center"
                   >
                     <Plus className="w-5 h-5" />
                   </button>
                 </div>
                 {songs.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mt-4">
+                  <div className="flex flex-wrap gap-2 mt-3 sm:mt-4">
                     {songs.map((song, idx) => {
                       // Double-check that song is a string before rendering
                       const songString = typeof song === 'string' ? song : String(song || 'Unknown');
                       return (
                         <span
                           key={idx}
-                          className="inline-flex items-center px-3 py-1 bg-[#A5B99A] bg-opacity-10 text-[#2C2A29] rounded-full text-sm"
+                          className="inline-flex items-center px-3 py-1.5 sm:py-1 bg-[#A5B99A] bg-opacity-10 text-[#2C2A29] rounded-full text-xs sm:text-sm max-w-full"
                         >
-                          {songString}
+                          <span className="truncate max-w-[200px] sm:max-w-none">{songString}</span>
                           <button
                             onClick={() => handleRemoveSong(idx)}
-                            className="ml-2 hover:text-red-600 touch-target"
+                            className="ml-2 min-w-[24px] min-h-[24px] flex items-center justify-center hover:text-red-600 active:text-red-700 flex-shrink-0"
+                            aria-label="Remove song"
                           >
-                            <X className="w-3 h-3" />
+                            <X className="w-3.5 h-3.5 sm:w-3 sm:h-3" />
                           </button>
                         </span>
                       );
@@ -399,17 +400,17 @@ function PlaylistPageContent() {
             <button
               onClick={handleSave}
               disabled={saving || songs.length === 0}
-              className="w-full px-6 py-4 min-h-[56px] text-base bg-[#A5B99A] text-white rounded-lg hover:bg-[#93B0C8] transition-colors touch-target disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+              className="w-full px-6 py-4 min-h-[48px] sm:min-h-[56px] text-base bg-[#A5B99A] text-white rounded-lg hover:bg-[#93B0C8] active:bg-[#93B0C8]/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 font-medium"
             >
               {saving ? (
                 <>
                   <Loader2 className="w-5 h-5 animate-spin" />
-                  Saving...
+                  <span>Saving...</span>
                 </>
               ) : (
                 <>
                   <Save className="w-5 h-5" />
-                  Save Playlist
+                  <span>Save Playlist</span>
                 </>
               )}
             </button>
@@ -419,19 +420,20 @@ function PlaylistPageContent() {
         {/* Saved Songs List */}
         {songs.length > 0 && (
           <div className="bg-white rounded-xl p-4 sm:p-6 lg:p-8 shadow-sm border border-gray-200">
-            <h3 className="text-lg font-semibold text-[#2C2A29] mb-4">Your Playlist ({songs.length} songs)</h3>
+            <h3 className="text-base sm:text-lg font-semibold text-[#2C2A29] mb-3 sm:mb-4">Your Playlist ({songs.length} {songs.length === 1 ? 'song' : 'songs'})</h3>
             <div className="space-y-2">
               {songs.map((song, idx) => {
                   // Double-check that song is a string before rendering
                   const songString = typeof song === 'string' ? song : String(song || 'Unknown');
                   return (
-                    <div key={idx} className="p-3 bg-gray-50 rounded-lg flex items-center justify-between">
-                      <span className="text-[#2C2A29]">{songString}</span>
+                    <div key={idx} className="p-3 sm:p-3 bg-gray-50 rounded-lg flex items-center justify-between gap-3">
+                      <span className="text-sm sm:text-base text-[#2C2A29] flex-1 min-w-0 truncate">{songString}</span>
                       <button
                         onClick={() => handleRemoveSong(idx)}
-                        className="text-red-600 hover:text-red-800 touch-target"
+                        className="text-red-600 hover:text-red-800 active:text-red-900 min-w-[36px] min-h-[36px] flex items-center justify-center flex-shrink-0"
+                        aria-label="Remove song"
                       >
-                        <X className="w-4 h-4" />
+                        <X className="w-5 h-5 sm:w-4 sm:h-4" />
                       </button>
                     </div>
                   );

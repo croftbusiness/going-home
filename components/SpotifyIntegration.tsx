@@ -293,18 +293,18 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
 
   if (!isConnected) {
     return (
-      <div className="bg-gradient-to-r from-[#1DB954] to-[#1ed760] rounded-lg p-6 text-white">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <Music className="w-6 h-6" />
-            <div>
-              <h3 className="font-semibold text-lg">Connect to Spotify</h3>
-              <p className="text-sm opacity-90">Import your playlists and favorite songs</p>
+      <div className="bg-gradient-to-r from-[#1DB954] to-[#1ed760] rounded-lg p-4 sm:p-6 text-white">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
+          <div className="flex items-center space-x-2 sm:space-x-3 flex-1 min-w-0">
+            <Music className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" />
+            <div className="min-w-0 flex-1">
+              <h3 className="font-semibold text-base sm:text-lg">Connect to Spotify</h3>
+              <p className="text-xs sm:text-sm opacity-90">Import your playlists and favorite songs</p>
             </div>
           </div>
           <button
             onClick={handleConnect}
-            className="px-4 py-2 bg-white text-[#1DB954] rounded-lg hover:bg-gray-100 transition-colors font-medium"
+            className="w-full sm:w-auto px-6 py-3 sm:px-4 sm:py-2 min-h-[44px] bg-white text-[#1DB954] rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors font-medium text-base sm:text-sm"
           >
             Connect
           </button>
@@ -314,35 +314,35 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
   }
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-6">
-      <div className="flex items-center justify-between mb-4">
+    <div className="bg-white rounded-lg border border-gray-200 p-4 sm:p-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0 mb-4">
         <div className="flex items-center space-x-2">
-          <Music className="w-5 h-5 text-[#1DB954]" />
-          <h3 className="font-semibold text-[#2C2A29]">Select Songs from Spotify</h3>
+          <Music className="w-5 h-5 text-[#1DB954] flex-shrink-0" />
+          <h3 className="font-semibold text-base sm:text-lg text-[#2C2A29]">Select Songs from Spotify</h3>
         </div>
-        <div className="text-xs text-gray-500">
+        <div className="text-xs sm:text-xs text-gray-500">
           {selectedSongs.length} / {maxSongs} selected
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex space-x-2 mb-4 border-b border-gray-200">
+      <div className="flex space-x-1 sm:space-x-2 mb-4 border-b border-gray-200 -mx-4 sm:-mx-6 px-4 sm:px-6">
         <button
           onClick={() => setActiveTab('playlists')}
-          className={`px-4 py-2 text-sm font-medium transition-colors ${
+          className={`flex-1 sm:flex-none px-3 sm:px-4 py-3 sm:py-2 text-sm font-medium transition-colors min-h-[44px] sm:min-h-[auto] ${
             activeTab === 'playlists'
               ? 'text-[#93B0C8] border-b-2 border-[#93B0C8]'
-              : 'text-gray-500 hover:text-gray-700'
+              : 'text-gray-500 hover:text-gray-700 active:text-gray-900'
           }`}
         >
           My Playlists
         </button>
         <button
           onClick={() => setActiveTab('search')}
-          className={`px-4 py-2 text-sm font-medium transition-colors ${
+          className={`flex-1 sm:flex-none px-3 sm:px-4 py-3 sm:py-2 text-sm font-medium transition-colors min-h-[44px] sm:min-h-[auto] ${
             activeTab === 'search'
               ? 'text-[#93B0C8] border-b-2 border-[#93B0C8]'
-              : 'text-gray-500 hover:text-gray-700'
+              : 'text-gray-500 hover:text-gray-700 active:text-gray-900'
           }`}
         >
           Search Songs
@@ -363,13 +363,13 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
                 <button
                   key={playlist.id}
                   onClick={() => handlePlaylistSelect(playlist.id)}
-                  className={`w-full text-left p-3 rounded-lg border transition-colors ${
+                  className={`w-full text-left p-3 sm:p-3 min-h-[48px] rounded-lg border transition-colors active:scale-[0.98] ${
                     selectedPlaylist === playlist.id
                       ? 'border-[#93B0C8] bg-[#93B0C8]/10'
-                      : 'border-gray-200 hover:border-gray-300'
+                      : 'border-gray-200 hover:border-gray-300 active:bg-gray-50'
                   }`}
                 >
-                  <div className="font-medium text-[#2C2A29]">{String(playlist.name || 'Unknown Playlist')}</div>
+                  <div className="font-medium text-sm sm:text-base text-[#2C2A29] truncate">{String(playlist.name || 'Unknown Playlist')}</div>
                   {playlist.tracks && (
                     <div className="text-xs text-gray-500 mt-1">
                       {playlist.tracks.total} tracks
@@ -397,34 +397,35 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
                     <button
                       key={track.id}
                       onClick={() => handleSelectTrack(track)}
-                      className={`w-full text-left p-3 rounded-lg border transition-colors ${
+                      className={`w-full text-left p-3 sm:p-3 min-h-[56px] rounded-lg border transition-colors active:scale-[0.98] ${
                         isTrackSelected(track)
                           ? 'border-[#A5B99A] bg-[#A5B99A]/10'
-                          : 'border-gray-200 hover:border-gray-300'
+                          : 'border-gray-200 hover:border-gray-300 active:bg-gray-50'
                       }`}
                     >
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1 min-w-0">
-                          <div className="font-medium text-[#2C2A29] truncate">
+                      <div className="flex items-center justify-between gap-2 sm:gap-0">
+                        <div className="flex-1 min-w-0 pr-2">
+                          <div className="font-medium text-sm sm:text-base text-[#2C2A29] truncate">
                             {String(track.name || 'Unknown')}
                           </div>
-                          <div className="text-sm text-gray-500 truncate">
+                          <div className="text-xs sm:text-sm text-gray-500 truncate">
                             {String(track.artist || 'Unknown Artist')}
                           </div>
                         </div>
-                        <div className="flex items-center space-x-2 ml-2">
+                        <div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0">
                           {track.preview_url && (
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
                                 handlePlayPreview(track);
                               }}
-                              className={`p-2 rounded-full transition-colors ${
+                              className={`p-2 sm:p-2 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-full transition-colors ${
                                 playingTrackId === track.id
                                   ? 'bg-[#1DB954] text-white'
-                                  : 'text-[#1DB954] hover:bg-[#1DB954]/10'
+                                  : 'text-[#1DB954] hover:bg-[#1DB954]/10 active:bg-[#1DB954]/20'
                               }`}
                               title={playingTrackId === track.id ? 'Stop preview' : 'Play preview'}
+                              aria-label={playingTrackId === track.id ? 'Stop preview' : 'Play preview'}
                             >
                               {playingTrackId === track.id ? (
                                 <X className="w-4 h-4" />
@@ -442,8 +443,9 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
                               target="_blank"
                               rel="noopener noreferrer"
                               onClick={(e) => e.stopPropagation()}
-                              className="text-[#1DB954] hover:text-[#1ed760] p-2"
+                              className="text-[#1DB954] hover:text-[#1ed760] active:text-[#1ed760] p-2 min-w-[36px] min-h-[36px] flex items-center justify-center"
                               title="Open in Spotify"
+                              aria-label="Open in Spotify"
                             >
                               <ExternalLink className="w-4 h-4" />
                             </a>
@@ -462,19 +464,19 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
       {/* Search Tab */}
       {activeTab === 'search' && (
         <div>
-          <div className="flex space-x-2 mb-4">
+          <div className="flex flex-col sm:flex-row gap-2 mb-4">
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
               placeholder="Search for songs..."
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent"
+              className="flex-1 px-4 py-3 sm:py-2 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent"
             />
             <button
               onClick={handleSearch}
               disabled={searching || !searchQuery.trim()}
-              className="px-4 py-2 bg-[#93B0C8] text-white rounded-lg hover:bg-[#A5B99A] transition-colors disabled:opacity-50 flex items-center space-x-2"
+              className="px-4 py-3 sm:py-2 min-h-[48px] sm:min-h-[auto] bg-[#93B0C8] text-white rounded-lg hover:bg-[#A5B99A] active:bg-[#A5B99A]/90 transition-colors disabled:opacity-50 flex items-center justify-center space-x-2 font-medium"
             >
               {searching ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -498,34 +500,35 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
                     <button
                       key={track.id}
                       onClick={() => handleSelectTrack(track)}
-                      className={`w-full text-left p-3 rounded-lg border transition-colors ${
+                      className={`w-full text-left p-3 sm:p-3 min-h-[56px] rounded-lg border transition-colors active:scale-[0.98] ${
                         isTrackSelected(track)
                           ? 'border-[#A5B99A] bg-[#A5B99A]/10'
-                          : 'border-gray-200 hover:border-gray-300'
+                          : 'border-gray-200 hover:border-gray-300 active:bg-gray-50'
                       }`}
                     >
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1 min-w-0">
-                          <div className="font-medium text-[#2C2A29] truncate">
+                      <div className="flex items-center justify-between gap-2 sm:gap-0">
+                        <div className="flex-1 min-w-0 pr-2">
+                          <div className="font-medium text-sm sm:text-base text-[#2C2A29] truncate">
                             {String(track.name || 'Unknown')}
                           </div>
-                          <div className="text-sm text-gray-500 truncate">
+                          <div className="text-xs sm:text-sm text-gray-500 truncate">
                             {String(track.artist || 'Unknown Artist')}
                           </div>
                         </div>
-                        <div className="flex items-center space-x-2 ml-2">
+                        <div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0">
                           {track.preview_url && (
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
                                 handlePlayPreview(track);
                               }}
-                              className={`p-2 rounded-full transition-colors ${
+                              className={`p-2 sm:p-2 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-full transition-colors ${
                                 playingTrackId === track.id
                                   ? 'bg-[#1DB954] text-white'
-                                  : 'text-[#1DB954] hover:bg-[#1DB954]/10'
+                                  : 'text-[#1DB954] hover:bg-[#1DB954]/10 active:bg-[#1DB954]/20'
                               }`}
                               title={playingTrackId === track.id ? 'Stop preview' : 'Play preview'}
+                              aria-label={playingTrackId === track.id ? 'Stop preview' : 'Play preview'}
                             >
                               {playingTrackId === track.id ? (
                                 <X className="w-4 h-4" />
@@ -543,8 +546,9 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
                               target="_blank"
                               rel="noopener noreferrer"
                               onClick={(e) => e.stopPropagation()}
-                              className="text-[#1DB954] hover:text-[#1ed760] p-2"
+                              className="text-[#1DB954] hover:text-[#1ed760] active:text-[#1ed760] p-2 min-w-[36px] min-h-[36px] flex items-center justify-center"
                               title="Open in Spotify"
+                              aria-label="Open in Spotify"
                             >
                               <ExternalLink className="w-4 h-4" />
                             </a>
