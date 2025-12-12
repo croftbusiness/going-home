@@ -90,7 +90,7 @@ export default function WillQuestionnairePage() {
             </div>
             <div className="ml-3">
               <p className="text-sm text-amber-800">
-                <strong>Legal Disclaimer:</strong> Going Home does not provide legal advice or create legally binding documents. 
+                <strong>Legal Disclaimer:</strong> StillReady does not provide legal advice or create legally binding documents. 
                 This questionnaire is for informational and planning purposes only. Please consult with a qualified attorney 
                 to create a legally valid will.
               </p>

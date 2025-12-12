@@ -300,7 +300,7 @@ export default function IfSomethingHappensPage() {
             If Something Happens
           </h1>
           <p className="text-sm sm:text-base lg:text-lg text-[#2C2A29] opacity-70 font-light">
-            Essential information when you need it most
+            This helps the people you love know what to do. Calm readiness, whenever it's needed.
           </p>
         </div>
 
@@ -765,7 +765,7 @@ export default function IfSomethingHappensPage() {
                 </div>
               ) : (
                 <div className="text-center py-4 sm:py-6">
-                  <p className="text-xs sm:text-sm text-[#2C2A29] opacity-60 mb-2">No documents available</p>
+                  <p className="text-xs sm:text-sm text-[#2C2A29] opacity-60 mb-2">No documents available yet</p>
                   <Link
                     href="/dashboard/documents"
                     className="text-xs sm:text-sm text-[#93B0C8] hover:text-[#A5B99A] active:text-[#A5B99A] transition-colors touch-target inline-block py-1"

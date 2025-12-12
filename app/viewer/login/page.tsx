@@ -76,13 +76,13 @@ function ViewerLoginContent() {
       <div className="max-w-md w-full space-y-8 bg-[#FCFAF7] p-8 rounded-lg shadow-sm">
         <div className="flex flex-col items-center">
           <Link href="/" className="mb-6">
-            <div className="relative w-16 h-16">
+            <div className="relative h-12 w-auto">
               <Image
-                src="/logo.png"
-                alt="Going Home Logo"
-                width={64}
-                height={64}
-                className="object-contain"
+                src="/logo.svg"
+                alt="StillReady Logo"
+                width={200}
+                height={50}
+                className="object-contain h-12 w-auto"
                 priority
               />
             </div>

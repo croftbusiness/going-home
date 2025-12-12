@@ -153,3 +153,4 @@ The complete schema is in `supabase/legacy_features_schema.sql` and includes:
 
 
 
+

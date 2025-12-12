@@ -247,11 +247,11 @@ export default function LettersPage() {
                   Why This Helps Your Loved Ones
                 </h3>
                 <p className="text-sm text-[#2C2A29] opacity-70 leading-relaxed">
-                  Your written words have the power to comfort, heal, and guide long after you're gone. By writing 
-                  letters now, you're giving your loved ones a precious gift—your own voice speaking directly to 
-                  them when they need it most. Whether released after your passing, on special dates, or at life 
-                  milestones, these letters become treasured keepsakes that help them feel your love and presence. 
-                  Your words will provide comfort during grief, encouragement during challenges, and connection 
+                  Your written words have the power to comfort, heal, and guide. By writing messages now, 
+                  you're giving your loved ones a precious gift—your own voice speaking directly to them when 
+                  they need it most. Whether released on special dates or at life milestones, these messages 
+                  become treasured keepsakes that help them feel your love and presence. Your words will provide 
+                  comfort during difficult moments, encouragement during challenges, and connection 
                   during important moments, ensuring your love continues to touch their lives.
                 </p>
               </div>
@@ -531,9 +531,9 @@ export default function LettersPage() {
         {letters.length === 0 && !showForm ? (
           <div className="bg-[#FCFAF7] rounded-lg p-12 text-center">
             <Mail className="w-12 h-12 text-[#A5B99A] mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-[#2C2A29] mb-2">No letters yet</h3>
+            <h3 className="text-lg font-medium text-[#2C2A29] mb-2">No messages yet</h3>
             <p className="text-[#2C2A29] opacity-70 mb-4">
-              Write heartfelt messages to your loved ones
+              This helps the people you love know what to do. Write heartfelt messages to your loved ones.
             </p>
           </div>
         ) : (

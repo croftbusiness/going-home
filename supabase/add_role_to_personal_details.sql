@@ -7,3 +7,4 @@ COMMENT ON COLUMN personal_details.role IS 'User role that appears to trusted co
 
 
 
+

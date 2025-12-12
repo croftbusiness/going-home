@@ -145,7 +145,7 @@ export default function DocumentsPage() {
               <div className="min-w-0 flex-1">
                 <h1 className="text-xl sm:text-2xl font-semibold text-[#2C2A29]">Important Documents</h1>
                 <p className="text-xs sm:text-sm text-[#2C2A29] opacity-70 mt-1">
-                  Upload essential paperwork and files
+                  Upload essential paperwork and files. This helps the people you love know what to do.
                 </p>
               </div>
             </div>

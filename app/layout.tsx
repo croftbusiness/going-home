@@ -5,8 +5,8 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Going Home - End of Life Planning',
-  description: 'Securely store and organize your end-of-life preferences and essential documentation',
+  title: 'StillReady - Calm Preparedness for Life\'s Unexpected Moments',
+  description: 'StillReady helps you organize the information your loved ones may need — calmly, securely, and ahead of time.',
 }
 
 export const viewport: Viewport = {

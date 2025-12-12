@@ -228,7 +228,7 @@ export default function DashboardPage() {
       emotionalLevel: 9,
     },
     {
-      title: 'Funeral Planning',
+      title: 'Life Event Planning',
       description: 'AI-guided comprehensive ceremony planning with stories and music',
       icon: Sparkles,
       href: '/dashboard/funeral-planning',
@@ -238,8 +238,8 @@ export default function DashboardPage() {
       emotionalLevel: 9,
     },
     {
-      title: 'Funeral Cost Calculator',
-      description: 'Estimate and plan your funeral expenses with questionnaire or manual entry',
+      title: 'Life Event Cost Calculator',
+      description: 'Estimate and plan expenses with questionnaire or manual entry',
       icon: DollarSign,
       href: '/dashboard/funeral-cost-calculator',
       completed: false,
@@ -260,8 +260,8 @@ export default function DashboardPage() {
       emotionalLevel: 8,
     },
     {
-      title: 'End-of-Life Directives',
-      description: 'Comprehensive care plan: location, visitors, pain management, and final wishes',
+      title: 'Care Preferences & Directives',
+      description: 'Comprehensive care plan: location, visitors, pain management, and your wishes',
       icon: Heart,
       href: '/dashboard/end-of-life-directives',
       completed: status.endOfLifeDirectives,
@@ -292,8 +292,8 @@ export default function DashboardPage() {
       emotionalLevel: 7,
     },
     {
-      title: 'End-of-Life Checklist',
-      description: 'Final preferences and wishes for your care',
+      title: 'Care Checklist',
+      description: 'Preferences and wishes for your care during unexpected moments',
       icon: CheckSquare,
       href: '/dashboard/end-of-life-checklist',
       completed: status.endOfLifeChecklist,
@@ -388,7 +388,7 @@ export default function DashboardPage() {
     
     // ADMINISTRATIVE
     {
-      title: 'Final Summary',
+      title: 'Complete Summary',
       description: 'Complete overview of all your information in one place',
       icon: FileCheck,
       href: '/dashboard/final-summary',
@@ -779,7 +779,7 @@ export default function DashboardPage() {
               </div>
               <div>
                 <h2 className="text-2xl sm:text-3xl font-bold text-[#2C2A29]">All Sections</h2>
-                <p className="text-sm text-[#2C2A29] opacity-60 mt-0.5">Complete your end-of-life planning</p>
+                <p className="text-sm text-[#2C2A29] opacity-60 mt-0.5">Organize your information and preferences</p>
               </div>
             </div>
             <div className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-[#A5B99A]/10 to-[#93B0C8]/10 rounded-full border border-[#A5B99A]/20">

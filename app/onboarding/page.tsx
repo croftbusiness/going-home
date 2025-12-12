@@ -132,13 +132,13 @@ export default function OnboardingPage() {
               : 'opacity-0 scale-50 translate-y-10'
           }`}>
             <div className="relative inline-block">
-              <div className="relative w-24 h-24 mx-auto">
+              <div className="relative h-16 w-auto mx-auto">
                 <Image
-                  src="/logo.png"
-                  alt="Going Home Logo"
-                  width={96}
-                  height={96}
-                  className="object-contain animate-pulse"
+                  src="/logo.svg"
+                  alt="StillReady Logo"
+                  width={240}
+                  height={60}
+                  className="object-contain h-16 w-auto animate-pulse"
                   priority
                 />
               </div>
@@ -156,7 +156,7 @@ export default function OnboardingPage() {
               ? 'opacity-100 translate-y-0' 
               : 'opacity-0 translate-y-10'
           }`}>
-            Welcome to Going Home
+            Welcome to StillReady
           </h1>
 
           <p className={`text-xl sm:text-2xl text-[#2C2A29] opacity-70 mb-8 transition-all duration-700 delay-200 ${
@@ -164,7 +164,7 @@ export default function OnboardingPage() {
               ? 'opacity-100 translate-y-0' 
               : 'opacity-0 translate-y-10'
           }`}>
-            Your secure place to organize what matters most
+            Calm preparedness for life's unexpected moments
           </p>
 
           {/* CTA Button */}

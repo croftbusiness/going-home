@@ -103,7 +103,7 @@ async function generatePDF(data: any): Promise<Uint8Array> {
   // Legal Disclaimer (at top)
   addText("LEGAL DISCLAIMER", 12, true, rgb(1, 0, 0));
   addText(
-    "Going Home does not provide legal advice or create legally binding documents. " +
+    "StillReady does not provide legal advice or create legally binding documents. " +
     "This questionnaire is for informational and planning purposes only. " +
     "Please consult with a qualified attorney to create a legally valid will.",
     10,

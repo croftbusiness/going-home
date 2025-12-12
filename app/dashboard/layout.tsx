@@ -54,8 +54,8 @@ const navigation = [
   
   // Planning & Legacy
   { name: 'Family Legacy', href: '/dashboard/family-legacy', icon: Gift, section: 'planning' },
-  { name: 'Funeral Planning', href: '/dashboard/funeral-planning', icon: Sparkles, section: 'planning' },
-  { name: 'Funeral Cost Calculator', href: '/dashboard/funeral-cost-calculator', icon: Calculator, section: 'planning' },
+  { name: 'Life Event Planning', href: '/dashboard/funeral-planning', icon: Sparkles, section: 'planning' },
+  { name: 'Life Event Cost Calculator', href: '/dashboard/funeral-cost-calculator', icon: Calculator, section: 'planning' },
   { name: 'My Music', href: '/dashboard/my-music', icon: Music, section: 'planning' },
   { name: 'Legacy Messages', href: '/dashboard/legacy-messages', icon: Video, section: 'planning' },
   { name: 'Will Questionnaire', href: '/dashboard/will-questionnaire', icon: FileQuestion, section: 'planning' },
@@ -70,14 +70,14 @@ const navigation = [
   // Personal & Family
   { name: 'Children\'s Wishes', href: '/dashboard/children-wishes', icon: Baby, section: 'personal' },
   { name: 'Household Info', href: '/dashboard/household', icon: HomeIcon, section: 'personal' },
-  { name: 'End-of-Life Checklist', href: '/dashboard/end-of-life-checklist', icon: CheckSquare, section: 'personal' },
-  { name: 'End-of-Life Directives', href: '/dashboard/end-of-life-directives', icon: Heart, section: 'personal' },
+  { name: 'Care Checklist', href: '/dashboard/end-of-life-checklist', icon: CheckSquare, section: 'personal' },
+  { name: 'Care Preferences & Directives', href: '/dashboard/end-of-life-directives', icon: Heart, section: 'personal' },
   
   // Administrative
   { name: 'Access Overview', href: '/dashboard/access-overview', icon: Users, section: 'admin' },
   { name: 'Shared With Me', href: '/dashboard/shared-with-me', icon: Eye, section: 'admin' },
   { name: 'Account Settings', href: '/dashboard/account-settings', icon: Settings, section: 'admin' },
-  { name: 'Final Summary', href: '/dashboard/final-summary', icon: FileCheck, section: 'admin' },
+  { name: 'Complete Summary', href: '/dashboard/final-summary', icon: FileCheck, section: 'admin' },
   { name: 'Access Rules', href: '/dashboard/release-settings', icon: Shield, section: 'admin' },
 ];
 
@@ -159,20 +159,16 @@ export default function DashboardLayout({
         <div className="flex flex-col h-full">
           {/* Logo/Header */}
           <div className="flex items-center justify-between p-6 border-b border-gray-200/50 bg-white/50 backdrop-blur-sm">
-            <Link href="/dashboard" className="flex items-center space-x-3 group">
-              <div className="relative w-10 h-10 flex-shrink-0">
+            <Link href="/dashboard" className="flex items-center group">
+              <div className="relative h-8 flex-shrink-0">
                 <Image
-                  src="/logo.png"
-                  alt="Going Home Logo"
-                  width={40}
+                  src="/logo.svg"
+                  alt="StillReady Logo"
+                  width={160}
                   height={40}
-                  className="object-contain"
+                  className="object-contain h-8 w-auto"
                   priority
                 />
-              </div>
-              <div>
-                <h1 className="text-lg font-bold text-[#2C2A29] tracking-tight">Going Home</h1>
-                <p className="text-xs text-[#2C2A29] opacity-50 font-medium">Secure Planning</p>
               </div>
             </Link>
             <button
@@ -303,17 +299,16 @@ export default function DashboardLayout({
             >
               <Menu className="w-6 h-6 text-[#2C2A29]" />
             </button>
-            <Link href="/dashboard" className="flex items-center space-x-2">
-              <div className="relative w-8 h-8 flex-shrink-0">
+            <Link href="/dashboard" className="flex items-center">
+              <div className="relative h-7 flex-shrink-0">
                 <Image
-                  src="/logo.png"
-                  alt="Going Home Logo"
-                  width={32}
-                  height={32}
-                  className="object-contain"
+                  src="/logo.svg"
+                  alt="StillReady Logo"
+                  width={140}
+                  height={35}
+                  className="object-contain h-7 w-auto"
                 />
               </div>
-              <h1 className="text-lg font-semibold text-[#2C2A29]">Going Home</h1>
             </Link>
             <div className="w-10" /> {/* Spacer */}
           </div>

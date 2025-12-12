@@ -55,20 +55,16 @@ export default function HomePage() {
       <nav className="bg-white/80 backdrop-blur-sm border-b border-gray-100 sticky top-0 z-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
-            <Link href="/" className="flex items-center space-x-3 group">
-              <div className="relative w-10 h-10 flex-shrink-0">
+            <Link href="/" className="flex items-center group">
+              <div className="relative h-9 flex-shrink-0">
                 <Image
-                  src="/logo.png"
-                  alt="Going Home Logo"
-                  width={40}
-                  height={40}
-                  className="object-contain"
+                  src="/logo.svg"
+                  alt="StillReady Logo"
+                  width={180}
+                  height={45}
+                  className="object-contain h-9 w-auto"
                   priority
                 />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold text-[#2C2A29]">Going Home</h1>
-                <p className="text-xs text-[#2C2A29] opacity-50 -mt-0.5">Secure Planning</p>
               </div>
             </Link>
             <div className="flex items-center space-x-2 sm:space-x-3">
@@ -109,21 +105,20 @@ export default function HomePage() {
               <span className="text-sm font-medium text-[#2C2A29]">Enterprise-Grade Security</span>
             </div>
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-[#2C2A29] mb-6 leading-tight">
-              A peaceful place to organize
+              Calm preparedness for
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-[#A5B99A] to-[#93B0C8] mt-2">
-                what matters most
+                life's unexpected moments
               </span>
             </h1>
             <p className="text-xl sm:text-2xl text-[#2C2A29]/70 mb-10 max-w-2xl mx-auto leading-relaxed">
-              Securely store your end-of-life preferences, important documents, personal messages, 
-              and funeral planning—all in one simple, private space designed with care.
+              StillReady helps you organize the information your loved ones may need — calmly, securely, and ahead of time.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
                 href="/auth/signup"
                 className="group inline-flex items-center space-x-2 px-8 py-4 bg-gradient-to-r from-[#A5B99A] to-[#93B0C8] text-white rounded-lg hover:shadow-xl transition-all text-lg font-semibold transform hover:scale-105"
               >
-                <span>Start Planning Today</span>
+                <span>Get Started</span>
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
               <Link
@@ -159,7 +154,7 @@ export default function HomePage() {
               Everything you need in one place
             </h2>
             <p className="text-xl text-[#2C2A29]/70 max-w-2xl mx-auto">
-              Comprehensive tools to organize, secure, and share what matters most
+              This helps the people you love know what to do. Prepared without panic.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -170,13 +165,13 @@ export default function HomePage() {
             />
             <FeatureCard
               icon={<Heart className="w-6 h-6" />}
-              title="End-of-Life Planning"
-              description="Document your end-of-life directives, care preferences, and final wishes with guided forms."
+              title="Life Event Preferences"
+              description="Document your care preferences and wishes for unexpected moments with guided forms."
             />
             <FeatureCard
               icon={<Music className="w-6 h-6" />}
-              title="Funeral Planning"
-              description="Plan your ceremony with AI-assisted story creation, visual planning boards, playlists, and more."
+              title="Life Event Planning"
+              description="Plan meaningful ceremonies with AI-assisted story creation, visual planning boards, playlists, and more."
             />
             <FeatureCard
               icon={<Calculator className="w-6 h-6" />}
@@ -288,34 +283,33 @@ export default function HomePage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <h2 className="text-4xl sm:text-5xl font-bold text-[#2C2A29] mb-6">
-                Give your loved ones peace of mind
+                Calm readiness, whenever it's needed
               </h2>
               <p className="text-lg text-[#2C2A29]/70 mb-8 leading-relaxed">
-                Planning ahead isn't about dwelling on the future—it's about giving yourself and your family
-                the gift of clarity and peace of mind. When the time comes, your loved ones will have
-                everything they need, exactly as you wanted it.
+                Being prepared isn't about worry—it's about clarity and peace of mind. If something happens, 
+                your loved ones will have everything they need, exactly as you wanted it.
               </p>
               <ul className="space-y-4 mb-8">
-                <BenefitItem text="Reduce stress and confusion during difficult times" />
+                <BenefitItem text="Reduce stress and confusion during unexpected moments" />
                 <BenefitItem text="Ensure your wishes are known and respected" />
                 <BenefitItem text="Protect your digital legacy and accounts" />
                 <BenefitItem text="Leave meaningful messages for those you love" />
-                <BenefitItem text="Plan your funeral exactly as you envision it" />
+                <BenefitItem text="Plan life events exactly as you envision them" />
                 <BenefitItem text="Preserve your life story for future generations" />
               </ul>
               <Link
                 href="/auth/signup"
                 className="inline-flex items-center space-x-2 px-8 py-4 bg-gradient-to-r from-[#A5B99A] to-[#93B0C8] text-white rounded-lg hover:shadow-xl transition-all text-lg font-semibold transform hover:scale-105"
               >
-                <span>Start Your Plan Today</span>
+                <span>Get Started</span>
                 <ArrowRight className="w-5 h-5" />
               </Link>
             </div>
             <div className="relative">
               <div className="bg-gradient-to-br from-[#FCFAF7] to-white rounded-2xl p-8 shadow-2xl border border-gray-100">
                 <div className="space-y-4">
-                  <FeatureHighlight icon={<CheckCircle2 />} text="End-of-Life Directives & Checklist" />
-                  <FeatureHighlight icon={<CheckCircle2 />} text="Funeral Planning & Cost Calculator" />
+                  <FeatureHighlight icon={<CheckCircle2 />} text="Life Event Preferences & Directives" />
+                  <FeatureHighlight icon={<CheckCircle2 />} text="Life Event Planning & Cost Calculator" />
                   <FeatureHighlight icon={<CheckCircle2 />} text="Personal Biography with AI Assistance" />
                   <FeatureHighlight icon={<CheckCircle2 />} text="Visual Planning Boards & Moodboards" />
                   <FeatureHighlight icon={<CheckCircle2 />} text="Legacy Messages & Letters" />
@@ -341,8 +335,8 @@ export default function HomePage() {
             Ready to get started?
           </h2>
           <p className="text-xl text-white/90 mb-10 max-w-2xl mx-auto">
-            Join thousands of families who have found peace of mind through thoughtful planning.
-            It's free, secure, and takes just minutes to begin.
+            You don't need to finish everything at once. Start organizing what matters most, 
+            calmly and at your own pace.
           </p>
           <Link
             href="/auth/signup"
@@ -362,21 +356,19 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             <div className="col-span-1 md:col-span-2">
-              <div className="flex items-center space-x-3 mb-4">
-                <div className="relative w-8 h-8 flex-shrink-0">
+              <div className="flex items-center mb-4">
+                <div className="relative h-7 flex-shrink-0">
                   <Image
-                    src="/logo.png"
-                    alt="Going Home Logo"
-                    width={32}
-                    height={32}
-                    className="object-contain"
+                    src="/logo.svg"
+                    alt="StillReady Logo"
+                    width={140}
+                    height={35}
+                    className="object-contain h-7 w-auto"
                   />
                 </div>
-                <h3 className="text-xl font-bold">Going Home</h3>
               </div>
               <p className="text-gray-400 text-sm max-w-md">
-                A peaceful place to organize what matters most. Secure, simple, and designed with care
-                for those who plan ahead.
+                Calm preparedness for life's unexpected moments. Secure, simple, and designed with care.
               </p>
             </div>
             <div>
@@ -397,7 +389,7 @@ export default function HomePage() {
             </div>
           </div>
           <div className="border-t border-gray-800 pt-8 text-center text-sm text-gray-400">
-            <p>© {new Date().getFullYear()} Going Home. Built with care for those who plan ahead.</p>
+            <p>© {new Date().getFullYear()} StillReady. Calm preparedness for life's unexpected moments.</p>
           </div>
         </div>
       </footer>

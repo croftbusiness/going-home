@@ -286,19 +286,16 @@ function ViewerDashboardContent() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <Link href="/" className="flex items-center space-x-2">
-                <div className="relative w-8 h-8">
+                <div className="relative h-7 w-auto">
                   <Image
-                    src="/logo.png"
-                    alt="Going Home Logo"
-                    width={32}
-                    height={32}
-                    className="object-contain"
+                    src="/logo.svg"
+                    alt="StillReady Logo"
+                    width={140}
+                    height={35}
+                    className="object-contain h-7 w-auto"
                   />
                 </div>
-                <div>
-                  <h1 className="text-lg font-bold text-[#2C2A29]">Going Home</h1>
-                  <p className="text-xs text-[#2C2A29] opacity-50">Viewer Mode</p>
-                </div>
+                <p className="text-xs text-[#2C2A29] opacity-50">Viewer Mode</p>
               </Link>
             </div>
             <button

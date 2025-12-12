@@ -18,7 +18,7 @@ function getOpenAIClient(): OpenAI {
  * Base system prompt for all funeral AI features
  * Ensures gentle, warm, supportive tone
  */
-const BASE_FUNERAL_PROMPT = `You are a compassionate AI assistant helping users plan a meaningful funeral or memorial service through the "Going Home" app.
+const BASE_FUNERAL_PROMPT = `You are a compassionate AI assistant helping users plan a meaningful life event or memorial service through the "StillReady" app.
 
 CRITICAL TONE GUIDELINES:
 - Always speak in a calm, warm, supportive tone

@@ -120,3 +120,4 @@ DELETE FROM user_cards WHERE user_id = 'your-user-id';
 -- Cards will be recreated on next API call
 ```
 
+

@@ -1,0 +1,28 @@
+<svg width="50" height="50" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+  <!-- Two curved forms representing being held - standalone icon version -->
+  <!-- Left curve - gentle, open-ended, curving inward suggesting a hand/arm/wing/cradle -->
+  <path d="M 7 25 
+            C 7 17, 9 15, 12 17
+            C 15 19, 16 23, 15 27
+            C 14 30, 11 30, 9 28
+            C 8 27, 7.5 26, 7 25" 
+        fill="none" 
+        stroke="#A5B99A" 
+        stroke-width="2.8" 
+        stroke-linecap="round" 
+        stroke-linejoin="round"
+        opacity="0.9"/>
+  
+  <!-- Right curve - gentle, open-ended, curving inward suggesting a hand/arm/wing/cradle -->
+  <path d="M 28 25 
+            C 28 17, 26 15, 23 17
+            C 20 19, 19 23, 20 27
+            C 21 30, 24 30, 26 28
+            C 27 27, 27.5 26, 28 25" 
+        fill="none" 
+        stroke="#93B0C8" 
+        stroke-width="2.8" 
+        stroke-linecap="round" 
+        stroke-linejoin="round"
+        opacity="0.9"/>
+</svg>
