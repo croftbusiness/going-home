@@ -90,13 +90,8 @@ export async function GET(request: Request) {
     // Filter and select cards based on logic
     const selectedCards = selectCards(availableCards, incompleteSections, userPrefs?.login_count || 0);
 
-    // Update last_shown_at for selected cards
-    for (const card of selectedCards) {
-      await db
-        .from('user_cards')
-        .update({ last_shown_at: now })
-        .eq('id', card.id);
-    }
+    // Don't update last_shown_at here - it should be updated when cards are actually shown/displayed
+    // This prevents cards from being filtered out before they're actually shown to the user
 
     return NextResponse.json({ cards: selectedCards });
   } catch (error) {

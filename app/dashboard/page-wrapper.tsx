@@ -21,7 +21,7 @@ export default function DashboardPageWrapper() {
       const response = await fetch('/api/user/cards/preference');
       if (response.ok) {
         const data = await response.json();
-        // If mobile and preference is not explicitly false, show cards
+        // Only show cards on mobile devices (Tinder-style swipe experience)
         if (isMobile && data.show_cards !== false) {
           // Check login count to show preference prompt after 2-3 logins
           const cardsResponse = await fetch('/api/user/cards');
