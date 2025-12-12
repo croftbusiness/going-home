@@ -277,32 +277,32 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
   }
 
   return (
-    <div className="bg-gradient-to-br from-white via-[#FAF9F7] to-white rounded-2xl border border-gray-200/40 shadow-xl shadow-gray-200/20 backdrop-blur-sm overflow-hidden flex flex-col max-h-[85vh] w-full max-w-full">
+    <div className="bg-gradient-to-br from-white via-[#FAF9F7] to-white rounded-2xl border border-gray-200/40 shadow-xl shadow-gray-200/20 backdrop-blur-sm flex flex-col max-h-[85vh] w-full box-border" style={{ maxWidth: '100%', overflowX: 'hidden' }}>
       {/* Header - Fixed at top */}
-      <div className="flex-shrink-0 p-4 sm:p-6 lg:p-8 border-b border-gray-200/40">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0">
-          <div className="flex items-center space-x-4">
+      <div className="flex-shrink-0 p-4 sm:p-6 lg:p-8 border-b border-gray-200/40 w-full box-border" style={{ maxWidth: '100%' }}>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0 w-full box-border" style={{ maxWidth: '100%' }}>
+          <div className="flex items-center space-x-4 min-w-0 flex-shrink" style={{ maxWidth: 'calc(100% - 120px)' }}>
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-br from-[#1DB954] to-[#1ed760] rounded-xl blur-md opacity-30 animate-pulse" />
               <div className="relative p-3 bg-gradient-to-br from-[#1DB954]/20 to-[#1ed760]/20 rounded-xl border border-[#1DB954]/30">
                 <Music className="w-6 h-6 sm:w-7 sm:h-7 text-[#1DB954] flex-shrink-0" />
               </div>
             </div>
-            <div>
-              <h3 className="font-bold text-lg sm:text-xl text-[#2C2A29] bg-gradient-to-r from-[#2C2A29] to-[#2C2A29]/80 bg-clip-text">
+            <div className="min-w-0 overflow-hidden" style={{ maxWidth: '100%' }}>
+              <h3 className="font-bold text-lg sm:text-xl text-[#2C2A29] bg-gradient-to-r from-[#2C2A29] to-[#2C2A29]/80 bg-clip-text truncate">
                 Select Songs from Spotify
               </h3>
-              <p className="text-xs sm:text-sm text-gray-500 mt-1">Browse your playlists or search for songs</p>
+              <p className="text-xs sm:text-sm text-gray-500 mt-1 truncate">Browse your playlists or search for songs</p>
             </div>
           </div>
-          <div className="px-4 py-2 bg-gradient-to-r from-[#A5B99A]/15 to-[#93B0C8]/15 rounded-full text-xs sm:text-sm font-semibold text-[#2C2A29] border border-[#A5B99A]/30 shadow-sm">
-            {selectedSongs.length} / {maxSongs} selected
+          <div className="px-3 py-2 bg-gradient-to-r from-[#A5B99A]/15 to-[#93B0C8]/15 rounded-full text-xs font-semibold text-[#2C2A29] border border-[#A5B99A]/30 shadow-sm whitespace-nowrap flex-shrink-0">
+            {selectedSongs.length} / {maxSongs}
           </div>
         </div>
       </div>
 
       {/* Tabs - Fixed at top */}
-      <div className="flex-shrink-0 flex space-x-2 border-b-2 border-gray-200/40 px-4 sm:px-6 lg:px-8">
+      <div className="flex-shrink-0 flex space-x-2 border-b-2 border-gray-200/40 px-4 sm:px-6 lg:px-8 w-full box-border" style={{ maxWidth: '100%' }}>
         <button
           onClick={() => setActiveTab('playlists')}
           className={`flex-1 sm:flex-none px-4 sm:px-6 py-3 text-sm font-semibold transition-all duration-200 min-h-[48px] sm:min-h-[auto] relative ${
@@ -338,7 +338,7 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
       </div>
 
       {/* Content Area - Scrollable */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6 lg:p-8 w-full">
+      <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 w-full box-border" style={{ maxWidth: '100%', overflowX: 'hidden' }}>
         {/* Playlists Tab */}
         {activeTab === 'playlists' && (
           <div className="h-full flex flex-col">
@@ -349,7 +349,7 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
               </div>
             ) : (
               <>
-                <div className="space-y-3 mb-6">
+                <div className="space-y-3 mb-6 w-full box-border" style={{ maxWidth: '100%' }}>
                   {playlists.map((playlist) => (
                     <button
                       key={playlist.id}
@@ -378,7 +378,7 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
                         Select songs from this playlist
                       </div>
                     </div>
-                    <div className="space-y-3">
+                    <div className="space-y-3 w-full box-border" style={{ maxWidth: '100%' }}>
                       {playlistTracks.map((track) => {
                         if (!isValidTrack(track)) return null;
                         return (
@@ -466,7 +466,7 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
 
             {searchResults.length > 0 && (
               <div className="flex-1 min-h-0">
-                <div className="space-y-3">
+                <div className="space-y-3 w-full box-border" style={{ maxWidth: '100%' }}>
                   {searchResults.map((track) => {
                     if (!isValidTrack(track)) return null;
                     return (

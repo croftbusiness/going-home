@@ -204,7 +204,7 @@ function PlaylistPageContent() {
   }
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-gradient-to-br from-[#FAF9F7] via-[#FCFAF7] to-[#FAF9F7]">
+    <div className="min-h-screen bg-gradient-to-br from-[#FAF9F7] via-[#FCFAF7] to-[#FAF9F7]" style={{ overflowX: 'hidden' }}>
       {/* Premium Header with Backdrop Blur */}
       <header className="bg-white/80 backdrop-blur-md border-b border-gray-100/50 sticky top-0 z-20 shadow-sm shadow-gray-200/20">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6">
@@ -235,7 +235,10 @@ function PlaylistPageContent() {
         </div>
       </header>
 
-      <main className="w-full max-w-5xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-6 sm:py-8 lg:py-10 overflow-x-hidden">
+      <main 
+        className="w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10" 
+        style={{ maxWidth: '100%', overflowX: 'hidden', boxSizing: 'border-box' }}
+      >
         {/* Premium Intro Card */}
         <div className="relative bg-gradient-to-br from-white via-[#FCFAF7] to-white rounded-2xl p-6 sm:p-8 lg:p-10 shadow-xl shadow-gray-200/30 border border-gray-100/50 mb-6 sm:mb-8 overflow-hidden">
           {/* Decorative background elements */}
@@ -320,8 +323,15 @@ function PlaylistPageContent() {
                 <div className="h-px flex-1 bg-gradient-to-r from-transparent via-[#A5B99A]/30 to-transparent" />
               </div>
               
-              {/* Spotify Integration */}
-              <div className="mb-6 w-full max-w-full overflow-hidden rounded-xl">
+              {/* Spotify Integration - FIXED WRAPPER */}
+              <div 
+                className="mb-6 w-full rounded-xl" 
+                style={{ 
+                  maxWidth: '100%', 
+                  overflowX: 'hidden',
+                  boxSizing: 'border-box'
+                }}
+              >
                 {mounted && (
                   <SpotifyIntegration
                     selectedSongs={Array.isArray(songs) ? songs : []}
