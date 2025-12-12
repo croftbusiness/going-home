@@ -90,8 +90,49 @@ export default function DashboardPage() {
   });
 
   useEffect(() => {
-    checkAuthAndLoadData();
+    checkCardsFirst();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const checkCardsFirst = async () => {
+    try {
+      // Check if mobile device (viewport width or user agent)
+      const checkIsMobile = () => {
+        if (typeof window === 'undefined') return false;
+        const isMobileViewport = window.innerWidth < 768;
+        const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
+        const isMobileUA = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent.toLowerCase());
+        return isMobileViewport || isMobileUA;
+      };
+
+      // Check if user wants to see cards (mobile only)
+      if (checkIsMobile()) {
+        const response = await fetch('/api/user/cards/preference');
+        if (response.ok) {
+          const data = await response.json();
+          // Only show cards on mobile devices (Tinder-style swipe experience)
+          if (data.show_cards !== false) {
+            // Check if there are cards to show
+            const cardsResponse = await fetch('/api/user/cards');
+            if (cardsResponse.ok) {
+              const cardsData = await cardsResponse.json();
+              console.log('Cards data:', cardsData); // Debug log
+              if (cardsData.cards && cardsData.cards.length > 0) {
+                router.push('/dashboard/cards');
+                return; // Don't continue with dashboard loading
+              }
+            }
+          }
+        }
+      }
+      // No cards to show, proceed with normal dashboard loading
+      checkAuthAndLoadData();
+    } catch (error) {
+      console.error('Error checking card preference:', error);
+      // On error, proceed with normal dashboard loading
+      checkAuthAndLoadData();
+    }
+  };
 
   const checkAuthAndLoadData = async () => {
     try {
