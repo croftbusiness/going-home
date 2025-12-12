@@ -57,7 +57,7 @@ export default function HomePage() {
               <div className="relative h-7 sm:h-8 w-auto">
                 <Image
                   src="/logo.svg"
-                  alt="StillReady Logo"
+                  alt="ReadyAtHand Logo"
                   width={180}
                   height={45}
                   className="object-contain h-7 sm:h-8 w-auto"
@@ -102,7 +102,7 @@ export default function HomePage() {
               </span>
             </h1>
             <p className="text-base sm:text-xl lg:text-2xl text-[#2C2A29]/70 mb-8 sm:mb-10 max-w-2xl mx-auto leading-relaxed px-4">
-              StillReady helps you organize the information your loved ones may need — calmly, securely, and ahead of time.
+              ReadyAtHand helps you organize the information your loved ones may need — calmly, securely, and ahead of time.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 px-4">
               <Link
@@ -351,7 +351,7 @@ export default function HomePage() {
                 <div className="relative h-6 sm:h-7 w-auto">
                   <Image
                     src="/logo.svg"
-                    alt="StillReady Logo"
+                    alt="ReadyAtHand Logo"
                     width={140}
                     height={35}
                     className="object-contain h-6 sm:h-7 w-auto"
@@ -380,7 +380,7 @@ export default function HomePage() {
             </div>
           </div>
           <div className="border-t border-gray-800 pt-6 sm:pt-8 text-center text-xs sm:text-sm text-gray-400">
-            <p>© {new Date().getFullYear()} StillReady. Calm preparedness for life's unexpected moments.</p>
+            <p>© {new Date().getFullYear()} ReadyAtHand. Calm preparedness for life's unexpected moments.</p>
           </div>
         </div>
       </footer>

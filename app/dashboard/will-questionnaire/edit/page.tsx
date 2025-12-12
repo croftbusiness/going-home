@@ -252,7 +252,7 @@ export default function WillQuestionnaireEditPage() {
         {/* Legal Disclaimer */}
         <div className="bg-amber-50 border-l-4 border-amber-400 p-4 mb-6 rounded-md">
           <p className="text-sm text-amber-800">
-            <strong>Legal Disclaimer:</strong> StillReady does not provide legal advice or create legally binding documents. 
+            <strong>Legal Disclaimer:</strong> ReadyAtHand does not provide legal advice or create legally binding documents. 
             This questionnaire is for informational and planning purposes only.
           </p>
         </div>

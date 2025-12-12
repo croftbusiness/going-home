@@ -168,7 +168,7 @@ export default function DashboardLayout({
               <div className="relative h-8 flex-shrink-0">
                 <Image
                   src="/logo.svg"
-                  alt="StillReady Logo"
+                  alt="ReadyAtHand Logo"
                   width={160}
                   height={40}
                   className="object-contain h-8 w-auto"
@@ -308,7 +308,7 @@ export default function DashboardLayout({
               <div className="relative h-7 flex-shrink-0">
                 <Image
                   src="/logo.svg"
-                  alt="StillReady Logo"
+                  alt="ReadyAtHand Logo"
                   width={140}
                   height={35}
                   className="object-contain h-7 w-auto"

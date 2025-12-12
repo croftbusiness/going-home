@@ -112,7 +112,7 @@ ${letter.release_type === 'after_death'
 }
 
 With love and remembrance,
-The StillReady Team
+The ReadyAtHand Team
 `;
 
     // Send email using existing email service
@@ -193,14 +193,14 @@ The StillReady Team
     
     <p style="color: #2C2A29; opacity: 0.6; font-size: 12px; margin: 0;">
       With love and remembrance,<br>
-      The StillReady Team
+      The ReadyAtHand Team
     </p>
   </div>
 </body>
 </html>`;
 
       await transporter.sendMail({
-        from: process.env.EMAIL_FROM || `StillReady <${smtpUser}>`,
+        from: process.env.EMAIL_FROM || `ReadyAtHand <${smtpUser}>`,
         to: recipientEmail,
         subject: emailSubject,
         text: emailBody,

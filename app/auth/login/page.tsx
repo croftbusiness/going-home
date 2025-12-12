@@ -87,7 +87,7 @@ export default function LoginPage() {
             <div className="relative h-12 w-auto">
               <Image
                 src="/logo.svg"
-                alt="StillReady Logo"
+                alt="ReadyAtHand Logo"
                 width={200}
                 height={50}
                 className="object-contain h-12 w-auto"
@@ -99,7 +99,7 @@ export default function LoginPage() {
             Welcome Back
           </h1>
           <p className="mt-2 text-center text-[#2C2A29] opacity-70">
-            Sign in to your StillReady account
+            Sign in to your ReadyAtHand account
           </p>
         </div>
 

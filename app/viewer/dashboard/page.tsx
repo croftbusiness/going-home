@@ -289,7 +289,7 @@ function ViewerDashboardContent() {
                 <div className="relative h-7 w-auto">
                   <Image
                     src="/logo.svg"
-                    alt="StillReady Logo"
+                    alt="ReadyAtHand Logo"
                     width={140}
                     height={35}
                     className="object-contain h-7 w-auto"

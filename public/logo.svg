@@ -1,38 +1,55 @@
 <svg width="200" height="50" viewBox="0 0 200 50" xmlns="http://www.w3.org/2000/svg">
-  <!-- Two curved forms representing being held - soft, open, cradling -->
-  <!-- Left curve - gentle arc curving inward, suggesting a hand/arm/wing cradling -->
-  <path d="M 2 28 
-            C 2 20, 4 18, 7 20
-            C 10 22, 11 26, 10 30
-            C 9 33, 6 33, 4 31
-            C 3 30, 2.5 29, 2 28" 
-        fill="none" 
-        stroke="#A5B99A" 
-        stroke-width="2.4" 
-        stroke-linecap="round" 
-        stroke-linejoin="round"
-        opacity="0.9"/>
+  <!-- ReadyAtHand wordmark with icon -->
   
-  <!-- Right curve - gentle arc curving inward, suggesting a hand/arm/wing cradling -->
-  <path d="M 23 28 
-            C 23 20, 21 18, 18 20
-            C 15 22, 14 26, 15 30
-            C 16 33, 19 33, 21 31
-            C 22 30, 22.5 29, 23 28" 
-        fill="none" 
-        stroke="#93B0C8" 
-        stroke-width="2.4" 
-        stroke-linecap="round" 
-        stroke-linejoin="round"
-        opacity="0.9"/>
+  <!-- Abstract binder/folder icon -->
+  <g transform="translate(0, 5)">
+    <!-- Main folder/binder body -->
+    <rect x="2" y="8" 
+          width="20" 
+          height="28" 
+          rx="2" 
+          ry="2" 
+          fill="#A5B99A" 
+          opacity="0.9"/>
+    
+    <!-- Subtle tab/notch at top -->
+    <path d="M 7 8 
+              L 10 4 
+              L 13 8 
+              Z" 
+          fill="#A5B99A" 
+          opacity="0.9"/>
+    
+    <!-- Minimal internal detail lines -->
+    <line x1="5" y1="18" 
+          x2="19" y2="18" 
+          stroke="#93B0C8" 
+          stroke-width="1.2" 
+          stroke-linecap="round" 
+          opacity="0.6"/>
+    
+    <line x1="5" y1="23" 
+          x2="19" y2="23" 
+          stroke="#93B0C8" 
+          stroke-width="1.2" 
+          stroke-linecap="round" 
+          opacity="0.5"/>
+    
+    <line x1="5" y1="28" 
+          x2="17" y2="28" 
+          stroke="#93B0C8" 
+          stroke-width="1.2" 
+          stroke-linecap="round" 
+          opacity="0.4"/>
+  </g>
   
-  <!-- StillReady wordmark - integrated with icon -->
-  <text x="32" y="34" 
+  <!-- ReadyAtHand wordmark - "Ready" bolder, "AtHand" lighter -->
+  <text x="28" y="34" 
         font-family="Inter, system-ui, -apple-system, sans-serif" 
         font-size="24" 
         font-weight="700" 
         fill="#2C2A29" 
         letter-spacing="-0.4">
-    StillReady
+    <tspan font-weight="700">Ready</tspan><tspan font-weight="500" opacity="0.85">AtHand</tspan>
   </text>
 </svg>

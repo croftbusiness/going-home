@@ -23,7 +23,7 @@ const ONBOARDING_STEPS: Array<{
   {
     id: 'welcome',
     section: 'welcome',
-    question: 'Welcome to StillReady! This helps you organize the information your loved ones may need. Ready to get started?',
+    question: 'Welcome to ReadyAtHand! This helps you organize the information your loved ones may need. Ready to get started?',
     explanation: 'We\'ll help you step-by-step. You can skip any section and come back later.',
     fieldType: 'select',
     options: ['Yes, let\'s begin', 'I\'ll explore on my own'],

@@ -135,7 +135,7 @@ export default function OnboardingPage() {
               <div className="relative h-16 w-auto mx-auto">
                 <Image
                   src="/logo.svg"
-                  alt="StillReady Logo"
+                  alt="ReadyAtHand Logo"
                   width={240}
                   height={60}
                   className="object-contain h-16 w-auto animate-pulse"
@@ -156,7 +156,7 @@ export default function OnboardingPage() {
               ? 'opacity-100 translate-y-0' 
               : 'opacity-0 translate-y-10'
           }`}>
-            Welcome to StillReady
+            Welcome to ReadyAtHand
           </h1>
 
           <p className={`text-xl sm:text-2xl text-[#2C2A29] opacity-70 mb-8 transition-all duration-700 delay-200 ${

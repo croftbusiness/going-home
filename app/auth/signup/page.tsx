@@ -98,7 +98,7 @@ export default function SignupPage() {
             <div className="relative h-12 w-auto">
               <Image
                 src="/logo.svg"
-                alt="StillReady Logo"
+                alt="ReadyAtHand Logo"
                 width={200}
                 height={50}
                 className="object-contain h-12 w-auto"
