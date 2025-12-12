@@ -184,7 +184,7 @@ export default function LettersPage() {
                 <ArrowLeft className="w-5 h-5 text-[#2C2A29]" />
               </Link>
               <div className="min-w-0 flex-1">
-                <h1 className="text-xl sm:text-2xl font-semibold text-[#2C2A29]">Personal Letters</h1>
+                <h1 className="text-xl sm:text-2xl font-semibold text-[#2C2A29]">Messages & Guidance</h1>
                 <p className="text-xs sm:text-sm text-[#2C2A29] opacity-70 mt-1">
                   Messages for your trusted contacts (separate from funeral ceremony letters)
                 </p>

@@ -21,9 +21,9 @@ const sectionOptions: SectionOption[] = [
   { id: 'personalDetails', label: 'Personal Details', description: 'Name, address, contact information', icon: User, color: 'bg-[#A5B99A]' },
   { id: 'medicalContacts', label: 'Medical & Legal Contacts', description: 'Physician, attorney, medical notes', icon: Heart, color: 'bg-[#93B0C8]' },
   { id: 'endOfLifeDirectives', label: 'End-of-Life Directives', description: 'Care preferences, treatment decisions, final wishes', icon: Heart, color: 'bg-[#A5B99A]' },
-  { id: 'funeralPreferences', label: 'Funeral Preferences', description: 'Service type, songs, atmosphere wishes', icon: FileText, color: 'bg-[#93B0C8]' },
-  { id: 'trustedContacts', label: 'Trusted Contacts', description: 'Family and friends with access', icon: Users, color: 'bg-[#A5B99A]' },
-  { id: 'documents', label: 'Documents', description: 'Wills, IDs, insurance papers', icon: Upload, color: 'bg-[#93B0C8]' },
+  { id: 'funeralPreferences', label: 'Life Event Preferences', description: 'Service type, songs, atmosphere wishes', icon: FileText, color: 'bg-[#93B0C8]' },
+  { id: 'trustedContacts', label: 'Emergency & Trusted Contacts', description: 'Family and friends with access', icon: Users, color: 'bg-[#A5B99A]' },
+  { id: 'documents', label: 'Important Documents', description: 'Wills, IDs, insurance papers', icon: Upload, color: 'bg-[#93B0C8]' },
   { id: 'assets', label: 'Assets', description: 'Properties, vehicles, investments', icon: DollarSign, color: 'bg-[#A5B99A]' },
   { id: 'insuranceFinancial', label: 'Insurance & Financial', description: 'Policies, accounts, advisors', icon: Building2, color: 'bg-[#93B0C8]' },
   { id: 'household', label: 'Household Information', description: 'Pet care, access codes, utilities', icon: HomeIcon, color: 'bg-[#A5B99A]' },
@@ -633,7 +633,7 @@ export default function FinalSummaryPage() {
           {summary?.funeralPreferences && (
             <SectionCard
               icon={FileText}
-              title="Funeral Preferences"
+              title="Life Event Preferences"
               color="bg-[#A5B99A]"
             >
               <div className="space-y-2 text-sm">

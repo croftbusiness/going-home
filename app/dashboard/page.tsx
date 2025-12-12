@@ -188,7 +188,7 @@ export default function DashboardPage() {
   const sections = [
     // MOST EMOTIONALLY ENGAGING - Personal Connection & Legacy
     {
-      title: 'Personal Letters',
+      title: 'Messages & Guidance',
       description: 'Write heartfelt messages to loved ones, timed for special moments',
       icon: Mail,
       href: '/dashboard/letters',
@@ -270,7 +270,7 @@ export default function DashboardPage() {
       emotionalLevel: 8,
     },
     {
-      title: 'Trusted Contacts',
+      title: 'Emergency & Trusted Contacts',
       description: 'Designate those who can access your information when needed',
       icon: Users,
       href: '/dashboard/trusted-contacts',
@@ -282,7 +282,7 @@ export default function DashboardPage() {
     
     // MODERATE EMOTIONAL VALUE - Preferences & Wishes
     {
-      title: 'Basic Funeral Preferences',
+      title: 'Life Event Preferences',
       description: 'Quick entry for burial, cremation, and service basics',
       icon: FileText,
       href: '/dashboard/funeral-preferences',
@@ -314,7 +314,7 @@ export default function DashboardPage() {
       emotionalLevel: 5,
     },
     {
-      title: 'Documents',
+      title: 'Important Documents',
       description: 'Upload essential paperwork and important files',
       icon: Upload,
       href: '/dashboard/documents',
@@ -398,7 +398,7 @@ export default function DashboardPage() {
       emotionalLevel: 2,
     },
     {
-      title: 'Release Settings',
+      title: 'Access Rules',
       description: 'Configure how and when your information is shared',
       icon: Shield,
       href: '/dashboard/release-settings',
@@ -459,14 +459,14 @@ export default function DashboardPage() {
               </div>
               <p className="text-base sm:text-lg lg:text-xl text-[#2C2A29] opacity-70 font-light">
                 {progress >= 100 
-                  ? '🎉 Your planning is complete! Everything is ready.' 
+                  ? 'You&apos;re fully prepared. Everything is ready.' 
                   : progress >= 75
-                  ? 'You\'re almost there! Just a few more sections to go.'
+                  ? `You're ${Math.round(progress)}% prepared. A few details left — most people finish this in under 10 minutes.`
                   : progress >= 50
-                  ? 'Great progress! Keep building your legacy.'
+                  ? `You're ${Math.round(progress)}% prepared. You're making great progress.`
                   : progress >= 25
-                  ? 'You\'re off to a great start. Every step matters.'
-                  : 'Let\'s begin organizing your information and preferences.'}
+                  ? `You're ${Math.round(progress)}% prepared. Every step matters.`
+                  : 'Let&apos;s begin organizing your information and preferences.'}
               </p>
             </div>
           </div>
@@ -501,7 +501,14 @@ export default function DashboardPage() {
                       )}
                     </div>
                     <p className="text-sm sm:text-base text-[#2C2A29] opacity-70 mb-3">
-                      <span className="font-semibold text-[#A5B99A]">{completedSections}</span> of <span className="font-semibold">{totalSections}</span> sections completed
+                      <span className="font-semibold text-[#A5B99A]">You&apos;re {Math.round(progress)}% prepared</span>
+                      {progress < 100 && progress >= 50 && (
+                        <span className="block mt-1 text-xs opacity-60">
+                          {progress >= 75 
+                            ? 'A few details left — most people finish this in under 10 minutes'
+                            : 'You&apos;re making great progress'}
+                        </span>
+                      )}
                     </p>
                     <div className="flex items-center space-x-2">
                       <Target className={`w-4 h-4 ${progressIcon.color}`} />

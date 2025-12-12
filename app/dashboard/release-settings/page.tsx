@@ -147,9 +147,9 @@ export default function ReleaseSettingsPage() {
               <ArrowLeft className="w-5 h-5 text-[#2C2A29]" />
             </Link>
             <div className="min-w-0 flex-1">
-              <h1 className="text-xl sm:text-2xl font-semibold text-[#2C2A29]">Release Settings</h1>
+              <h1 className="text-xl sm:text-2xl font-semibold text-[#2C2A29]">Access Rules</h1>
               <p className="text-xs sm:text-sm text-[#2C2A29] opacity-70 mt-1">
-                Configure post-death information release
+                Configure how and when your information is shared
               </p>
             </div>
           </div>

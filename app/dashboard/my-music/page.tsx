@@ -130,7 +130,7 @@ export default function MyMusicPage() {
                 href="/dashboard/funeral-preferences"
                 className="px-6 py-3 bg-[#A5B99A] text-white rounded-lg hover:bg-[#93B0C8] transition-colors"
               >
-                Go to Funeral Preferences
+                Go to Life Event Preferences
               </Link>
               <Link
                 href="/dashboard/funeral-planning/playlist"

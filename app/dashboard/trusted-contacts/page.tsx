@@ -383,7 +383,7 @@ export default function TrustedContactsPage() {
                       onChange={(e) => setFormData({ ...formData, canViewFuneralPreferences: e.target.checked })}
                       className="w-5 h-5 sm:w-4 sm:h-4 text-[#A5B99A] border-gray-300 rounded focus:ring-[#A5B99A] cursor-pointer"
                     />
-                    <span className="text-sm sm:text-base text-[#2C2A29]">Funeral Preferences</span>
+                    <span className="text-sm sm:text-base text-[#2C2A29]">Life Event Preferences</span>
                   </label>
                   <label className="flex items-center space-x-3 p-2 hover:bg-white rounded-lg transition-colors cursor-pointer touch-target">
                     <input

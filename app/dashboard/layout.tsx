@@ -38,6 +38,7 @@ import {
   Calculator,
   Eye,
   Music,
+  AlertCircle,
 } from 'lucide-react';
 
 // Organized navigation with sections and unique icons
@@ -45,10 +46,11 @@ import {
 const navigation = [
   // Primary/Quick Start
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, section: 'primary' },
+  { name: 'If Something Happens', href: '/dashboard/if-something-happens', icon: AlertCircle, section: 'primary' },
   { name: 'Personal Details', href: '/dashboard/personal-details', icon: User, section: 'primary' },
-  { name: 'Personal Letters', href: '/dashboard/letters', icon: PenTool, section: 'primary' },
-  { name: 'Documents', href: '/dashboard/documents', icon: Upload, section: 'primary' },
-  { name: 'Trusted Contacts', href: '/dashboard/trusted-contacts', icon: Users, section: 'primary' },
+  { name: 'Messages & Guidance', href: '/dashboard/letters', icon: PenTool, section: 'primary' },
+  { name: 'Important Documents', href: '/dashboard/documents', icon: Upload, section: 'primary' },
+  { name: 'Emergency & Trusted Contacts', href: '/dashboard/trusted-contacts', icon: Users, section: 'primary' },
   
   // Planning & Legacy
   { name: 'Family Legacy', href: '/dashboard/family-legacy', icon: Gift, section: 'planning' },
@@ -76,7 +78,7 @@ const navigation = [
   { name: 'Shared With Me', href: '/dashboard/shared-with-me', icon: Eye, section: 'admin' },
   { name: 'Account Settings', href: '/dashboard/account-settings', icon: Settings, section: 'admin' },
   { name: 'Final Summary', href: '/dashboard/final-summary', icon: FileCheck, section: 'admin' },
-  { name: 'Release Settings', href: '/dashboard/release-settings', icon: Shield, section: 'admin' },
+  { name: 'Access Rules', href: '/dashboard/release-settings', icon: Shield, section: 'admin' },
 ];
 
 const sectionLabels: Record<string, string> = {
