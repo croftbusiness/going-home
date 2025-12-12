@@ -277,9 +277,9 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
   }
 
   return (
-    <div className="bg-gradient-to-br from-white via-[#FAF9F7] to-white rounded-2xl border border-gray-200/40 shadow-xl shadow-gray-200/20 backdrop-blur-sm overflow-hidden flex flex-col max-h-[85vh]">
+    <div className="bg-gradient-to-br from-white via-[#FAF9F7] to-white rounded-2xl border border-gray-200/40 shadow-xl shadow-gray-200/20 backdrop-blur-sm overflow-hidden flex flex-col max-h-[85vh] w-full max-w-full">
       {/* Header - Fixed at top */}
-      <div className="flex-shrink-0 p-5 sm:p-6 lg:p-8 border-b border-gray-200/40">
+      <div className="flex-shrink-0 p-4 sm:p-6 lg:p-8 border-b border-gray-200/40">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0">
           <div className="flex items-center space-x-4">
             <div className="relative">
@@ -302,10 +302,10 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
       </div>
 
       {/* Tabs - Fixed at top */}
-      <div className="flex-shrink-0 flex space-x-2 border-b-2 border-gray-200/40 px-5 sm:px-6 lg:px-8">
+      <div className="flex-shrink-0 flex space-x-2 border-b-2 border-gray-200/40 px-4 sm:px-6 lg:px-8">
         <button
           onClick={() => setActiveTab('playlists')}
-          className={`flex-1 sm:flex-none px-5 sm:px-6 py-3 sm:py-3 text-sm font-semibold transition-all duration-200 min-h-[48px] sm:min-h-[auto] relative ${
+          className={`flex-1 sm:flex-none px-4 sm:px-6 py-3 text-sm font-semibold transition-all duration-200 min-h-[48px] sm:min-h-[auto] relative ${
             activeTab === 'playlists'
               ? 'text-[#93B0C8]'
               : 'text-gray-500 hover:text-gray-700 active:text-gray-900'
@@ -321,7 +321,7 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
         </button>
         <button
           onClick={() => setActiveTab('search')}
-          className={`flex-1 sm:flex-none px-5 sm:px-6 py-3 sm:py-3 text-sm font-semibold transition-all duration-200 min-h-[48px] sm:min-h-[auto] relative ${
+          className={`flex-1 sm:flex-none px-4 sm:px-6 py-3 text-sm font-semibold transition-all duration-200 min-h-[48px] sm:min-h-[auto] relative ${
             activeTab === 'search'
               ? 'text-[#93B0C8]'
               : 'text-gray-500 hover:text-gray-700 active:text-gray-900'
@@ -338,7 +338,7 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
       </div>
 
       {/* Content Area - Scrollable */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden p-5 sm:p-6 lg:p-8">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6 lg:p-8 w-full">
         {/* Playlists Tab */}
         {activeTab === 'playlists' && (
           <div className="h-full flex flex-col">
@@ -354,7 +354,7 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
                     <button
                       key={playlist.id}
                       onClick={() => handlePlaylistSelect(playlist.id)}
-                      className={`group w-full text-left p-4 sm:p-5 min-h-[60px] rounded-xl border-2 transition-all duration-200 active:scale-[0.97] ${
+                      className={`group w-full max-w-full text-left p-4 sm:p-5 min-h-[60px] rounded-xl border-2 transition-all duration-200 active:scale-[0.97] ${
                         selectedPlaylist === playlist.id
                           ? 'border-[#93B0C8] bg-gradient-to-r from-[#93B0C8]/15 via-[#A5B99A]/10 to-[#93B0C8]/15 shadow-lg shadow-[#93B0C8]/20 scale-[1.02]'
                           : 'border-gray-200/60 hover:border-[#93B0C8]/40 hover:bg-gradient-to-r hover:from-gray-50/80 hover:to-gray-50/50 hover:shadow-md active:bg-gray-50'
@@ -385,13 +385,13 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
                           <button
                             key={track.id}
                             onClick={() => handleSelectTrack(track)}
-                            className={`group w-full text-left p-4 sm:p-5 min-h-[72px] rounded-xl border-2 transition-all duration-200 active:scale-[0.97] overflow-hidden ${
+                            className={`group w-full max-w-full text-left p-3 sm:p-5 min-h-[72px] rounded-xl border-2 transition-all duration-200 active:scale-[0.97] overflow-hidden ${
                               isTrackSelected(track)
                                 ? 'border-[#A5B99A] bg-gradient-to-r from-[#A5B99A]/20 via-[#A5B99A]/10 to-[#A5B99A]/20 shadow-lg shadow-[#A5B99A]/20'
                                 : 'border-gray-200/60 hover:border-[#A5B99A]/40 hover:bg-gradient-to-r hover:from-gray-50/80 hover:to-gray-50/50 hover:shadow-md active:bg-gray-50'
                             }`}
                           >
-                            <div className="flex items-center justify-between gap-4 sm:gap-5 min-w-0">
+                            <div className="flex items-center justify-between gap-3 sm:gap-5 min-w-0 max-w-full">
                               <div className="flex-1 min-w-0 pr-2">
                                 <div className="font-semibold text-sm sm:text-base text-[#2C2A29] truncate mb-1">
                                   {String(track.name || 'Unknown')}
@@ -403,7 +403,7 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
                               <div className="flex items-center space-x-3 sm:space-x-4 flex-shrink-0">
                                 <div
                                   onClick={(e) => e.stopPropagation()}
-                                  className="relative w-[56px] h-[56px] flex-shrink-0"
+                                  className="relative w-[48px] h-[48px] sm:w-[56px] sm:h-[56px] flex-shrink-0"
                                 >
                                   <div className="absolute inset-0 w-full h-full max-w-full max-h-full overflow-hidden rounded-full">
                                     <TrackPlayer
@@ -473,13 +473,13 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
                       <button
                         key={track.id}
                         onClick={() => handleSelectTrack(track)}
-                        className={`group w-full text-left p-4 sm:p-5 min-h-[72px] rounded-xl border-2 transition-all duration-200 active:scale-[0.97] overflow-hidden ${
+                        className={`group w-full max-w-full text-left p-3 sm:p-5 min-h-[72px] rounded-xl border-2 transition-all duration-200 active:scale-[0.97] overflow-hidden ${
                           isTrackSelected(track)
                             ? 'border-[#A5B99A] bg-gradient-to-r from-[#A5B99A]/20 via-[#A5B99A]/10 to-[#A5B99A]/20 shadow-lg shadow-[#A5B99A]/20'
                             : 'border-gray-200/60 hover:border-[#A5B99A]/40 hover:bg-gradient-to-r hover:from-gray-50/80 hover:to-gray-50/50 hover:shadow-md active:bg-gray-50'
                         }`}
                       >
-                        <div className="flex items-center justify-between gap-4 sm:gap-5 min-w-0">
+                        <div className="flex items-center justify-between gap-3 sm:gap-5 min-w-0 max-w-full">
                           <div className="flex-1 min-w-0 pr-2">
                             <div className="font-semibold text-sm sm:text-base text-[#2C2A29] truncate mb-1">
                               {String(track.name || 'Unknown')}
