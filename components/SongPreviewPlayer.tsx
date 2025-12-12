@@ -142,26 +142,31 @@ export default function SongPreviewPlayer({
     );
   }
 
-  // Player UI
+  // Player UI - Enhanced Premium Design
   return (
     <button
       onClick={togglePlay}
       disabled={isLoading}
-      className={`inline-flex items-center justify-center min-w-[44px] min-h-[44px] p-2.5 rounded-full transition-colors touch-target ${
+      className={`relative inline-flex items-center justify-center min-w-[52px] min-h-[52px] sm:min-w-[56px] sm:min-h-[56px] p-3 rounded-full transition-all duration-200 touch-target ${
         isPlaying
-          ? 'bg-[#1DB954] text-white hover:bg-[#1ed760]'
-          : 'text-[#1DB954] hover:bg-[#1DB954]/10 active:bg-[#1DB954]/20'
+          ? 'bg-gradient-to-br from-[#1DB954] to-[#1ed760] text-white hover:from-[#1ed760] hover:to-[#1DB954] shadow-lg shadow-[#1DB954]/30 hover:shadow-xl hover:shadow-[#1DB954]/40 hover:scale-110 active:scale-105'
+          : 'text-[#1DB954] hover:bg-gradient-to-br hover:from-[#1DB954]/10 hover:to-[#1ed760]/10 active:bg-[#1DB954]/20 border-2 border-[#1DB954]/30 hover:border-[#1DB954]/50 hover:shadow-md'
       } ${isLoading ? 'opacity-70 cursor-wait' : ''} ${className}`}
-      title={isPlaying ? 'Pause preview' : 'Play preview'}
+      title={isPlaying ? 'Pause preview' : 'Play preview (30 seconds)'}
       aria-label={isPlaying ? 'Pause preview' : 'Play preview'}
     >
-      {isLoading ? (
-        <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" />
-      ) : isPlaying ? (
-        <Pause className="w-4 h-4 sm:w-5 sm:h-5" />
-      ) : (
-        <Play className="w-4 h-4 sm:w-5 sm:h-5" />
+      {isPlaying && (
+        <div className="absolute inset-0 bg-[#1DB954] rounded-full blur-md opacity-50 animate-pulse" />
       )}
+      <span className="relative z-10">
+        {isLoading ? (
+          <Loader2 className="w-5 h-5 sm:w-6 sm:h-6 animate-spin" />
+        ) : isPlaying ? (
+          <Pause className="w-5 h-5 sm:w-6 sm:h-6" />
+        ) : (
+          <Play className="w-5 h-5 sm:w-6 sm:h-6" />
+        )}
+      </span>
     </button>
   );
 }

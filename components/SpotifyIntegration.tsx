@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Music, Search, Loader2, CheckCircle2 } from 'lucide-react';
-import TrackPlayer from './music/TrackPlayer';
+import SongPreviewPlayer from './SongPreviewPlayer';
 
 interface Track {
   id: string;
@@ -186,11 +186,11 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
             duration_ms: typeof track.duration_ms === 'number' ? track.duration_ms : undefined,
           }));
         setSearchResults(validTracks);
-      } else if (response.status === 401) {
+      } else if (response.status === 503) {
         const data = await response.json().catch(() => ({}));
-        console.error('Authentication error:', data.error || 'Unauthorized');
+        console.error('Service unavailable:', data.error || 'Spotify service unavailable');
         setSearchResults([]);
-        setIsConnected(false);
+        // Show error message but don't change connection status
       } else {
         setSearchResults([]);
       }
@@ -250,18 +250,24 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
 
   if (!isConnected) {
     return (
-      <div className="bg-gradient-to-r from-[#1DB954] to-[#1ed760] rounded-lg p-4 sm:p-6 text-white">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
-          <div className="flex items-center space-x-2 sm:space-x-3 flex-1 min-w-0">
-            <Music className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" />
+      <div className="relative overflow-hidden bg-gradient-to-br from-[#1DB954] via-[#1ed760] to-[#1DB954] rounded-2xl p-6 sm:p-8 text-white shadow-2xl shadow-[#1DB954]/30">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.2),transparent_50%)]" />
+        <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0">
+          <div className="flex items-center space-x-4 flex-1 min-w-0">
+            <div className="relative">
+              <div className="absolute inset-0 bg-white/30 rounded-xl blur-lg animate-pulse" />
+              <div className="relative p-3 bg-white/20 rounded-xl backdrop-blur-sm">
+                <Music className="w-6 h-6 sm:w-7 sm:h-7 flex-shrink-0 drop-shadow-lg" />
+              </div>
+            </div>
             <div className="min-w-0 flex-1">
-              <h3 className="font-semibold text-base sm:text-lg">Connect to Spotify</h3>
-              <p className="text-xs sm:text-sm opacity-90">Import your playlists and favorite songs</p>
+              <h3 className="font-bold text-lg sm:text-xl mb-1 drop-shadow-md">Connect to Spotify</h3>
+              <p className="text-sm sm:text-base opacity-95">Import your playlists and favorite songs</p>
             </div>
           </div>
           <button
             onClick={handleConnect}
-            className="w-full sm:w-auto px-6 py-3 sm:px-4 sm:py-2 min-h-[44px] bg-white text-[#1DB954] rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors font-medium text-base sm:text-sm"
+            className="w-full sm:w-auto px-8 py-4 sm:px-6 sm:py-3 min-h-[52px] bg-white text-[#1DB954] rounded-xl hover:bg-gray-50 active:scale-95 transition-all font-bold text-base sm:text-sm shadow-xl hover:shadow-2xl hover:scale-105"
           >
             Connect
           </button>
@@ -271,48 +277,60 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
   }
 
   return (
-    <div className="bg-gradient-to-br from-white to-[#FAF9F7] rounded-xl border border-gray-200/50 shadow-sm p-5 sm:p-6 lg:p-8">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 mb-5 sm:mb-6">
-        <div className="flex items-center space-x-3">
-          <div className="p-2 bg-[#1DB954]/10 rounded-lg">
-            <Music className="w-5 h-5 sm:w-6 sm:h-6 text-[#1DB954] flex-shrink-0" />
+    <div className="bg-gradient-to-br from-white via-[#FAF9F7] to-white rounded-2xl border border-gray-200/40 shadow-xl shadow-gray-200/20 p-5 sm:p-6 lg:p-8 backdrop-blur-sm">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0 mb-6 sm:mb-8">
+        <div className="flex items-center space-x-4">
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-[#1DB954] to-[#1ed760] rounded-xl blur-md opacity-30 animate-pulse" />
+            <div className="relative p-3 bg-gradient-to-br from-[#1DB954]/20 to-[#1ed760]/20 rounded-xl border border-[#1DB954]/30">
+              <Music className="w-6 h-6 sm:w-7 sm:h-7 text-[#1DB954] flex-shrink-0" />
+            </div>
           </div>
           <div>
-            <h3 className="font-semibold text-base sm:text-lg text-[#2C2A29]">Select Songs from Spotify</h3>
-            <p className="text-xs text-gray-500 mt-0.5">Browse your playlists or search for songs</p>
+            <h3 className="font-bold text-lg sm:text-xl text-[#2C2A29] bg-gradient-to-r from-[#2C2A29] to-[#2C2A29]/80 bg-clip-text">
+              Select Songs from Spotify
+            </h3>
+            <p className="text-xs sm:text-sm text-gray-500 mt-1">Browse your playlists or search for songs</p>
           </div>
         </div>
-        <div className="px-3 py-1.5 bg-[#A5B99A]/10 rounded-full text-xs sm:text-sm font-medium text-[#2C2A29]">
+        <div className="px-4 py-2 bg-gradient-to-r from-[#A5B99A]/15 to-[#93B0C8]/15 rounded-full text-xs sm:text-sm font-semibold text-[#2C2A29] border border-[#A5B99A]/30 shadow-sm">
           {selectedSongs.length} / {maxSongs} selected
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="flex space-x-1 sm:space-x-2 mb-5 sm:mb-6 border-b border-gray-200/60 -mx-5 sm:-mx-6 lg:-mx-8 px-5 sm:px-6 lg:px-8">
+      {/* Tabs - Enhanced Design */}
+      <div className="flex space-x-2 mb-6 sm:mb-8 border-b-2 border-gray-200/40 -mx-5 sm:-mx-6 lg:-mx-8 px-5 sm:px-6 lg:px-8">
         <button
           onClick={() => setActiveTab('playlists')}
-          className={`flex-1 sm:flex-none px-4 sm:px-5 py-3 sm:py-2.5 text-sm font-medium transition-colors min-h-[44px] sm:min-h-[auto] relative ${
+          className={`flex-1 sm:flex-none px-5 sm:px-6 py-3 sm:py-3 text-sm font-semibold transition-all duration-200 min-h-[48px] sm:min-h-[auto] relative ${
             activeTab === 'playlists'
               ? 'text-[#93B0C8]'
               : 'text-gray-500 hover:text-gray-700 active:text-gray-900'
           }`}
         >
-          My Playlists
+          <span className="relative z-10">My Playlists</span>
           {activeTab === 'playlists' && (
-            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#93B0C8] rounded-t-full" />
+            <>
+              <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[#93B0C8] to-[#A5B99A] rounded-t-full" />
+              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#93B0C8] rounded-t-full opacity-50 blur-sm" />
+            </>
           )}
         </button>
         <button
           onClick={() => setActiveTab('search')}
-          className={`flex-1 sm:flex-none px-4 sm:px-5 py-3 sm:py-2.5 text-sm font-medium transition-colors min-h-[44px] sm:min-h-[auto] relative ${
+          className={`flex-1 sm:flex-none px-5 sm:px-6 py-3 sm:py-3 text-sm font-semibold transition-all duration-200 min-h-[48px] sm:min-h-[auto] relative ${
             activeTab === 'search'
               ? 'text-[#93B0C8]'
               : 'text-gray-500 hover:text-gray-700 active:text-gray-900'
           }`}
         >
-          Search Songs
+          <span className="relative z-10">Search Songs</span>
           {activeTab === 'search' && (
-            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#93B0C8] rounded-t-full" />
+            <>
+              <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[#93B0C8] to-[#A5B99A] rounded-t-full" />
+              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#93B0C8] rounded-t-full opacity-50 blur-sm" />
+            </>
           )}
         </button>
       </div>
@@ -326,20 +344,20 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
               <p>No playlists found</p>
             </div>
           ) : (
-            <div className={`space-y-2 overflow-y-auto ${selectedPlaylist && playlistTracks.length > 0 ? 'max-h-[120px] sm:max-h-[160px]' : 'max-h-[280px] sm:max-h-[320px]'}`}>
+            <div className={`space-y-3 overflow-y-auto ${selectedPlaylist && playlistTracks.length > 0 ? 'max-h-[140px] sm:max-h-[180px]' : 'max-h-[300px] sm:max-h-[360px]'} pr-2`}>
               {playlists.map((playlist) => (
                 <button
                   key={playlist.id}
                   onClick={() => handlePlaylistSelect(playlist.id)}
-                  className={`w-full text-left p-3 sm:p-4 min-h-[52px] rounded-lg border transition-all active:scale-[0.98] ${
+                  className={`group w-full text-left p-4 sm:p-5 min-h-[60px] rounded-xl border-2 transition-all duration-200 active:scale-[0.97] ${
                     selectedPlaylist === playlist.id
-                      ? 'border-[#93B0C8] bg-gradient-to-r from-[#93B0C8]/10 to-[#93B0C8]/5 shadow-sm'
-                      : 'border-gray-200/60 hover:border-gray-300 hover:bg-gray-50/50 active:bg-gray-50'
+                      ? 'border-[#93B0C8] bg-gradient-to-r from-[#93B0C8]/15 via-[#A5B99A]/10 to-[#93B0C8]/15 shadow-lg shadow-[#93B0C8]/20 scale-[1.02]'
+                      : 'border-gray-200/60 hover:border-[#93B0C8]/40 hover:bg-gradient-to-r hover:from-gray-50/80 hover:to-gray-50/50 hover:shadow-md active:bg-gray-50'
                   }`}
                 >
-                  <div className="font-medium text-sm sm:text-base text-[#2C2A29] truncate">{String(playlist.name || 'Unknown Playlist')}</div>
+                  <div className="font-semibold text-sm sm:text-base text-[#2C2A29] truncate mb-1">{String(playlist.name || 'Unknown Playlist')}</div>
                   {playlist.tracks && (
-                    <div className="text-xs text-gray-500 mt-1">
+                    <div className="text-xs sm:text-sm text-gray-500 font-medium">
                       {playlist.tracks.total} {playlist.tracks.total === 1 ? 'track' : 'tracks'}
                     </div>
                   )}
@@ -350,45 +368,46 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
 
           {/* Playlist Tracks */}
           {selectedPlaylist && playlistTracks.length > 0 && (
-            <div className="mt-5 sm:mt-6 pt-5 sm:pt-6 border-t border-gray-200/60">
-              <div className="mb-4">
-                <div className="text-sm font-semibold text-[#2C2A29]">Select songs from this playlist</div>
+            <div className="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t-2 border-gray-200/40">
+              <div className="mb-5 sm:mb-6">
+                <div className="text-base sm:text-lg font-bold text-[#2C2A29] bg-gradient-to-r from-[#2C2A29] to-[#2C2A29]/80 bg-clip-text">
+                  Select songs from this playlist
+                </div>
               </div>
-              <div className="space-y-2 max-h-[35vh] sm:max-h-[280px] md:max-h-[360px] overflow-y-auto pr-1">
+              <div className="space-y-3 max-h-[35vh] sm:max-h-[300px] md:max-h-[380px] overflow-y-auto pr-2">
                 {playlistTracks.map((track) => {
                   if (!isValidTrack(track)) return null;
                   return (
                     <button
                       key={track.id}
                       onClick={() => handleSelectTrack(track)}
-                      className={`w-full text-left p-3 sm:p-4 min-h-[64px] rounded-lg border transition-all active:scale-[0.98] ${
+                      className={`group w-full text-left p-4 sm:p-5 min-h-[72px] rounded-xl border-2 transition-all duration-200 active:scale-[0.97] ${
                         isTrackSelected(track)
-                          ? 'border-[#A5B99A] bg-gradient-to-r from-[#A5B99A]/10 to-[#A5B99A]/5 shadow-sm'
-                          : 'border-gray-200/60 hover:border-gray-300 hover:bg-gray-50/50 active:bg-gray-50'
+                          ? 'border-[#A5B99A] bg-gradient-to-r from-[#A5B99A]/20 via-[#A5B99A]/10 to-[#A5B99A]/20 shadow-lg shadow-[#A5B99A]/20'
+                          : 'border-gray-200/60 hover:border-[#A5B99A]/40 hover:bg-gradient-to-r hover:from-gray-50/80 hover:to-gray-50/50 hover:shadow-md active:bg-gray-50'
                       }`}
                     >
-                      <div className="flex items-center justify-between gap-3 sm:gap-4">
+                      <div className="flex items-center justify-between gap-4 sm:gap-5">
                         <div className="flex-1 min-w-0 pr-2">
-                          <div className="font-medium text-sm sm:text-base text-[#2C2A29] truncate">
+                          <div className="font-semibold text-sm sm:text-base text-[#2C2A29] truncate mb-1">
                             {String(track.name || 'Unknown')}
                           </div>
-                          <div className="text-xs sm:text-sm text-gray-500 truncate mt-0.5">
+                          <div className="text-xs sm:text-sm text-gray-600 truncate font-medium">
                             {String(track.artist || 'Unknown Artist')}
                           </div>
                         </div>
-                        <div className="flex items-center space-x-2 sm:space-x-3 flex-shrink-0">
+                        <div className="flex items-center space-x-3 sm:space-x-4 flex-shrink-0">
                           <div onClick={(e) => e.stopPropagation()}>
-                            <TrackPlayer
+                            <SongPreviewPlayer
+                              previewUrl={track.preview_url || null}
                               trackId={track.id}
-                              trackName={String(track.name || 'Unknown')}
-                              artistName={String(track.artist || 'Unknown Artist')}
-                              albumArtUrl={track.album_art_url}
-                              previewUrl={track.preview_url}
-                              spotifyUrl={track.external_urls?.spotify}
                             />
                           </div>
                           {isTrackSelected(track) && (
-                            <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6 text-[#A5B99A] flex-shrink-0" />
+                            <div className="relative">
+                              <div className="absolute inset-0 bg-[#A5B99A]/30 rounded-full blur-md animate-pulse" />
+                              <CheckCircle2 className="relative w-6 h-6 sm:w-7 sm:h-7 text-[#A5B99A] flex-shrink-0 drop-shadow-md" />
+                            </div>
                           )}
                         </div>
                       </div>
@@ -404,24 +423,27 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
       {/* Search Tab */}
       {activeTab === 'search' && (
         <div>
-          <div className="flex flex-col sm:flex-row gap-2 mb-4">
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-              placeholder="Search for songs..."
-              className="flex-1 px-4 py-3 sm:py-2 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent"
-            />
+          <div className="flex flex-col sm:flex-row gap-3 mb-6">
+            <div className="relative flex-1">
+              <div className="absolute inset-0 bg-gradient-to-r from-[#A5B99A]/20 to-[#93B0C8]/20 rounded-xl blur-md opacity-50" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                placeholder="Search for songs..."
+                className="relative w-full px-5 py-4 sm:py-3 text-base border-2 border-gray-200/60 rounded-xl focus:ring-2 focus:ring-[#A5B99A] focus:border-[#A5B99A] bg-white/80 backdrop-blur-sm transition-all shadow-sm hover:shadow-md"
+              />
+            </div>
             <button
               onClick={handleSearch}
               disabled={searching || !searchQuery.trim()}
-              className="px-4 py-3 sm:py-2 min-h-[48px] sm:min-h-[auto] bg-[#93B0C8] text-white rounded-lg hover:bg-[#A5B99A] active:bg-[#A5B99A]/90 transition-colors disabled:opacity-50 flex items-center justify-center space-x-2 font-medium"
+              className="px-6 py-4 sm:px-6 sm:py-3 min-h-[52px] sm:min-h-[auto] bg-gradient-to-r from-[#93B0C8] to-[#A5B99A] text-white rounded-xl hover:from-[#A5B99A] hover:to-[#93B0C8] active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 font-bold text-base shadow-lg hover:shadow-xl hover:scale-105"
             >
               {searching ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
+                <Loader2 className="w-5 h-5 animate-spin" />
               ) : (
-                <Search className="w-4 h-4" />
+                <Search className="w-5 h-5" />
               )}
               <span>Search</span>
             </button>
@@ -429,41 +451,40 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
 
           {searchResults.length > 0 && (
             <div>
-              <div className="space-y-2 max-h-[35vh] sm:max-h-[360px] md:max-h-[420px] overflow-y-auto pr-1">
+              <div className="space-y-3 max-h-[35vh] sm:max-h-[360px] md:max-h-[420px] overflow-y-auto pr-2">
                 {searchResults.map((track) => {
                   if (!isValidTrack(track)) return null;
                   return (
                     <button
                       key={track.id}
                       onClick={() => handleSelectTrack(track)}
-                      className={`w-full text-left p-3 sm:p-4 min-h-[64px] rounded-lg border transition-all active:scale-[0.98] ${
+                      className={`group w-full text-left p-4 sm:p-5 min-h-[72px] rounded-xl border-2 transition-all duration-200 active:scale-[0.97] ${
                         isTrackSelected(track)
-                          ? 'border-[#A5B99A] bg-gradient-to-r from-[#A5B99A]/10 to-[#A5B99A]/5 shadow-sm'
-                          : 'border-gray-200/60 hover:border-gray-300 hover:bg-gray-50/50 active:bg-gray-50'
+                          ? 'border-[#A5B99A] bg-gradient-to-r from-[#A5B99A]/20 via-[#A5B99A]/10 to-[#A5B99A]/20 shadow-lg shadow-[#A5B99A]/20'
+                          : 'border-gray-200/60 hover:border-[#A5B99A]/40 hover:bg-gradient-to-r hover:from-gray-50/80 hover:to-gray-50/50 hover:shadow-md active:bg-gray-50'
                       }`}
                     >
-                      <div className="flex items-center justify-between gap-3 sm:gap-4">
+                      <div className="flex items-center justify-between gap-4 sm:gap-5">
                         <div className="flex-1 min-w-0 pr-2">
-                          <div className="font-medium text-sm sm:text-base text-[#2C2A29] truncate">
+                          <div className="font-semibold text-sm sm:text-base text-[#2C2A29] truncate mb-1">
                             {String(track.name || 'Unknown')}
                           </div>
-                          <div className="text-xs sm:text-sm text-gray-500 truncate mt-0.5">
+                          <div className="text-xs sm:text-sm text-gray-600 truncate font-medium">
                             {String(track.artist || 'Unknown Artist')}
                           </div>
                         </div>
-                        <div className="flex items-center space-x-2 sm:space-x-3 flex-shrink-0">
+                        <div className="flex items-center space-x-3 sm:space-x-4 flex-shrink-0">
                           <div onClick={(e) => e.stopPropagation()}>
-                            <TrackPlayer
+                            <SongPreviewPlayer
+                              previewUrl={track.preview_url || null}
                               trackId={track.id}
-                              trackName={String(track.name || 'Unknown')}
-                              artistName={String(track.artist || 'Unknown Artist')}
-                              albumArtUrl={track.album_art_url}
-                              previewUrl={track.preview_url}
-                              spotifyUrl={track.external_urls?.spotify}
                             />
                           </div>
                           {isTrackSelected(track) && (
-                            <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6 text-[#A5B99A] flex-shrink-0" />
+                            <div className="relative">
+                              <div className="absolute inset-0 bg-[#A5B99A]/30 rounded-full blur-md animate-pulse" />
+                              <CheckCircle2 className="relative w-6 h-6 sm:w-7 sm:h-7 text-[#A5B99A] flex-shrink-0 drop-shadow-md" />
+                            </div>
                           )}
                         </div>
                       </div>

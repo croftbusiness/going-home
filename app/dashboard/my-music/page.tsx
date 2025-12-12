@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Music, Loader2, Trash2 } from 'lucide-react';
-import TrackPlayer from '@/components/music/TrackPlayer';
+import SongPreviewPlayer from '@/components/SongPreviewPlayer';
 
 interface SavedSong {
   id: string;
@@ -110,7 +110,7 @@ export default function MyMusicPage() {
                 My Music
               </h1>
               <p className="text-xs sm:text-sm text-[#2C2A29] opacity-70 mt-1">
-                Your saved Spotify songs with full playback for Premium users
+                Your saved Spotify songs with 30-second previews
               </p>
             </div>
           </div>
@@ -147,35 +147,41 @@ export default function MyMusicPage() {
                 key={song.id}
                 className="bg-white rounded-lg p-4 sm:p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow"
               >
-                <div className="flex items-center gap-4">
-                  {/* Album Art */}
+                <div className="flex items-center gap-4 sm:gap-5">
+                  {/* Album Art - Enhanced */}
                   {song.album_art_url ? (
-                    <img
-                      src={song.album_art_url}
-                      alt={song.album || 'Album cover'}
-                      className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg object-cover flex-shrink-0"
-                    />
+                    <div className="relative flex-shrink-0">
+                      <div className="absolute inset-0 bg-gradient-to-br from-[#1DB954]/20 to-[#1ed760]/20 rounded-xl blur-lg group-hover:blur-xl transition-all" />
+                      <img
+                        src={song.album_art_url}
+                        alt={song.album || 'Album cover'}
+                        className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-xl object-cover shadow-lg border-2 border-white/50"
+                      />
+                    </div>
                   ) : (
-                    <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg bg-gradient-to-br from-[#A5B99A] to-[#93B0C8] flex items-center justify-center flex-shrink-0">
-                      <Music className="w-8 h-8 text-white" />
+                    <div className="relative flex-shrink-0">
+                      <div className="absolute inset-0 bg-gradient-to-br from-[#A5B99A] to-[#93B0C8] rounded-xl blur-lg opacity-50" />
+                      <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-xl bg-gradient-to-br from-[#A5B99A] to-[#93B0C8] flex items-center justify-center shadow-lg border-2 border-white/50">
+                        <Music className="w-10 h-10 sm:w-12 sm:h-12 text-white drop-shadow-lg" />
+                      </div>
                     </div>
                   )}
 
-                  {/* Song Info */}
+                  {/* Song Info - Enhanced */}
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-[#2C2A29] truncate text-base sm:text-lg">
+                    <h3 className="font-bold text-[#2C2A29] truncate text-base sm:text-lg mb-1 bg-gradient-to-r from-[#2C2A29] to-[#2C2A29]/80 bg-clip-text">
                       {song.name}
                     </h3>
-                    <p className="text-sm sm:text-base text-[#2C2A29] opacity-70 truncate">
+                    <p className="text-sm sm:text-base text-[#2C2A29] opacity-75 truncate font-medium mb-1">
                       {song.artist}
                     </p>
                     {song.album && (
-                      <p className="text-xs sm:text-sm text-[#2C2A29] opacity-60 truncate mt-1">
+                      <p className="text-xs sm:text-sm text-gray-500 truncate font-medium mb-1">
                         {song.album}
                       </p>
                     )}
                     {song.duration_ms && (
-                      <p className="text-xs text-[#2C2A29] opacity-50 mt-1">
+                      <p className="text-xs text-gray-400 font-semibold">
                         {formatDuration(song.duration_ms)}
                       </p>
                     )}
@@ -183,28 +189,24 @@ export default function MyMusicPage() {
 
                   {/* Actions */}
                   <div className="flex items-center gap-3 sm:gap-4 flex-shrink-0">
-                    {/* Track Player */}
-                    <TrackPlayer
-                      trackId={song.spotify_id}
-                      trackName={song.name}
-                      artistName={song.artist}
-                      albumArtUrl={song.album_art_url}
-                      previewUrl={song.preview_url}
-                      spotifyUrl={song.spotify_url}
+                    {/* Preview Player */}
+                    <SongPreviewPlayer
+                      previewUrl={song.preview_url || null}
+                      trackId={song.id}
                     />
 
-                    {/* Delete */}
+                    {/* Delete - Enhanced */}
                     <button
                       onClick={() => handleDelete(song.id)}
                       disabled={deletingId === song.id}
-                      className="p-3 min-w-[44px] min-h-[44px] flex items-center justify-center text-red-600 hover:bg-red-50 active:bg-red-100 rounded-full transition-colors disabled:opacity-50 touch-target"
+                      className="relative p-3 min-w-[52px] min-h-[52px] sm:min-w-[56px] sm:min-h-[56px] flex items-center justify-center text-red-600 hover:bg-gradient-to-br hover:from-red-50 hover:to-red-100/50 active:scale-95 rounded-full transition-all duration-200 disabled:opacity-50 touch-target border-2 border-red-200/40 hover:border-red-300/60 hover:shadow-md"
                       title="Remove song"
                       aria-label="Remove song"
                     >
                       {deletingId === song.id ? (
-                        <Loader2 className="w-5 h-5 animate-spin" />
+                        <Loader2 className="w-5 h-5 sm:w-6 sm:h-6 animate-spin" />
                       ) : (
-                        <Trash2 className="w-5 h-5" />
+                        <Trash2 className="w-5 h-5 sm:w-6 sm:h-6" />
                       )}
                     </button>
                   </div>

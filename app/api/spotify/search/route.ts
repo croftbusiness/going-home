@@ -1,28 +1,41 @@
 import { NextResponse } from 'next/server';
-import { requireAuth, createServerClient } from '@/lib/auth';
+import { createServerClient } from '@/lib/auth';
 
-async function getAccessToken(userId: string) {
-  const supabase = createServerClient();
-  const { data: tokenData } = await supabase
-    .from('spotify_tokens')
-    .select('access_token, expires_at')
-    .eq('user_id', userId)
-    .single();
+const SPOTIFY_CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
+const SPOTIFY_CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET;
 
-  if (!tokenData || new Date(tokenData.expires_at) <= new Date()) {
+// Get client credentials token for public search (no user auth required)
+async function getClientCredentialsToken(): Promise<string | null> {
+  if (!SPOTIFY_CLIENT_ID || !SPOTIFY_CLIENT_SECRET) {
     return null;
   }
 
-  return tokenData.access_token;
+  try {
+    const response = await fetch('https://accounts.spotify.com/api/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': `Basic ${Buffer.from(`${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`).toString('base64')}`,
+      },
+      body: new URLSearchParams({
+        grant_type: 'client_credentials',
+      }),
+    });
+
+    if (!response.ok) {
+      return null;
+    }
+
+    const data = await response.json();
+    return data.access_token;
+  } catch (error) {
+    console.error('Client credentials token error:', error);
+    return null;
+  }
 }
 
 export async function GET(request: Request) {
   try {
-    const auth = await requireAuth();
-    if ('error' in auth) {
-      return NextResponse.json({ error: auth.error }, { status: auth.status });
-    }
-
     const { searchParams } = new URL(request.url);
     const query = searchParams.get('q');
     const limit = searchParams.get('limit') || '20';
@@ -31,9 +44,10 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Search query required' }, { status: 400 });
     }
 
-    const accessToken = await getAccessToken(auth.userId);
+    // Use client credentials for public search (no user auth needed)
+    const accessToken = await getClientCredentialsToken();
     if (!accessToken) {
-      return NextResponse.json({ error: 'Not connected to Spotify' }, { status: 401 });
+      return NextResponse.json({ error: 'Spotify service unavailable' }, { status: 503 });
     }
 
     // Search for tracks
