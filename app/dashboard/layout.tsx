@@ -146,13 +146,9 @@ export default function DashboardLayout({
     }
   };
 
-  // Hide sidebar and layout for cards page (full-screen experience)
-  const isCardsPage = pathname === '/dashboard/cards';
-
   return (
     <div className="min-h-screen bg-[#FAF9F7] flex">
-      {/* Sidebar - hidden on cards page */}
-      {!isCardsPage && (
+      {/* Sidebar */}
       <aside className={`
         fixed inset-y-0 left-0 z-50 w-72 bg-gradient-to-b from-[#FCFAF7] to-white border-r border-gray-200/50 shadow-lg transform transition-transform duration-300 ease-in-out
         lg:translate-x-0 lg:static lg:inset-0
@@ -285,10 +281,9 @@ export default function DashboardLayout({
           </div>
         </div>
       </aside>
-      )}
 
       {/* Overlay for mobile */}
-      {sidebarOpen && !isCardsPage && (
+      {sidebarOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
           onClick={() => setSidebarOpen(false)}
@@ -296,9 +291,8 @@ export default function DashboardLayout({
       )}
 
       {/* Main Content */}
-      <div className={`flex-1 flex flex-col ${isCardsPage ? '' : 'lg:ml-0'}`}>
-        {/* Mobile Header - hidden on cards page */}
-        {!isCardsPage && (
+      <div className="flex-1 flex flex-col lg:ml-0">
+        {/* Mobile Header */}
         <header className="lg:hidden bg-[#FCFAF7] border-b border-gray-200 px-4 py-4">
           <div className="flex items-center justify-between">
             <button
@@ -322,10 +316,9 @@ export default function DashboardLayout({
             <div className="w-10" /> {/* Spacer */}
           </div>
         </header>
-        )}
 
         {/* Page Content */}
-        <main className={`flex-1 ${isCardsPage ? 'overflow-hidden' : 'overflow-y-auto'}`}>
+        <main className="flex-1 overflow-y-auto">
           {children}
         </main>
       </div>

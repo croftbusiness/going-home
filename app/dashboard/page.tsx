@@ -3,8 +3,6 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import ResumeCardButton from '@/components/cards/ResumeCardButton';
-import CardPreferencePrompt from '@/components/cards/CardPreferencePrompt';
 import { 
   User, 
   FileText, 
@@ -91,92 +89,10 @@ export default function DashboardPage() {
   });
 
   useEffect(() => {
-    checkCardsFirst();
+    checkAuthAndLoadData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const [showPreferencePrompt, setShowPreferencePrompt] = useState(false);
-
-  const handlePreferenceEnable = async () => {
-    setShowPreferencePrompt(false);
-    // Check for cards and show them
-    const checkIsMobile = () => {
-      if (typeof window === 'undefined') return false;
-      const isMobileViewport = window.innerWidth < 768;
-      const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
-      const isMobileUA = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent.toLowerCase());
-      return isMobileViewport || isMobileUA;
-    };
-
-    if (checkIsMobile()) {
-      const cardsResponse = await fetch('/api/user/cards');
-      if (cardsResponse.ok) {
-        const cardsData = await cardsResponse.json();
-        if (cardsData.cards && cardsData.cards.length > 0) {
-          router.push('/dashboard/cards');
-          return;
-        }
-      }
-    }
-    checkAuthAndLoadData();
-  };
-
-  const handlePreferenceDisable = async () => {
-    setShowPreferencePrompt(false);
-    checkAuthAndLoadData();
-  };
-
-  const handlePreferenceDismiss = async () => {
-    setShowPreferencePrompt(false);
-    checkAuthAndLoadData();
-  };
-
-  const checkCardsFirst = async () => {
-    try {
-      // Check if mobile device (viewport width or user agent)
-      const checkIsMobile = () => {
-        if (typeof window === 'undefined') return false;
-        const isMobileViewport = window.innerWidth < 768;
-        const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
-        const isMobileUA = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent.toLowerCase());
-        return isMobileViewport || isMobileUA;
-      };
-
-      // Check if user wants to see cards (mobile only)
-      if (checkIsMobile()) {
-        const response = await fetch('/api/user/cards/preference');
-        if (response.ok) {
-          const data = await response.json();
-          
-          // If preference hasn't been set, show the prompt
-          if (!data.show_cards_set) {
-            setShowPreferencePrompt(true);
-            setLoading(false);
-            return;
-          }
-          
-          // Only show cards on mobile devices if preference is enabled
-          if (data.show_cards === true) {
-            // Check if there are cards to show
-            const cardsResponse = await fetch('/api/user/cards');
-            if (cardsResponse.ok) {
-              const cardsData = await cardsResponse.json();
-              if (cardsData.cards && cardsData.cards.length > 0) {
-                router.push('/dashboard/cards');
-                return; // Don't continue with dashboard loading
-              }
-            }
-          }
-        }
-      }
-      // No cards to show, proceed with normal dashboard loading
-      checkAuthAndLoadData();
-    } catch (error) {
-      console.error('Error checking card preference:', error);
-      // On error, proceed with normal dashboard loading
-      checkAuthAndLoadData();
-    }
-  };
 
   const checkAuthAndLoadData = async () => {
     try {
@@ -503,16 +419,6 @@ export default function DashboardPage() {
           <p className="text-[#2C2A29] opacity-60">Loading your dashboard...</p>
         </div>
       </div>
-    );
-  }
-
-  if (showPreferencePrompt) {
-    return (
-      <CardPreferencePrompt
-        onEnable={handlePreferenceEnable}
-        onDisable={handlePreferenceDisable}
-        onDismiss={handlePreferenceDismiss}
-      />
     );
   }
 
