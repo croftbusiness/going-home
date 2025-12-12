@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Music, Loader2, Trash2 } from 'lucide-react';
-import SongPreviewPlayer from '@/components/SongPreviewPlayer';
+import TrackPlayer from '@/components/music/TrackPlayer';
 
 interface SavedSong {
   id: string;
@@ -110,7 +110,7 @@ export default function MyMusicPage() {
                 My Music
               </h1>
               <p className="text-xs sm:text-sm text-[#2C2A29] opacity-70 mt-1">
-                Your saved Spotify songs with preview playback
+                Your saved Spotify songs with full playback for Premium users
               </p>
             </div>
           </div>
@@ -182,18 +182,22 @@ export default function MyMusicPage() {
                   </div>
 
                   {/* Actions */}
-                  <div className="flex items-center gap-2 flex-shrink-0">
-                    {/* Play Preview */}
-                    <SongPreviewPlayer
+                  <div className="flex items-center gap-3 sm:gap-4 flex-shrink-0">
+                    {/* Track Player */}
+                    <TrackPlayer
+                      trackId={song.spotify_id}
+                      trackName={song.name}
+                      artistName={song.artist}
+                      albumArtUrl={song.album_art_url}
                       previewUrl={song.preview_url}
-                      trackId={song.id}
+                      spotifyUrl={song.spotify_url}
                     />
 
                     {/* Delete */}
                     <button
                       onClick={() => handleDelete(song.id)}
                       disabled={deletingId === song.id}
-                      className="p-3 min-w-[44px] min-h-[44px] flex items-center justify-center text-red-600 hover:bg-red-50 active:bg-red-100 rounded-full transition-colors disabled:opacity-50"
+                      className="p-3 min-w-[44px] min-h-[44px] flex items-center justify-center text-red-600 hover:bg-red-50 active:bg-red-100 rounded-full transition-colors disabled:opacity-50 touch-target"
                       title="Remove song"
                       aria-label="Remove song"
                     >

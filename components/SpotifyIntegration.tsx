@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Music, Search, Loader2, CheckCircle2 } from 'lucide-react';
-import SongPreviewPlayer from './SongPreviewPlayer';
+import TrackPlayer from './music/TrackPlayer';
 
 interface Track {
   id: string;
@@ -375,17 +375,16 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
                           <div className="text-xs sm:text-sm text-gray-500 truncate mt-0.5">
                             {String(track.artist || 'Unknown Artist')}
                           </div>
-                          {!track.preview_url && (
-                            <div className="text-xs text-gray-400 mt-1.5 italic">
-                              No preview available
-                            </div>
-                          )}
                         </div>
                         <div className="flex items-center space-x-2 sm:space-x-3 flex-shrink-0">
                           <div onClick={(e) => e.stopPropagation()}>
-                            <SongPreviewPlayer
-                              previewUrl={track.preview_url}
+                            <TrackPlayer
                               trackId={track.id}
+                              trackName={String(track.name || 'Unknown')}
+                              artistName={String(track.artist || 'Unknown Artist')}
+                              albumArtUrl={track.album_art_url}
+                              previewUrl={track.preview_url}
+                              spotifyUrl={track.external_urls?.spotify}
                             />
                           </div>
                           {isTrackSelected(track) && (
@@ -451,17 +450,16 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
                           <div className="text-xs sm:text-sm text-gray-500 truncate mt-0.5">
                             {String(track.artist || 'Unknown Artist')}
                           </div>
-                          {!track.preview_url && (
-                            <div className="text-xs text-gray-400 mt-1.5 italic">
-                              No preview available
-                            </div>
-                          )}
                         </div>
                         <div className="flex items-center space-x-2 sm:space-x-3 flex-shrink-0">
                           <div onClick={(e) => e.stopPropagation()}>
-                            <SongPreviewPlayer
-                              previewUrl={track.preview_url}
+                            <TrackPlayer
                               trackId={track.id}
+                              trackName={String(track.name || 'Unknown')}
+                              artistName={String(track.artist || 'Unknown Artist')}
+                              albumArtUrl={track.album_art_url}
+                              previewUrl={track.preview_url}
+                              spotifyUrl={track.external_urls?.spotify}
                             />
                           </div>
                           {isTrackSelected(track) && (

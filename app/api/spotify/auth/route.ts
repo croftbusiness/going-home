@@ -28,8 +28,8 @@ export async function GET(request: Request) {
     const action = searchParams.get('action');
 
     if (action === 'authorize') {
-      // Generate authorization URL
-      const scopes = 'user-read-private user-read-email playlist-read-private playlist-read-collaborative user-library-read';
+      // Generate authorization URL - include streaming scope for Web Playback SDK
+      const scopes = 'user-read-private user-read-email playlist-read-private playlist-read-collaborative user-library-read streaming user-read-playback-state user-modify-playback-state';
       
       // Get return URL from query params, default to current page or dashboard
       const { searchParams } = new URL(request.url);
