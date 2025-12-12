@@ -40,6 +40,8 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
   const [searchResults, setSearchResults] = useState<Track[]>([]);
   const [searching, setSearching] = useState(false);
   const [activeTab, setActiveTab] = useState<'playlists' | 'search'>('playlists');
+  const [playingTrackId, setPlayingTrackId] = useState<string | null>(null);
+  const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     checkConnection();
@@ -124,6 +126,55 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
     const songString = `${track.name} - ${track.artist}`;
     return selectedSongs.includes(songString);
   };
+
+  const handlePlayPreview = (track: Track) => {
+    // Stop any currently playing track
+    if (audioElement) {
+      audioElement.pause();
+      audioElement.currentTime = 0;
+    }
+
+    if (!track.preview_url) {
+      return; // No preview available
+    }
+
+    // If clicking the same track, stop it
+    if (playingTrackId === track.id && audioElement) {
+      setPlayingTrackId(null);
+      audioElement.pause();
+      audioElement.currentTime = 0;
+      setAudioElement(null);
+      return;
+    }
+
+    // Play new track
+    const audio = new Audio(track.preview_url);
+    audio.play();
+    setAudioElement(audio);
+    setPlayingTrackId(track.id);
+
+    // Clean up when track ends
+    audio.addEventListener('ended', () => {
+      setPlayingTrackId(null);
+      setAudioElement(null);
+    });
+
+    // Clean up on error
+    audio.addEventListener('error', () => {
+      setPlayingTrackId(null);
+      setAudioElement(null);
+    });
+  };
+
+  // Cleanup audio on unmount
+  useEffect(() => {
+    return () => {
+      if (audioElement) {
+        audioElement.pause();
+        audioElement.currentTime = 0;
+      }
+    };
+  }, [audioElement]);
 
   if (loading && !isConnected) {
     return (
@@ -227,7 +278,13 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
           {/* Playlist Tracks */}
           {selectedPlaylist && playlistTracks.length > 0 && (
             <div className="mt-4 pt-4 border-t border-gray-200">
-              <div className="text-sm font-medium text-[#2C2A29] mb-3">Select songs:</div>
+              <div className="flex items-center justify-between mb-3">
+                <div className="text-sm font-medium text-[#2C2A29]">Select songs:</div>
+                <div className="text-xs text-gray-500 flex items-center space-x-1">
+                  <Play className="w-3 h-3" />
+                  <span>Click play icon to preview</span>
+                </div>
+              </div>
               <div className="space-y-2 max-h-64 overflow-y-auto">
                 {playlistTracks.map((track) => (
                   <button
@@ -245,6 +302,26 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
                         <div className="text-sm text-gray-500 truncate">{track.artist}</div>
                       </div>
                       <div className="flex items-center space-x-2 ml-2">
+                        {track.preview_url && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handlePlayPreview(track);
+                            }}
+                            className={`p-2 rounded-full transition-colors ${
+                              playingTrackId === track.id
+                                ? 'bg-[#1DB954] text-white'
+                                : 'text-[#1DB954] hover:bg-[#1DB954]/10'
+                            }`}
+                            title={playingTrackId === track.id ? 'Stop preview' : 'Play preview'}
+                          >
+                            {playingTrackId === track.id ? (
+                              <X className="w-4 h-4" />
+                            ) : (
+                              <Play className="w-4 h-4" />
+                            )}
+                          </button>
+                        )}
                         {isTrackSelected(track) && (
                           <CheckCircle2 className="w-5 h-5 text-[#A5B99A] flex-shrink-0" />
                         )}
@@ -254,7 +331,8 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
                             target="_blank"
                             rel="noopener noreferrer"
                             onClick={(e) => e.stopPropagation()}
-                            className="text-[#1DB954] hover:text-[#1ed760]"
+                            className="text-[#1DB954] hover:text-[#1ed760] p-2"
+                            title="Open in Spotify"
                           >
                             <ExternalLink className="w-4 h-4" />
                           </a>
@@ -296,7 +374,12 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
           </div>
 
           {searchResults.length > 0 && (
-            <div className="space-y-2 max-h-96 overflow-y-auto">
+            <div>
+              <div className="text-xs text-gray-500 mb-3 flex items-center space-x-1">
+                <Play className="w-3 h-3" />
+                <span>Click play icon to preview songs (30-second previews)</span>
+              </div>
+              <div className="space-y-2 max-h-96 overflow-y-auto">
               {searchResults.map((track) => (
                 <button
                   key={track.id}
@@ -307,28 +390,49 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
                 >
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1 min-w-0">
-                      <div className="font-medium text-[#2C2A29] truncate">{track.name}</div>
-                      <div className="text-sm text-gray-500 truncate">{track.artist}</div>
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1 min-w-0">
+                        <div className="font-medium text-[#2C2A29] truncate">{track.name}</div>
+                        <div className="text-sm text-gray-500 truncate">{track.artist}</div>
+                      </div>
+                      <div className="flex items-center space-x-2 ml-2">
+                        {track.preview_url && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handlePlayPreview(track);
+                            }}
+                            className={`p-2 rounded-full transition-colors ${
+                              playingTrackId === track.id
+                                ? 'bg-[#1DB954] text-white'
+                                : 'text-[#1DB954] hover:bg-[#1DB954]/10'
+                            }`}
+                            title={playingTrackId === track.id ? 'Stop preview' : 'Play preview'}
+                          >
+                            {playingTrackId === track.id ? (
+                              <X className="w-4 h-4" />
+                            ) : (
+                              <Play className="w-4 h-4" />
+                            )}
+                          </button>
+                        )}
+                        {isTrackSelected(track) && (
+                          <CheckCircle2 className="w-5 h-5 text-[#A5B99A] flex-shrink-0" />
+                        )}
+                        {track.external_urls?.spotify && (
+                          <a
+                            href={track.external_urls.spotify}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => e.stopPropagation()}
+                            className="text-[#1DB954] hover:text-[#1ed760] p-2"
+                            title="Open in Spotify"
+                          >
+                            <ExternalLink className="w-4 h-4" />
+                          </a>
+                        )}
+                      </div>
                     </div>
-                    <div className="flex items-center space-x-2 ml-2">
-                      {isTrackSelected(track) && (
-                        <CheckCircle2 className="w-5 h-5 text-[#A5B99A] flex-shrink-0" />
-                      )}
-                      {track.external_urls?.spotify && (
-                        <a
-                          href={track.external_urls.spotify}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={(e) => e.stopPropagation()}
-                          className="text-[#1DB954] hover:text-[#1ed760]"
-                        >
-                          <ExternalLink className="w-4 h-4" />
-                        </a>
-                      )}
-                    </div>
-                  </div>
                 </button>
               ))}
             </div>
