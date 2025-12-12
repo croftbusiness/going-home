@@ -3,10 +3,11 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, Music, Loader2, Plus, X, Heart, Save } from 'lucide-react';
+import { ArrowLeft, Music, Loader2, Plus, X, Heart, Save, AlertCircle } from 'lucide-react';
 import SpotifyIntegration from '@/components/SpotifyIntegration';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 
-export default function PlaylistPage() {
+function PlaylistPageContent() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -20,11 +21,32 @@ export default function PlaylistPage() {
   useEffect(() => {
     mountedRef.current = true;
     setMounted(true);
+    
+    // Add global error handler
+    const handleError = (event: ErrorEvent) => {
+      console.error('Global error caught:', event.error);
+      if (mountedRef.current) {
+        setError(`An error occurred: ${event.error?.message || 'Unknown error'}`);
+      }
+    };
+    
+    const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
+      console.error('Unhandled promise rejection:', event.reason);
+      if (mountedRef.current) {
+        setError(`An error occurred: ${event.reason?.message || 'Unknown error'}`);
+      }
+    };
+    
+    window.addEventListener('error', handleError);
+    window.addEventListener('unhandledrejection', handleUnhandledRejection);
+    
     loadPlaylist();
     
     return () => {
       mountedRef.current = false;
       setMounted(false);
+      window.removeEventListener('error', handleError);
+      window.removeEventListener('unhandledrejection', handleUnhandledRejection);
     };
   }, []);
 
@@ -374,6 +396,14 @@ export default function PlaylistPage() {
         )}
       </main>
     </div>
+  );
+}
+
+export default function PlaylistPage() {
+  return (
+    <ErrorBoundary>
+      <PlaylistPageContent />
+    </ErrorBoundary>
   );
 }
 
