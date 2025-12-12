@@ -46,11 +46,8 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
   const [playingTrackId, setPlayingTrackId] = useState<string | null>(null);
   const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(null);
 
-  useEffect(() => {
-    checkConnection();
-  }, []);
-
   // Type guard to validate tracks and filter out error objects
+  // MUST be defined before it's used in computed values
   const isValidTrack = (track: any): track is Track => {
     if (!track || typeof track !== 'object') return false;
     
@@ -73,6 +70,14 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
     
     return true;
   };
+
+  useEffect(() => {
+    checkConnection();
+  }, []);
+
+  // Memoize filtered tracks to ensure we never render invalid ones
+  const safePlaylistTracks = playlistTracks.filter(isValidTrack);
+  const safeSearchResults = searchResults.filter(isValidTrack);
 
   const checkConnection = async () => {
     try {
@@ -389,7 +394,7 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
           )}
 
           {/* Playlist Tracks */}
-          {selectedPlaylist && playlistTracks.length > 0 && (
+          {selectedPlaylist && safePlaylistTracks.length > 0 && (
             <div className="mt-4 pt-4 border-t border-gray-200">
               <div className="flex items-center justify-between mb-3">
                 <div className="text-sm font-medium text-[#2C2A29]">Select songs:</div>
@@ -399,10 +404,13 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
                 </div>
               </div>
               <div className="space-y-2 max-h-64 overflow-y-auto">
-                {playlistTracks.filter(isValidTrack).map((track) => (
-                  <button
-                    key={track.id}
-                    onClick={() => handleSelectTrack(track)}
+                {safePlaylistTracks.map((track) => {
+                  // Double-check validity before rendering
+                  if (!isValidTrack(track)) return null;
+                  return (
+                    <button
+                      key={track.id}
+                      onClick={() => handleSelectTrack(track)}
                     className={`w-full text-left p-3 rounded-lg border transition-colors ${
                       isTrackSelected(track)
                         ? 'border-[#A5B99A] bg-[#A5B99A]/10'
@@ -457,7 +465,8 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
                       </div>
                     </div>
                   </button>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}
@@ -490,14 +499,17 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
             </button>
           </div>
 
-          {searchResults.length > 0 && (
+          {safeSearchResults.length > 0 && (
             <div>
               <div className="text-xs text-gray-500 mb-3 flex items-center space-x-1">
                 <Play className="w-3 h-3" />
                 <span>Click play icon to preview songs (30-second previews)</span>
               </div>
               <div className="space-y-2 max-h-96 overflow-y-auto">
-                {searchResults.filter(isValidTrack).map((track) => (
+                {safeSearchResults.map((track) => {
+                  // Double-check validity before rendering
+                  if (!isValidTrack(track)) return null;
+                  return (
                   <button
                     key={track.id}
                     onClick={() => handleSelectTrack(track)}
@@ -555,7 +567,8 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
                       </div>
                     </div>
                   </button>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}
