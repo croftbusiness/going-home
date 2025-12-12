@@ -162,7 +162,7 @@ export default function HomePage() {
             <FeatureCard
               icon={<Music className="w-5 h-5 sm:w-6 sm:h-6" />}
               title="Life Event Planning"
-              description="Plan meaningful ceremonies with AI-assisted story creation, visual planning boards, playlists, and more."
+              description="Plan for when you can't be there—medical emergencies, accidents, hospitalization, and memorial services."
             />
             <FeatureCard
               icon={<Calculator className="w-5 h-5 sm:w-6 sm:h-6" />}
@@ -300,7 +300,7 @@ export default function HomePage() {
               <div className="bg-gradient-to-br from-[#FCFAF7] to-white rounded-xl sm:rounded-2xl p-6 sm:p-8 shadow-xl sm:shadow-2xl border border-gray-100">
                 <div className="space-y-3 sm:space-y-4">
                   <FeatureHighlight icon={<CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6" />} text="Life Event Preferences & Directives" />
-                  <FeatureHighlight icon={<CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6" />} text="Life Event Planning & Cost Calculator" />
+                  <FeatureHighlight icon={<CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6" />} text="Life Event Planning for Emergencies & Memorials" />
                   <FeatureHighlight icon={<CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6" />} text="Personal Biography with AI Assistance" />
                   <FeatureHighlight icon={<CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6" />} text="Visual Planning Boards & Moodboards" />
                   <FeatureHighlight icon={<CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6" />} text="Messages & Guidance" />

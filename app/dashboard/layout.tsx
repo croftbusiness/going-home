@@ -54,7 +54,7 @@ const navigation = [
   
   // Planning & Legacy
   { name: 'Family Legacy', href: '/dashboard/family-legacy', icon: Gift, section: 'planning' },
-  { name: 'Life Event Planning', href: '/dashboard/funeral-planning', icon: Sparkles, section: 'planning' },
+  { name: 'Life Event Planning', href: '/dashboard/life-event-planning', icon: Sparkles, section: 'planning' },
   { name: 'Life Event Cost Calculator', href: '/dashboard/funeral-cost-calculator', icon: Calculator, section: 'planning' },
   { name: 'My Music', href: '/dashboard/my-music', icon: Music, section: 'planning' },
   { name: 'Legacy Messages', href: '/dashboard/legacy-messages', icon: Video, section: 'planning' },
@@ -85,7 +85,7 @@ const sectionLabels: Record<string, string> = {
   primary: 'Quick Start',
   planning: 'Planning & Legacy',
   financial: 'Financial & Legal',
-  personal: 'Personal & Family',
+  personal: 'Personal & Care',
   admin: 'Settings',
 };
 

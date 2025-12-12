@@ -229,9 +229,9 @@ export default function DashboardPage() {
     },
     {
       title: 'Life Event Planning',
-      description: 'AI-guided comprehensive ceremony planning with stories and music',
+      description: 'Plan for when you can\'t be there—emergencies, accidents, hospitalization, and memorial services',
       icon: Sparkles,
-      href: '/dashboard/funeral-planning',
+      href: '/dashboard/life-event-planning',
       completed: false,
       color: 'bg-[#A5B99A]',
       bgColor: 'bg-[#A5B99A] bg-opacity-5',
@@ -459,14 +459,14 @@ export default function DashboardPage() {
               </div>
               <p className="text-base sm:text-lg lg:text-xl text-[#2C2A29] opacity-70 font-light">
                 {progress >= 100 
-                  ? 'You&apos;re fully prepared. Everything is ready.' 
+                  ? 'You\'re fully prepared. Everything is ready.' 
                   : progress >= 75
-                  ? `You're ${Math.round(progress)}% prepared. A few details left — most people finish this in under 10 minutes.`
+                  ? 'A few details left — most people finish this in under 10 minutes.'
                   : progress >= 50
-                  ? `You're ${Math.round(progress)}% prepared. You're making great progress.`
+                  ? 'You\'re making great progress. Keep going at your own pace.'
                   : progress >= 25
-                  ? `You're ${Math.round(progress)}% prepared. Every step matters.`
-                  : 'Let&apos;s begin organizing your information and preferences.'}
+                  ? 'Every step matters. Take your time organizing what\'s important.'
+                  : 'Let\'s begin organizing your information and preferences. You don\'t need to finish everything at once.'}
               </p>
             </div>
           </div>
@@ -502,11 +502,20 @@ export default function DashboardPage() {
                     </div>
                     <p className="text-sm sm:text-base text-[#2C2A29] opacity-70 mb-3">
                       <span className="font-semibold text-[#A5B99A]">You&apos;re {Math.round(progress)}% prepared</span>
-                      {progress < 100 && progress >= 50 && (
+                      {progress < 100 && (
                         <span className="block mt-1 text-xs opacity-60">
                           {progress >= 75 
                             ? 'A few details left — most people finish this in under 10 minutes'
-                            : 'You&apos;re making great progress'}
+                            : progress >= 50
+                            ? 'You\'re making great progress'
+                            : progress >= 25
+                            ? 'Every step matters. Take your time.'
+                            : 'Getting started is the hardest part. You\'ve got this.'}
+                        </span>
+                      )}
+                      {progress >= 100 && (
+                        <span className="block mt-1 text-xs opacity-60">
+                          Everything is ready. Calm readiness, whenever it&apos;s needed.
                         </span>
                       )}
                     </p>
@@ -779,7 +788,7 @@ export default function DashboardPage() {
               </div>
               <div>
                 <h2 className="text-2xl sm:text-3xl font-bold text-[#2C2A29]">All Sections</h2>
-                <p className="text-sm text-[#2C2A29] opacity-60 mt-0.5">Organize your information and preferences</p>
+                <p className="text-sm text-[#2C2A29] opacity-60 mt-0.5">This helps the people you love know what to do</p>
               </div>
             </div>
             <div className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-[#A5B99A]/10 to-[#93B0C8]/10 rounded-full border border-[#A5B99A]/20">
