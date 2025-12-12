@@ -12,6 +12,8 @@ interface Track {
   external_urls?: {
     spotify: string;
   };
+  album_art_url?: string;
+  duration_ms?: number;
 }
 
 interface Playlist {
@@ -28,9 +30,10 @@ interface SpotifyIntegrationProps {
   selectedSongs: string[];
   onSongsChange: (songs: string[]) => void;
   maxSongs?: number;
+  onTrackSave?: (track: Track) => void; // Optional callback to save full track data
 }
 
-export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSongs = 3 }: SpotifyIntegrationProps) {
+export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSongs = 3, onTrackSave }: SpotifyIntegrationProps) {
   const [isConnected, setIsConnected] = useState(false);
   const [loading, setLoading] = useState(true);
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
@@ -122,7 +125,7 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
     }
   };
 
-  const handleSelectTrack = (track: Track) => {
+  const handleSelectTrack = async (track: Track) => {
     const songString = `${track.name} - ${track.artist}`;
     if (selectedSongs.includes(songString)) {
       // Remove if already selected
@@ -131,6 +134,10 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
       // Add if not at max
       if (selectedSongs.length < maxSongs) {
         onSongsChange([...selectedSongs, songString]);
+        // Save full track data if callback provided
+        if (onTrackSave) {
+          onTrackSave(track);
+        }
       }
     }
   };

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { ArrowLeft, ArrowRight, Save, Check } from 'lucide-react';
 import Link from 'next/link';
 import { getWillQuestionnaire, updateWillQuestionnaire } from '@/lib/api/willQuestionnaire';
+import DocumentTextExtractor from '@/components/DocumentTextExtractor';
 
 const TOTAL_STEPS = 8;
 
@@ -694,6 +695,15 @@ export default function WillQuestionnaireEditPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Any additional information or special instructions
                 </label>
+                <div className="mb-4">
+                  <DocumentTextExtractor
+                    label="Upload Document to Extract Text"
+                    description="Upload a PDF, Word document, or text file to automatically fill the notes field"
+                    onTextExtracted={(text) => {
+                      setFormData({ ...formData, notes: text });
+                    }}
+                  />
+                </div>
                 <textarea
                   value={formData.notes}
                   onChange={(e) => setFormData({ ...formData, notes: e.target.value })}

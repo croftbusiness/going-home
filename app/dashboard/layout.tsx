@@ -37,6 +37,7 @@ import {
   Gift,
   Calculator,
   Eye,
+  Music,
 } from 'lucide-react';
 
 // Organized navigation with sections and unique icons
@@ -53,6 +54,7 @@ const navigation = [
   { name: 'Family Legacy', href: '/dashboard/family-legacy', icon: Gift, section: 'planning' },
   { name: 'Funeral Planning', href: '/dashboard/funeral-planning', icon: Sparkles, section: 'planning' },
   { name: 'Funeral Cost Calculator', href: '/dashboard/funeral-cost-calculator', icon: Calculator, section: 'planning' },
+  { name: 'My Music', href: '/dashboard/my-music', icon: Music, section: 'planning' },
   { name: 'Legacy Messages', href: '/dashboard/legacy-messages', icon: Video, section: 'planning' },
   { name: 'Will Questionnaire', href: '/dashboard/will-questionnaire', icon: FileQuestion, section: 'planning' },
   { name: 'Biography', href: '/dashboard/biography', icon: BookOpen, section: 'planning' },

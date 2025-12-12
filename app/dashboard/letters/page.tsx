@@ -6,6 +6,7 @@ import { ArrowLeft, Plus, Mail, Edit, Trash2, Sparkles, Wand2, Heart } from 'luc
 import Link from 'next/link';
 import AILetterGenerator from '@/components/ai/AILetterGenerator';
 import LegacyMessageCoach from '@/components/ai/LegacyMessageCoach';
+import DocumentTextExtractor from '@/components/DocumentTextExtractor';
 
 interface Letter {
   id: string;
@@ -457,9 +458,18 @@ export default function LettersPage() {
                   <label className="block text-sm font-medium text-[#2C2A29]">
                     Your Message *
                   </label>
-                  <div className="text-xs text-[#2C2A29] opacity-60">
+                  <div className="text-xs text-[#2C2A29] opacity-60 mb-2">
                     Use AI Coach below to improve your message
                   </div>
+                </div>
+                <div className="mb-4">
+                  <DocumentTextExtractor
+                    label="Upload Document to Extract Text"
+                    description="Upload a PDF, Word document, or text file to automatically fill the message field"
+                    onTextExtracted={(text) => {
+                      setFormData({ ...formData, messageText: text });
+                    }}
+                  />
                 </div>
                 <textarea
                   value={formData.messageText}

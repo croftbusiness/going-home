@@ -9,6 +9,7 @@ import {
   BookHeart, GraduationCap, Camera, PenTool, HelpCircle
 } from 'lucide-react';
 import QuestionnaireMode from './components/QuestionnaireMode';
+import DocumentTextExtractor from '@/components/DocumentTextExtractor';
 
 interface Biography {
   lifeStory?: string;
@@ -467,19 +468,28 @@ export default function BiographyPage() {
                       />
                     ) : (
                       /* Write Yourself Mode */
-                      <div>
-                        <label className="block text-sm font-medium text-[#2C2A29] mb-2">
-                          {section.label}
-                        </label>
-                        <textarea
-                          value={currentContent}
-                          onChange={(e) => handleChange(section.id as keyof Biography, e.target.value)}
-                          rows={10}
-                          className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-[#A5B99A] transition-all resize-none"
-                          placeholder={`Write your ${section.label.toLowerCase()} here...`}
+                      <div className="space-y-4">
+                        <DocumentTextExtractor
+                          label="Upload Document to Extract Text"
+                          description={`Upload a PDF, Word document, or text file to automatically fill the ${section.label} field`}
+                          onTextExtracted={(text) => {
+                            handleChange(section.id as keyof Biography, text);
+                          }}
                         />
-                        <div className="text-xs text-gray-500 mt-1 text-right">
-                          {currentContent.length} characters
+                        <div>
+                          <label className="block text-sm font-medium text-[#2C2A29] mb-2">
+                            {section.label}
+                          </label>
+                          <textarea
+                            value={currentContent}
+                            onChange={(e) => handleChange(section.id as keyof Biography, e.target.value)}
+                            rows={10}
+                            className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-[#A5B99A] transition-all resize-none"
+                            placeholder={`Write your ${section.label.toLowerCase()} here...`}
+                          />
+                          <div className="text-xs text-gray-500 mt-1 text-right">
+                            {currentContent.length} characters
+                          </div>
                         </div>
                       </div>
                     )}

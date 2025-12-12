@@ -58,6 +58,8 @@ export async function GET(request: Request) {
       album: track.album.name,
       preview_url: track.preview_url,
       external_urls: track.external_urls,
+      album_art_url: track.album.images?.[0]?.url || null,
+      duration_ms: track.duration_ms || null,
     }));
 
     return NextResponse.json({ tracks });

@@ -195,6 +195,27 @@ export default function PlaylistPage() {
                     }));
                   }}
                   maxSongs={50}
+                  onTrackSave={async (track) => {
+                    // Save full track data to saved_songs
+                    try {
+                      await fetch('/api/user/saved-songs', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                          spotify_id: track.id,
+                          name: track.name,
+                          artist: track.artist,
+                          album: track.album,
+                          preview_url: track.preview_url,
+                          spotify_url: track.external_urls?.spotify,
+                          album_art_url: track.album_art_url,
+                          duration_ms: track.duration_ms,
+                        }),
+                      });
+                    } catch (error) {
+                      console.error('Failed to save track:', error);
+                    }
+                  }}
                 />
               </div>
 
