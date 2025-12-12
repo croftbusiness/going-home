@@ -19,7 +19,8 @@ export async function GET() {
       .single();
 
     return NextResponse.json({
-      show_cards: userData?.show_cards_on_login !== false,
+      show_cards: userData?.show_cards_on_login, // Return null if not set
+      show_cards_set: userData?.show_cards_on_login !== null && userData?.show_cards_on_login !== undefined,
       login_count: userData?.login_count || 0,
     });
   } catch (error) {

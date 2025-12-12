@@ -385,7 +385,7 @@ export default function SwipeCardFlow({ onComplete, onPause }: SwipeCardFlowProp
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
-      <div className="w-full max-w-md relative" style={{ height: '600px' }}>
+      <div className="w-full max-w-sm relative" style={{ height: '480px' }}>
         {cards.map((card, index) => (
           <SwipeCard
             key={card.id}
@@ -398,7 +398,7 @@ export default function SwipeCardFlow({ onComplete, onPause }: SwipeCardFlowProp
         ))}
         
         {/* Card counter */}
-        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-xs text-gray-500">
+        <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-xs text-gray-400">
           {currentIndex + 1} of {cards.length}
         </div>
       </div>
