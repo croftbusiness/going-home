@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowLeft, Save, User, Upload } from 'lucide-react';
+import { ArrowLeft, Save, User, Upload, Trash2, AlertTriangle } from 'lucide-react';
 
 export default function AccountSettingsPage() {
   const router = useRouter();
@@ -12,6 +12,9 @@ export default function AccountSettingsPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
+  const [deleting, setDeleting] = useState(false);
   const [formData, setFormData] = useState({
     role: 'User',
     preferredName: '',
@@ -104,6 +107,41 @@ export default function AccountSettingsPage() {
       setError(error.message || 'Failed to save settings');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    if (deleteConfirmText !== 'DELETE') {
+      setError('Please type DELETE to confirm');
+      return;
+    }
+
+    if (!confirm('Are you absolutely sure? This action cannot be undone. All your data will be permanently deleted.')) {
+      return;
+    }
+
+    setDeleting(true);
+    setError('');
+
+    try {
+      const response = await fetch('/api/user/delete-account', {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to delete account');
+      }
+
+      // Clear local storage and redirect to home
+      localStorage.clear();
+      sessionStorage.clear();
+      
+      // Redirect to home page with a message
+      router.push('/?account_deleted=true');
+    } catch (error: any) {
+      setError(error.message || 'Failed to delete account. Please try again.');
+      setDeleting(false);
     }
   };
 
@@ -273,6 +311,86 @@ export default function AccountSettingsPage() {
             </button>
           </div>
         </form>
+
+        {/* Delete Account Section */}
+        <div className="mt-12 bg-red-50 border-2 border-red-200 rounded-lg p-6">
+          <div className="flex items-start space-x-4">
+            <div className="p-2 bg-red-100 rounded-lg">
+              <AlertTriangle className="w-6 h-6 text-red-600" />
+            </div>
+            <div className="flex-1">
+              <h2 className="text-lg font-semibold text-red-900 mb-2">Delete Account</h2>
+              <p className="text-sm text-red-800 mb-4">
+                Once you delete your account, there is no going back. This will permanently delete:
+              </p>
+              <ul className="list-disc list-inside text-sm text-red-800 mb-4 space-y-1">
+                <li>All your personal information and data</li>
+                <li>All documents, letters, and files you've uploaded</li>
+                <li>All trusted contacts and viewer access</li>
+                <li>All funeral preferences and planning data</li>
+                <li>All legacy messages and biography content</li>
+                <li>Your account and all associated data</li>
+              </ul>
+              
+              {!showDeleteConfirm ? (
+                <button
+                  type="button"
+                  onClick={() => setShowDeleteConfirm(true)}
+                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center space-x-2"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  <span>Delete My Account</span>
+                </button>
+              ) : (
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-red-900 mb-2">
+                      Type <strong>DELETE</strong> to confirm:
+                    </label>
+                    <input
+                      type="text"
+                      value={deleteConfirmText}
+                      onChange={(e) => setDeleteConfirmText(e.target.value)}
+                      placeholder="DELETE"
+                      className="w-full px-4 py-2 border-2 border-red-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    />
+                  </div>
+                  <div className="flex space-x-3">
+                    <button
+                      type="button"
+                      onClick={handleDeleteAccount}
+                      disabled={deleteConfirmText !== 'DELETE' || deleting}
+                      className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+                    >
+                      {deleting ? (
+                        <>
+                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                          <span>Deleting...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Trash2 className="w-4 h-4" />
+                          <span>Permanently Delete Account</span>
+                        </>
+                      )}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowDeleteConfirm(false);
+                        setDeleteConfirmText('');
+                      }}
+                      disabled={deleting}
+                      className="px-6 py-2 border-2 border-red-300 text-red-700 rounded-lg hover:bg-red-100 transition-colors disabled:opacity-50"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       </main>
     </div>
   );

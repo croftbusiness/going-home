@@ -30,7 +30,7 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { action, section, content, existingContent } = body;
+    const { action, section, content, existingContent, answers } = body;
 
     const openai = getOpenAIClient();
     if (!openai) {
@@ -89,6 +89,34 @@ Please help improve this writing by:
 - Preserving all important information they've shared
 
 Return the improved version.`;
+        break;
+
+      case 'generate':
+        if (!answers || Object.keys(answers).length === 0) {
+          return NextResponse.json({ error: 'No answers provided' }, { status: 400 });
+        }
+        // Build a comprehensive prompt from the questionnaire answers
+        const answersText = Object.entries(answers)
+          .map(([key, value]) => {
+            const question = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+            return `${question}:\n${value}`;
+          })
+          .join('\n\n');
+        
+        prompt = `The user has answered a questionnaire about their ${section} section. Based on their answers, write a comprehensive, well-written biography section that:
+
+- Tells their story in a warm, authentic, and engaging way
+- Weaves together all the information they provided
+- Maintains their voice and perspective
+- Is well-structured and flows naturally
+- Captures the essence of their experiences and memories
+- Is appropriate for a personal biography that will be shared with loved ones
+
+Here are their answers:
+
+${answersText}
+
+Write the complete ${section} section based on these answers. Make it meaningful, personal, and well-written.`;
         break;
 
       default:

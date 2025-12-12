@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Save, Upload, X, Image as ImageIcon, Sparkles } from 'lucide-react';
+import { ArrowLeft, Save, Upload, X, Image as ImageIcon, Sparkles, Music } from 'lucide-react';
 import Link from 'next/link';
 import FuneralPreferenceGenerator from '@/components/ai/FuneralPreferenceGenerator';
+import SpotifyIntegration from '@/components/SpotifyIntegration';
 
 interface FuneralPreferences {
   burialOrCremation: 'burial' | 'cremation' | '';
@@ -306,27 +307,61 @@ export default function FuneralPreferencesPage() {
 
           {/* Songs */}
           <div className="bg-[#FCFAF7] rounded-lg p-6 shadow-sm">
-            <h2 className="text-lg font-medium text-[#2C2A29] mb-4">Song Choices</h2>
-            <p className="text-sm text-[#2C2A29] opacity-70 mb-4">
-              Choose up to 3 songs you'd like played
-            </p>
-            <div className="space-y-4">
-              {[1, 2, 3].map((num) => (
-                <div key={num}>
-                  <label htmlFor={`song${num}`} className="block text-sm font-medium text-[#2C2A29] mb-1">
-                    Song {num}
-                  </label>
-                  <input
-                    type="text"
-                    id={`song${num}`}
-                    name={`song${num}`}
-                    value={formData[`song${num}` as keyof FuneralPreferences] as string}
-                    onChange={handleChange}
-                    placeholder="Song title and artist"
-                    className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent"
-                  />
-                </div>
-              ))}
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h2 className="text-lg font-medium text-[#2C2A29]">Song Choices</h2>
+                <p className="text-sm text-[#2C2A29] opacity-70 mt-1">
+                  Choose up to 3 songs you'd like played
+                </p>
+              </div>
+              <div className="flex items-center space-x-2 text-[#93B0C8]">
+                <Music className="w-5 h-5" />
+              </div>
+            </div>
+
+            {/* Spotify Integration */}
+            <div className="mb-6">
+              <SpotifyIntegration
+                selectedSongs={[
+                  formData.song1,
+                  formData.song2,
+                  formData.song3,
+                ].filter(Boolean)}
+                onSongsChange={(songs) => {
+                  setFormData({
+                    ...formData,
+                    song1: songs[0] || '',
+                    song2: songs[1] || '',
+                    song3: songs[2] || '',
+                  });
+                }}
+                maxSongs={3}
+              />
+            </div>
+
+            {/* Manual Entry */}
+            <div className="border-t border-gray-200 pt-4">
+              <p className="text-sm text-[#2C2A29] opacity-70 mb-4">
+                Or enter songs manually:
+              </p>
+              <div className="space-y-4">
+                {[1, 2, 3].map((num) => (
+                  <div key={num}>
+                    <label htmlFor={`song${num}`} className="block text-sm font-medium text-[#2C2A29] mb-1">
+                      Song {num}
+                    </label>
+                    <input
+                      type="text"
+                      id={`song${num}`}
+                      name={`song${num}`}
+                      value={formData[`song${num}` as keyof FuneralPreferences] as string}
+                      onChange={handleChange}
+                      placeholder="Song title and artist"
+                      className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent"
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
