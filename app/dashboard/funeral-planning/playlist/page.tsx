@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ArrowLeft, Music, Sparkles, Loader2, CheckCircle, Plus, X, Heart } from 'lucide-react';
 import { getPlaylist, generatePlaylist } from '@/lib/api/funeral';
 import type { PlaylistInput } from '@/types/funeral';
+import SpotifyIntegration from '@/components/SpotifyIntegration';
 
 export default function PlaylistPage() {
   const [loading, setLoading] = useState(true);
@@ -179,48 +180,69 @@ export default function PlaylistPage() {
           <div className="space-y-6">
             {/* Favorite Songs */}
             <div>
-              <label className="block text-sm font-medium text-[#2C2A29] mb-2">
+              <label className="block text-sm font-medium text-[#2C2A29] mb-3">
                 Favorite Songs <span className="text-gray-400">(Optional)</span>
               </label>
-              <div className="flex gap-2 mb-2">
-                <input
-                  type="text"
-                  value={currentSong}
-                  onChange={(e) => setCurrentSong(e.target.value)}
-                  onKeyPress={(e) => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault();
-                      handleAddSong();
-                    }
+              
+              {/* Spotify Integration */}
+              <div className="mb-4">
+                <SpotifyIntegration
+                  selectedSongs={formData.favoriteSongs || []}
+                  onSongsChange={(songs) => {
+                    setFormData(prev => ({
+                      ...prev,
+                      favoriteSongs: songs,
+                    }));
                   }}
-                  placeholder="e.g., Amazing Grace, Over the Rainbow..."
-                  className="flex-1 px-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent touch-target"
+                  maxSongs={50}
                 />
-                <button
-                  onClick={handleAddSong}
-                  className="px-4 py-3 bg-gray-100 text-[#2C2A29] rounded-lg hover:bg-gray-200 transition-colors touch-target"
-                >
-                  <Plus className="w-5 h-5" />
-                </button>
               </div>
-              {formData.favoriteSongs && formData.favoriteSongs.length > 0 && (
-                <div className="flex flex-wrap gap-2">
-                  {formData.favoriteSongs.map((song, idx) => (
-                    <span
-                      key={idx}
-                      className="inline-flex items-center px-3 py-1 bg-[#A5B99A] bg-opacity-10 text-[#2C2A29] rounded-full text-sm"
-                    >
-                      {song}
-                      <button
-                        onClick={() => handleRemoveSong(idx)}
-                        className="ml-2 hover:text-red-600 touch-target"
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
-                    </span>
-                  ))}
+
+              {/* Manual Entry */}
+              <div className="border-t border-gray-200 pt-4">
+                <p className="text-sm text-[#2C2A29] opacity-70 mb-3">
+                  Or add songs manually:
+                </p>
+                <div className="flex gap-2 mb-2">
+                  <input
+                    type="text"
+                    value={currentSong}
+                    onChange={(e) => setCurrentSong(e.target.value)}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleAddSong();
+                      }
+                    }}
+                    placeholder="e.g., Amazing Grace, Over the Rainbow..."
+                    className="flex-1 px-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent touch-target"
+                  />
+                  <button
+                    onClick={handleAddSong}
+                    className="px-4 py-3 bg-gray-100 text-[#2C2A29] rounded-lg hover:bg-gray-200 transition-colors touch-target"
+                  >
+                    <Plus className="w-5 h-5" />
+                  </button>
                 </div>
-              )}
+                {formData.favoriteSongs && formData.favoriteSongs.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {formData.favoriteSongs.map((song, idx) => (
+                      <span
+                        key={idx}
+                        className="inline-flex items-center px-3 py-1 bg-[#A5B99A] bg-opacity-10 text-[#2C2A29] rounded-full text-sm"
+                      >
+                        {song}
+                        <button
+                          onClick={() => handleRemoveSong(idx)}
+                          className="ml-2 hover:text-red-600 touch-target"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Genres */}
