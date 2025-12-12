@@ -48,32 +48,6 @@ export default function LoginPage() {
         // Continue to dashboard if check fails
       }
       
-      // Check if mobile and should show cards
-      const isMobile = window.innerWidth < 768 || /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(navigator.userAgent.toLowerCase());
-      
-      if (isMobile) {
-        // Check card preference
-        try {
-          const prefRes = await fetch('/api/user/cards/preference');
-          if (prefRes.ok) {
-            const prefData = await prefRes.json();
-            if (prefData.show_cards !== false) {
-              // Check if there are cards to show
-              const cardsRes = await fetch('/api/user/cards');
-              if (cardsRes.ok) {
-                const cardsData = await cardsRes.json();
-                if (cardsData.cards && cardsData.cards.length > 0) {
-                  router.push('/dashboard/cards');
-                  return;
-                }
-              }
-            }
-          }
-        } catch (error) {
-          console.error('Error checking card preference:', error);
-        }
-      }
-      
       // Redirect to dashboard
       router.push('/dashboard');
     } catch (err: any) {
