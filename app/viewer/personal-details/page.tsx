@@ -46,7 +46,16 @@ export default function ViewerPersonalDetailsPage() {
         return;
       }
 
-      const response = await fetch('/api/viewer/data?section=personalDetails');
+      // Send session data in request body for simulation mode
+      // Send session data in POST request for simulation mode support
+      const response = await fetch('/api/viewer/data?section=personalDetails', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ session: parsedSession }),
+      });
+      
       if (!response.ok) {
         if (response.status === 403) {
           return; // Permission denied

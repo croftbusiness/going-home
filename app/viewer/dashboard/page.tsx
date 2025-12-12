@@ -82,7 +82,13 @@ function ViewerDashboardContent() {
 
       // Fetch owner name and profile picture
       try {
-        const response = await fetch(`/api/viewer/data?section=personalDetails`);
+        const response = await fetch(`/api/viewer/data?section=personalDetails`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ session: parsedSession }),
+        });
         if (response.ok) {
           const data = await response.json();
           if (data.data) {

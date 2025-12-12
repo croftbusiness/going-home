@@ -45,7 +45,13 @@ export default function ViewerInsuranceFinancialPage() {
         return;
       }
 
-      const response = await fetch('/api/viewer/data?section=insuranceFinancial');
+      const response = await fetch('/api/viewer/data?section=insuranceFinancial', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ session: parsedSession }),
+      });
       if (!response.ok) {
         if (response.status === 403) return;
         throw new Error('Failed to load data');
