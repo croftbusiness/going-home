@@ -35,3 +35,4 @@ CREATE POLICY "Users can manage own funeral cost calculations" ON funeral_cost_c
     WITH CHECK (auth.uid()::text = user_id::text);
 
 
+

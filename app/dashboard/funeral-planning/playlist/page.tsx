@@ -1,11 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Music, Loader2, Plus, X, Heart, Save } from 'lucide-react';
 import SpotifyIntegration from '@/components/SpotifyIntegration';
 
 export default function PlaylistPage() {
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -21,22 +23,52 @@ export default function PlaylistPage() {
     try {
       // Load playlist from funeral_playlists table
       const response = await fetch('/api/user/playlist');
+      
+      if (response.status === 401) {
+        // Redirect to login if unauthorized
+        router.push('/auth/login');
+        return;
+      }
+      
       if (response.ok) {
         const data = await response.json();
-        if (data.playlist && data.playlist.songs) {
+        if (data.playlist && data.playlist.songs && Array.isArray(data.playlist.songs)) {
           setSongs(data.playlist.songs);
         } else {
           // Fallback: Load from saved_songs if no playlist exists
-          const savedResponse = await fetch('/api/user/saved-songs');
-          if (savedResponse.ok) {
-            const savedData = await savedResponse.json();
-            const songStrings = (savedData.songs || []).map((song: any) => `${song.name} - ${song.artist}`);
-            setSongs(songStrings);
+          try {
+            const savedResponse = await fetch('/api/user/saved-songs');
+            
+            if (savedResponse.status === 401) {
+              router.push('/auth/login');
+              return;
+            }
+            
+            if (savedResponse.ok) {
+              const savedData = await savedResponse.json();
+              if (savedData.songs && Array.isArray(savedData.songs)) {
+                const songStrings = savedData.songs.map((song: any) => {
+                  if (song && typeof song === 'object' && song.name && song.artist) {
+                    return `${song.name} - ${song.artist}`;
+                  }
+                  return null;
+                }).filter((str: string | null) => str !== null) as string[];
+                setSongs(songStrings);
+              }
+            }
+          } catch (savedError) {
+            console.error('Error loading saved songs:', savedError);
+            // Continue without saved songs - not critical
           }
         }
+      } else {
+        // Handle other error responses
+        const errorData = await response.json().catch(() => ({ error: 'Failed to load playlist' }));
+        console.error('Failed to load playlist:', errorData.error);
       }
     } catch (error) {
       console.error('Error loading playlist:', error);
+      setError('Failed to load playlist. Please refresh the page.');
     } finally {
       setLoading(false);
     }
@@ -59,6 +91,11 @@ export default function PlaylistPage() {
         body: JSON.stringify({ songs }),
       });
 
+      if (response.status === 401) {
+        router.push('/auth/login');
+        return;
+      }
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.error || 'Failed to save playlist');
@@ -74,14 +111,16 @@ export default function PlaylistPage() {
   };
 
   const handleAddSong = () => {
-    if (currentSong.trim() && !songs.includes(currentSong.trim())) {
+    if (currentSong.trim() && Array.isArray(songs) && !songs.includes(currentSong.trim())) {
       setSongs([...songs, currentSong.trim()]);
       setCurrentSong('');
     }
   };
 
   const handleRemoveSong = (index: number) => {
-    setSongs(songs.filter((_, i) => i !== index));
+    if (Array.isArray(songs) && index >= 0 && index < songs.length) {
+      setSongs(songs.filter((_, i) => i !== index));
+    }
   };
 
   if (loading) {
@@ -174,30 +213,43 @@ export default function PlaylistPage() {
               {/* Spotify Integration */}
               <div className="mb-4">
                 <SpotifyIntegration
-                  selectedSongs={songs}
+                  selectedSongs={Array.isArray(songs) ? songs : []}
                   onSongsChange={(newSongs) => {
-                    setSongs(newSongs);
+                    if (Array.isArray(newSongs)) {
+                      setSongs(newSongs);
+                    }
                   }}
                   maxSongs={100}
                   onTrackSave={async (track) => {
                     // Save full track data to saved_songs
                     try {
-                      await fetch('/api/user/saved-songs', {
+                      if (!track || !track.id || !track.name || !track.artist) {
+                        console.warn('Invalid track data, skipping save');
+                        return;
+                      }
+                      
+                      const response = await fetch('/api/user/saved-songs', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
                           spotify_id: track.id,
                           name: track.name,
                           artist: track.artist,
-                          album: track.album,
-                          preview_url: track.preview_url,
-                          spotify_url: track.external_urls?.spotify,
-                          album_art_url: track.album_art_url,
-                          duration_ms: track.duration_ms,
+                          album: track.album || null,
+                          preview_url: track.preview_url || null,
+                          spotify_url: track.external_urls?.spotify || null,
+                          album_art_url: track.album_art_url || null,
+                          duration_ms: track.duration_ms || null,
                         }),
                       });
+                      
+                      if (!response.ok && response.status !== 409) {
+                        // 409 is OK - song already exists
+                        console.error('Failed to save track:', response.status);
+                      }
                     } catch (error) {
                       console.error('Failed to save track:', error);
+                      // Don't throw - this is a non-critical operation
                     }
                   }}
                 />

@@ -9,3 +9,4 @@ COMMENT ON COLUMN users.onboarding_complete IS 'Set to TRUE for all existing use
 
 
 
+

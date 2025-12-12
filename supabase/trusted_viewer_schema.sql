@@ -111,3 +111,4 @@ COMMENT ON COLUMN viewer_tokens.expires_at IS 'Token expiration timestamp (typic
 COMMENT ON COLUMN viewer_tokens.used IS 'Whether the token has been used for login';
 
 
+
