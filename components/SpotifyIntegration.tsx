@@ -58,10 +58,24 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
         setIsConnected(true);
         setPlaylists(data.playlists || []);
       } else {
-        setIsConnected(false);
+        // Only set disconnected if it's not an auth error (401)
+        // Auth errors might be temporary session issues, don't treat as disconnected
+        if (response.status === 401) {
+          // Check if it's an auth error (user not logged in) vs not connected to Spotify
+          const data = await response.json().catch(() => ({}));
+          if (data.error === 'Not connected to Spotify') {
+            setIsConnected(false);
+          }
+          // If it's a session/auth error, don't change connection state
+          // This prevents redirects when session is temporarily unavailable
+        } else {
+          setIsConnected(false);
+        }
       }
     } catch (error) {
-      setIsConnected(false);
+      // Network errors shouldn't change connection state
+      console.error('Error checking Spotify connection:', error);
+      // Don't set isConnected to false on network errors
     } finally {
       setLoading(false);
     }
@@ -69,7 +83,9 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
 
   const handleConnect = async () => {
     try {
-      const response = await fetch('/api/spotify/auth?action=authorize');
+      // Get current page URL to return to after auth
+      const returnUrl = window.location.pathname + window.location.search;
+      const response = await fetch(`/api/spotify/auth?action=authorize&returnUrl=${encodeURIComponent(returnUrl)}`);
       const data = await response.json();
       
       if (!response.ok) {
@@ -100,9 +116,16 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
       if (response.ok) {
         const data = await response.json();
         setPlaylistTracks(data.tracks || []);
+      } else if (response.status === 401) {
+        // Handle auth errors gracefully without redirecting
+        const data = await response.json().catch(() => ({}));
+        console.error('Authentication error:', data.error || 'Unauthorized');
+        // Don't redirect, just show error state
+        setIsConnected(false);
       }
     } catch (error) {
       console.error('Failed to load playlist tracks:', error);
+      // Don't redirect on network errors
     } finally {
       setLoading(false);
     }
@@ -117,9 +140,15 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
       if (response.ok) {
         const data = await response.json();
         setSearchResults(data.tracks || []);
+      } else if (response.status === 401) {
+        // Handle auth errors gracefully without redirecting
+        const data = await response.json().catch(() => ({}));
+        console.error('Authentication error:', data.error || 'Unauthorized');
+        setIsConnected(false);
       }
     } catch (error) {
       console.error('Search failed:', error);
+      // Don't redirect on network errors
     } finally {
       setSearching(false);
     }

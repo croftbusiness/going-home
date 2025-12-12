@@ -30,14 +30,23 @@ export async function GET(request: Request) {
     if (action === 'authorize') {
       // Generate authorization URL
       const scopes = 'user-read-private user-read-email playlist-read-private playlist-read-collaborative user-library-read';
-      const state = auth.userId; // Use user ID as state for security
+      
+      // Get return URL from query params, default to current page or dashboard
+      const { searchParams } = new URL(request.url);
+      const returnUrl = searchParams.get('returnUrl') || '/dashboard/funeral-preferences';
+      
+      // Encode state as JSON with user ID and return URL
+      const state = JSON.stringify({
+        userId: auth.userId,
+        returnUrl: returnUrl,
+      });
       
       const authUrl = `https://accounts.spotify.com/authorize?` +
         `client_id=${SPOTIFY_CLIENT_ID}&` +
         `response_type=code&` +
         `redirect_uri=${encodeURIComponent(SPOTIFY_REDIRECT_URI)}&` +
         `scope=${encodeURIComponent(scopes)}&` +
-        `state=${state}`;
+        `state=${encodeURIComponent(state)}`;
 
       return NextResponse.json({ authUrl });
     }
