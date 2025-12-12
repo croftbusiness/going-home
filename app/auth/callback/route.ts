@@ -81,9 +81,18 @@ export async function GET(request: Request) {
     // Check if user needs onboarding
     const { data: userData, error: userError } = await dbClient
       .from('users')
-      .select('onboarding_complete')
+      .select('onboarding_complete, show_cards_on_login, login_count')
       .eq('id', data.user.id)
       .single();
+
+    // Increment login count
+    if (userData) {
+      const newLoginCount = (userData.login_count || 0) + 1;
+      await dbClient
+        .from('users')
+        .update({ login_count: newLoginCount })
+        .eq('id', data.user.id);
+    }
 
     // If column doesn't exist or user hasn't completed onboarding, redirect to onboarding
     if (userError && (userError.code === '42703' || userError.message.includes('column'))) {
@@ -94,6 +103,25 @@ export async function GET(request: Request) {
     } else if (userData && !userData.onboarding_complete && !next.includes('/onboarding')) {
       // Column exists and user hasn't completed onboarding
       return NextResponse.redirect(new URL('/onboarding', requestUrl.origin));
+    }
+
+    // Check if mobile and should show cards (only for dashboard redirect)
+    if (next === '/dashboard' || next.includes('/dashboard')) {
+      const userAgent = request.headers.get('user-agent') || '';
+      const isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent.toLowerCase());
+      
+      if (isMobile && userData && userData.show_cards_on_login !== false) {
+        // Check if there are cards available
+        const { data: availableCards } = await dbClient
+          .from('user_cards')
+          .select('id')
+          .eq('user_id', data.user.id)
+          .limit(1);
+        
+        if (availableCards && availableCards.length > 0) {
+          return NextResponse.redirect(new URL('/dashboard/cards', requestUrl.origin));
+        }
+      }
     }
 
     // Redirect to dashboard or next URL
