@@ -204,7 +204,7 @@ function PlaylistPageContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#FAF9F7] via-[#FCFAF7] to-[#FAF9F7]">
+    <div className="min-h-screen overflow-x-hidden bg-gradient-to-br from-[#FAF9F7] via-[#FCFAF7] to-[#FAF9F7]">
       {/* Premium Header with Backdrop Blur */}
       <header className="bg-white/80 backdrop-blur-md border-b border-gray-100/50 sticky top-0 z-20 shadow-sm shadow-gray-200/20">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6">
