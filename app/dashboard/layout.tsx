@@ -37,7 +37,6 @@ import {
   Gift,
   Calculator,
   Eye,
-  Music,
   AlertCircle,
 } from 'lucide-react';
 
@@ -55,7 +54,6 @@ const navigation = [
   // Life Events & Memorial
   { name: 'Life Event Planning', href: '/dashboard/life-event-planning', icon: Sparkles, section: 'lifeEvents' },
   { name: 'Life Event Preferences', href: '/dashboard/funeral-preferences', icon: FileText, section: 'lifeEvents' },
-  { name: 'My Music', href: '/dashboard/my-music', icon: Music, section: 'lifeEvents' },
   { name: 'Life Event Cost Calculator', href: '/dashboard/funeral-cost-calculator', icon: Calculator, section: 'lifeEvents' },
   
   // Legacy & Messages

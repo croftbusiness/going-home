@@ -379,22 +379,23 @@ export default function MedicalContactsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#FAF9F7] via-white to-[#FAF9F7]">
+    <div className="min-h-screen bg-gradient-to-br from-[#FAF9F7] via-white to-[#FAF9F7] pb-20 sm:pb-8 overflow-x-hidden">
       {/* Header */}
-      <header className="bg-white/80 backdrop-blur-sm border-b border-gray-200/50 sticky top-0 z-10">
-        <div className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-8 py-3 sm:py-4">
-          <div className="flex items-center space-x-2 sm:space-x-3">
+      <header className="bg-white/95 backdrop-blur-sm border-b border-gray-200/50 sticky top-0 z-20 shadow-sm">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
+          <div className="flex items-center space-x-3">
             <Link
               href="/dashboard"
-              className="p-1.5 sm:p-2 hover:bg-[#FAF9F7] rounded-lg transition-colors flex-shrink-0 touch-target"
+              className="p-2 hover:bg-[#FAF9F7] rounded-lg transition-colors flex-shrink-0 touch-target min-h-[44px] min-w-[44px] flex items-center justify-center"
+              aria-label="Back to dashboard"
             >
               <ArrowLeft className="w-5 h-5 text-[#2C2A29]" />
             </Link>
             <div className="min-w-0 flex-1">
-              <h1 className="text-lg sm:text-xl lg:text-2xl font-semibold text-[#2C2A29] leading-tight">
+              <h1 className="text-lg sm:text-xl lg:text-2xl font-semibold text-[#2C2A29] leading-tight break-words">
                 Medical & Legal Information
               </h1>
-              <p className="text-xs sm:text-sm text-[#2C2A29] opacity-70 mt-0.5">
+              <p className="text-xs sm:text-sm text-[#2C2A29] opacity-70 mt-0.5 hidden sm:block">
                 Comprehensive medical and legal details
               </p>
             </div>
@@ -403,9 +404,9 @@ export default function MedicalContactsPage() {
       </header>
 
       {/* Tabs - Mobile Optimized */}
-      <div className="bg-white/50 backdrop-blur-sm border-b border-gray-200/50 sticky top-[73px] sm:top-[81px] z-10 overflow-x-auto">
-        <div className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-8">
-          <div className="flex space-x-1 sm:space-x-2 min-w-max">
+      <div className="bg-white/95 backdrop-blur-sm border-b border-gray-200/50 sticky top-[64px] sm:top-[73px] z-10 shadow-sm">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 overflow-x-auto">
+          <div className="flex space-x-1 sm:space-x-2 min-w-max pb-1">
             {tabs.map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -414,10 +415,10 @@ export default function MedicalContactsPage() {
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   className={`
-                    flex items-center space-x-1.5 sm:space-x-2 px-3 sm:px-4 py-2.5 sm:py-3 
-                    rounded-t-lg transition-all duration-200 touch-target whitespace-nowrap
+                    flex items-center space-x-1.5 sm:space-x-2 px-3 sm:px-4 py-3 sm:py-3.5 
+                    rounded-t-lg transition-all duration-200 touch-target whitespace-nowrap min-h-[44px]
                     ${isActive 
-                      ? 'bg-white border-t-2 border-l border-r border-[#A5B99A] text-[#A5B99A] font-medium' 
+                      ? 'bg-white border-t-2 border-l border-r border-[#A5B99A] text-[#A5B99A] font-medium shadow-sm' 
                       : 'text-[#2C2A29] opacity-70 hover:opacity-100 hover:bg-white/50'
                     }
                   `}
@@ -432,91 +433,86 @@ export default function MedicalContactsPage() {
       </div>
 
       {/* Form Content */}
-      <main className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-6 lg:py-8">
-        <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+        <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6 pb-20 sm:pb-0">
           {/* Medical Information Tab */}
           {activeTab === 'medical' && (
             <div className="space-y-4 sm:space-y-6">
               {/* Conditions */}
-              <div className="bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-gray-200/50">
+              <div className="bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-gray-200/50 shadow-sm">
                 <div className="flex items-center space-x-2 sm:space-x-3 mb-4">
-                  <ClipboardList className="w-5 h-5 sm:w-6 sm:h-6 text-[#A5B99A]" />
+                  <ClipboardList className="w-5 h-5 sm:w-6 sm:h-6 text-[#A5B99A] flex-shrink-0" />
                   <h2 className="text-base sm:text-lg font-semibold text-[#2C2A29]">Medical Conditions</h2>
                 </div>
                 <div className="space-y-3">
                   {formData.medicalInfo.conditions.map((condition, index) => (
-                    <div key={index} className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-2">
-                      <select
-                        value={condition && !COMMON_CONDITIONS.includes(condition) ? 'Other' : condition}
-                        onChange={(e) => {
-                          if (e.target.value === 'Other') {
-                            updateCondition(index, '');
-                          } else {
-                            updateCondition(index, e.target.value);
-                          }
-                        }}
-                        className="flex-1 px-3 sm:px-4 py-3 sm:py-3.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-sm sm:text-base min-h-[44px] touch-target"
-                      >
-                        <option value="">Select condition</option>
-                        {COMMON_CONDITIONS.map((cond) => (
-                          <option key={cond} value={cond}>{cond}</option>
-                        ))}
-                      </select>
-                      {condition && COMMON_CONDITIONS.includes(condition) && condition !== 'Other' && (
-                        <button
-                          type="button"
-                          onClick={() => removeCondition(index)}
-                          className="p-2.5 sm:p-3 text-[#2C2A29] opacity-60 hover:opacity-100 hover:bg-gray-100 rounded-lg transition-colors touch-target min-h-[44px] min-w-[44px] flex items-center justify-center"
+                    <div key={index} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                      <div className="flex-1 flex flex-col sm:flex-row gap-2">
+                        <select
+                          value={condition && !COMMON_CONDITIONS.includes(condition) ? 'Other' : condition}
+                          onChange={(e) => {
+                            if (e.target.value === 'Other') {
+                              updateCondition(index, '');
+                            } else {
+                              updateCondition(index, e.target.value);
+                            }
+                          }}
+                          className="flex-1 px-3 sm:px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-sm sm:text-base min-h-[44px] touch-target"
                         >
-                          <X className="w-5 h-5" />
-                        </button>
-                      )}
-                      {condition && !COMMON_CONDITIONS.includes(condition) && (
-                        <>
+                          <option value="">Select condition</option>
+                          {COMMON_CONDITIONS.map((cond) => (
+                            <option key={cond} value={cond}>{cond}</option>
+                          ))}
+                        </select>
+                        {condition && !COMMON_CONDITIONS.includes(condition) && (
                           <input
                             type="text"
                             value={condition}
                             onChange={(e) => updateCondition(index, e.target.value)}
                             placeholder="Enter condition"
-                            className="flex-1 px-3 sm:px-4 py-3 sm:py-3.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-sm sm:text-base min-h-[44px] touch-target"
+                            className="flex-1 px-3 sm:px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-sm sm:text-base min-h-[44px] touch-target"
                           />
-                          <button
-                            type="button"
-                            onClick={() => removeCondition(index)}
-                            className="p-2.5 sm:p-3 text-[#2C2A29] opacity-60 hover:opacity-100 hover:bg-gray-100 rounded-lg transition-colors touch-target min-h-[44px] min-w-[44px] flex items-center justify-center"
-                          >
-                            <X className="w-5 h-5" />
-                          </button>
-                        </>
-                      )}
+                        )}
+                      </div>
+                      {(condition && COMMON_CONDITIONS.includes(condition) && condition !== 'Other') || (condition && !COMMON_CONDITIONS.includes(condition)) ? (
+                        <button
+                          type="button"
+                          onClick={() => removeCondition(index)}
+                          className="p-3 text-[#2C2A29] opacity-60 hover:opacity-100 hover:bg-gray-100 rounded-lg transition-colors touch-target min-h-[44px] min-w-[44px] flex items-center justify-center flex-shrink-0"
+                          aria-label="Remove condition"
+                        >
+                          <X className="w-5 h-5" />
+                        </button>
+                      ) : null}
                     </div>
                   ))}
                   <button
                     type="button"
                     onClick={addCondition}
-                    className="w-full sm:w-auto px-4 py-2.5 bg-[#A5B99A]/10 text-[#A5B99A] rounded-lg hover:bg-[#A5B99A]/20 transition-colors flex items-center justify-center space-x-2 touch-target"
+                    className="w-full sm:w-auto px-4 py-3 bg-[#A5B99A]/10 text-[#A5B99A] rounded-lg hover:bg-[#A5B99A]/20 transition-colors flex items-center justify-center space-x-2 touch-target min-h-[44px] font-medium"
                   >
                     <Plus className="w-4 h-4" />
-                    <span className="text-sm sm:text-base font-medium">Add Condition</span>
+                    <span className="text-sm sm:text-base">Add Condition</span>
                   </button>
                 </div>
               </div>
 
               {/* Medications */}
-              <div className="bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-gray-200/50">
+              <div className="bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-gray-200/50 shadow-sm">
                 <div className="flex items-center space-x-2 sm:space-x-3 mb-4">
-                  <Pill className="w-5 h-5 sm:w-6 sm:h-6 text-[#93B0C8]" />
+                  <Pill className="w-5 h-5 sm:w-6 sm:h-6 text-[#93B0C8] flex-shrink-0" />
                   <h2 className="text-base sm:text-lg font-semibold text-[#2C2A29]">Medications</h2>
                 </div>
                 <div className="space-y-4">
                   {formData.medicalInfo.medications.map((medication, index) => (
-                    <div key={index} className="p-3 sm:p-4 bg-[#FAF9F7] rounded-lg border border-gray-200/30 space-y-3">
-                      <div className="flex items-center justify-between mb-2">
+                    <div key={index} className="p-4 bg-[#FAF9F7] rounded-lg border border-gray-200/30 space-y-3">
+                      <div className="flex items-center justify-between">
                         <span className="text-xs sm:text-sm font-medium text-[#2C2A29] opacity-70">Medication {index + 1}</span>
                         <button
                           type="button"
                           onClick={() => removeMedication(index)}
-                          className="p-1.5 text-[#2C2A29] opacity-60 hover:opacity-100 hover:bg-gray-100 rounded-lg transition-colors touch-target"
+                          className="p-2 text-[#2C2A29] opacity-60 hover:opacity-100 hover:bg-gray-100 rounded-lg transition-colors touch-target min-h-[44px] min-w-[44px] flex items-center justify-center"
+                          aria-label="Remove medication"
                         >
                           <X className="w-4 h-4" />
                         </button>
@@ -526,7 +522,7 @@ export default function MedicalContactsPage() {
                         value={medication.name}
                         onChange={(e) => updateMedication(index, 'name', e.target.value)}
                         placeholder="Medication name"
-                        className="w-full px-3 sm:px-4 py-3 sm:py-3.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-sm sm:text-base min-h-[44px] touch-target"
+                        className="w-full px-3 sm:px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-sm sm:text-base min-h-[44px] touch-target"
                       />
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <input
@@ -534,12 +530,12 @@ export default function MedicalContactsPage() {
                           value={medication.dosage}
                           onChange={(e) => updateMedication(index, 'dosage', e.target.value)}
                           placeholder="Dosage (e.g., 10mg)"
-                          className="px-3 sm:px-4 py-3 sm:py-3.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-sm sm:text-base min-h-[44px] touch-target"
+                          className="w-full px-3 sm:px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-sm sm:text-base min-h-[44px] touch-target"
                         />
                         <select
                           value={medication.frequency}
                           onChange={(e) => updateMedication(index, 'frequency', e.target.value)}
-                          className="px-3 sm:px-4 py-3 sm:py-3.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-sm sm:text-base min-h-[44px] touch-target"
+                          className="w-full px-3 sm:px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-sm sm:text-base min-h-[44px] touch-target"
                         >
                           <option value="">Select frequency</option>
                           {MEDICATION_FREQUENCY.map((freq) => (
@@ -552,87 +548,81 @@ export default function MedicalContactsPage() {
                   <button
                     type="button"
                     onClick={addMedication}
-                    className="w-full sm:w-auto px-4 py-2.5 bg-[#93B0C8]/10 text-[#93B0C8] rounded-lg hover:bg-[#93B0C8]/20 transition-colors flex items-center justify-center space-x-2 touch-target"
+                    className="w-full sm:w-auto px-4 py-3 bg-[#93B0C8]/10 text-[#93B0C8] rounded-lg hover:bg-[#93B0C8]/20 transition-colors flex items-center justify-center space-x-2 touch-target min-h-[44px] font-medium"
                   >
                     <Plus className="w-4 h-4" />
-                    <span className="text-sm sm:text-base font-medium">Add Medication</span>
+                    <span className="text-sm sm:text-base">Add Medication</span>
                   </button>
                 </div>
               </div>
 
               {/* Allergies */}
-              <div className="bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-gray-200/50">
+              <div className="bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-gray-200/50 shadow-sm">
                 <div className="flex items-center space-x-2 sm:space-x-3 mb-4">
-                  <AlertTriangle className="w-5 h-5 sm:w-6 sm:h-6 text-[#EBD9B5]" />
+                  <AlertTriangle className="w-5 h-5 sm:w-6 sm:h-6 text-[#EBD9B5] flex-shrink-0" />
                   <h2 className="text-base sm:text-lg font-semibold text-[#2C2A29]">Allergies</h2>
                 </div>
                 <div className="space-y-3">
                   {formData.medicalInfo.allergies.map((allergy, index) => (
-                    <div key={index} className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-2">
-                      <select
-                        value={allergy && !COMMON_ALLERGIES.includes(allergy) ? 'Other' : allergy}
-                        onChange={(e) => {
-                          if (e.target.value === 'Other') {
-                            updateAllergy(index, '');
-                          } else {
-                            updateAllergy(index, e.target.value);
-                          }
-                        }}
-                        className="flex-1 px-3 sm:px-4 py-3 sm:py-3.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-sm sm:text-base min-h-[44px] touch-target"
-                      >
-                        <option value="">Select allergy</option>
-                        {COMMON_ALLERGIES.map((all) => (
-                          <option key={all} value={all}>{all}</option>
-                        ))}
-                      </select>
-                      {allergy && COMMON_ALLERGIES.includes(allergy) && allergy !== 'Other' && (
-                        <button
-                          type="button"
-                          onClick={() => removeAllergy(index)}
-                          className="p-2.5 sm:p-3 text-[#2C2A29] opacity-60 hover:opacity-100 hover:bg-gray-100 rounded-lg transition-colors touch-target min-h-[44px] min-w-[44px] flex items-center justify-center"
+                    <div key={index} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                      <div className="flex-1 flex flex-col sm:flex-row gap-2">
+                        <select
+                          value={allergy && !COMMON_ALLERGIES.includes(allergy) ? 'Other' : allergy}
+                          onChange={(e) => {
+                            if (e.target.value === 'Other') {
+                              updateAllergy(index, '');
+                            } else {
+                              updateAllergy(index, e.target.value);
+                            }
+                          }}
+                          className="flex-1 px-3 sm:px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-sm sm:text-base min-h-[44px] touch-target"
                         >
-                          <X className="w-5 h-5" />
-                        </button>
-                      )}
-                      {allergy && !COMMON_ALLERGIES.includes(allergy) && (
-                        <>
+                          <option value="">Select allergy</option>
+                          {COMMON_ALLERGIES.map((all) => (
+                            <option key={all} value={all}>{all}</option>
+                          ))}
+                        </select>
+                        {allergy && !COMMON_ALLERGIES.includes(allergy) && (
                           <input
                             type="text"
                             value={allergy}
                             onChange={(e) => updateAllergy(index, e.target.value)}
                             placeholder="Enter allergy"
-                            className="flex-1 px-3 sm:px-4 py-3 sm:py-3.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-sm sm:text-base min-h-[44px] touch-target"
+                            className="flex-1 px-3 sm:px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-sm sm:text-base min-h-[44px] touch-target"
                           />
-                          <button
-                            type="button"
-                            onClick={() => removeAllergy(index)}
-                            className="p-2.5 sm:p-3 text-[#2C2A29] opacity-60 hover:opacity-100 hover:bg-gray-100 rounded-lg transition-colors touch-target min-h-[44px] min-w-[44px] flex items-center justify-center"
-                          >
-                            <X className="w-5 h-5" />
-                          </button>
-                        </>
-                      )}
+                        )}
+                      </div>
+                      {(allergy && COMMON_ALLERGIES.includes(allergy) && allergy !== 'Other') || (allergy && !COMMON_ALLERGIES.includes(allergy)) ? (
+                        <button
+                          type="button"
+                          onClick={() => removeAllergy(index)}
+                          className="p-3 text-[#2C2A29] opacity-60 hover:opacity-100 hover:bg-gray-100 rounded-lg transition-colors touch-target min-h-[44px] min-w-[44px] flex items-center justify-center flex-shrink-0"
+                          aria-label="Remove allergy"
+                        >
+                          <X className="w-5 h-5" />
+                        </button>
+                      ) : null}
                     </div>
                   ))}
                   <button
                     type="button"
                     onClick={addAllergy}
-                    className="w-full sm:w-auto px-4 py-2.5 bg-[#EBD9B5]/20 text-[#2C2A29] rounded-lg hover:bg-[#EBD9B5]/30 transition-colors flex items-center justify-center space-x-2 touch-target"
+                    className="w-full sm:w-auto px-4 py-3 bg-[#EBD9B5]/20 text-[#2C2A29] rounded-lg hover:bg-[#EBD9B5]/30 transition-colors flex items-center justify-center space-x-2 touch-target min-h-[44px] font-medium"
                   >
                     <Plus className="w-4 h-4" />
-                    <span className="text-sm sm:text-base font-medium">Add Allergy</span>
+                    <span className="text-sm sm:text-base">Add Allergy</span>
                   </button>
                 </div>
               </div>
 
               {/* Blood Type & Organ Donor */}
-              <div className="bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-gray-200/50">
+              <div className="bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-gray-200/50 shadow-sm">
                 <div className="flex items-center space-x-2 sm:space-x-3 mb-4">
-                  <Droplet className="w-5 h-5 sm:w-6 sm:h-6 text-[#A5B99A]" />
+                  <Droplet className="w-5 h-5 sm:w-6 sm:h-6 text-[#A5B99A] flex-shrink-0" />
                   <h2 className="text-base sm:text-lg font-semibold text-[#2C2A29]">Blood Type & Organ Donor</h2>
                 </div>
-            <div className="space-y-4">
-              <div>
+                <div className="space-y-4">
+                  <div>
                     <label className="block text-sm font-medium text-[#2C2A29] mb-2">Blood Type</label>
                     <select
                       value={formData.medicalInfo.bloodType}
@@ -640,7 +630,7 @@ export default function MedicalContactsPage() {
                         ...prev,
                         medicalInfo: { ...prev.medicalInfo, bloodType: e.target.value },
                       }))}
-                      className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-sm sm:text-base"
+                      className="w-full px-3 sm:px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-sm sm:text-base min-h-[44px] touch-target"
                     >
                       <option value="">Select blood type</option>
                       <option value="A+">A+</option>
@@ -653,7 +643,7 @@ export default function MedicalContactsPage() {
                       <option value="O-">O-</option>
                     </select>
                   </div>
-                  <div className="flex items-center space-x-3">
+                  <div className="flex items-start space-x-3">
                     <input
                       type="checkbox"
                       id="organDonor"
@@ -662,14 +652,14 @@ export default function MedicalContactsPage() {
                         ...prev,
                         medicalInfo: { ...prev.medicalInfo, organDonor: e.target.checked },
                       }))}
-                      className="w-5 h-5 text-[#A5B99A] border-gray-300 rounded focus:ring-[#A5B99A] touch-target"
+                      className="w-5 h-5 mt-0.5 text-[#A5B99A] border-gray-300 rounded focus:ring-[#A5B99A] touch-target flex-shrink-0"
                     />
-                    <label htmlFor="organDonor" className="text-sm sm:text-base text-[#2C2A29]">
+                    <label htmlFor="organDonor" className="text-sm sm:text-base text-[#2C2A29] leading-relaxed cursor-pointer">
                       I am an organ donor
-                </label>
+                    </label>
                   </div>
-                  <div className="flex items-center space-x-3">
-                <input
+                  <div className="flex items-start space-x-3">
+                    <input
                       type="checkbox"
                       id="dnrStatus"
                       checked={formData.medicalInfo.dnrStatus}
@@ -677,9 +667,9 @@ export default function MedicalContactsPage() {
                         ...prev,
                         medicalInfo: { ...prev.medicalInfo, dnrStatus: e.target.checked },
                       }))}
-                      className="w-5 h-5 text-[#A5B99A] border-gray-300 rounded focus:ring-[#A5B99A] touch-target"
+                      className="w-5 h-5 mt-0.5 text-[#A5B99A] border-gray-300 rounded focus:ring-[#A5B99A] touch-target flex-shrink-0"
                     />
-                    <label htmlFor="dnrStatus" className="text-sm sm:text-base text-[#2C2A29]">
+                    <label htmlFor="dnrStatus" className="text-sm sm:text-base text-[#2C2A29] leading-relaxed cursor-pointer">
                       Do Not Resuscitate (DNR) order in place
                     </label>
                   </div>
@@ -687,7 +677,7 @@ export default function MedicalContactsPage() {
               </div>
 
               {/* Advance Directive */}
-              <div className="bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-gray-200/50">
+              <div className="bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-gray-200/50 shadow-sm">
                 <h2 className="text-base sm:text-lg font-semibold text-[#2C2A29] mb-4">Advance Directive / Living Will</h2>
                 <textarea
                   value={formData.medicalInfo.advanceDirective}
@@ -697,12 +687,12 @@ export default function MedicalContactsPage() {
                   }))}
                   placeholder="Details about your advance directive or living will..."
                   rows={4}
-                  className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-sm sm:text-base resize-none"
+                  className="w-full px-3 sm:px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-sm sm:text-base resize-none min-h-[100px]"
                 />
               </div>
 
               {/* Other Medical Notes */}
-              <div className="bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-gray-200/50">
+              <div className="bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-gray-200/50 shadow-sm">
                 <h2 className="text-base sm:text-lg font-semibold text-[#2C2A29] mb-4">Additional Medical Notes</h2>
                 <textarea
                   value={formData.medicalInfo.otherNotes}
@@ -712,7 +702,7 @@ export default function MedicalContactsPage() {
                   }))}
                   placeholder="Any other important medical information..."
                   rows={4}
-                  className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-sm sm:text-base resize-none"
+                  className="w-full px-3 sm:px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-sm sm:text-base resize-none min-h-[100px]"
                 />
               </div>
             </div>
@@ -721,30 +711,31 @@ export default function MedicalContactsPage() {
           {/* Medical Contacts Tab */}
           {activeTab === 'contacts' && (
             <div className="space-y-4 sm:space-y-6">
-              <div className="bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-gray-200/50">
-                <div className="flex items-center justify-between mb-4">
+              <div className="bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-gray-200/50 shadow-sm">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
                   <div className="flex items-center space-x-2 sm:space-x-3">
-                    <Stethoscope className="w-5 h-5 sm:w-6 sm:h-6 text-[#93B0C8]" />
+                    <Stethoscope className="w-5 h-5 sm:w-6 sm:h-6 text-[#93B0C8] flex-shrink-0" />
                     <h2 className="text-base sm:text-lg font-semibold text-[#2C2A29]">Medical Contacts</h2>
                   </div>
                   <button
                     type="button"
                     onClick={addMedicalContact}
-                    className="px-3 sm:px-4 py-2 bg-[#93B0C8] text-white rounded-lg hover:bg-[#A5B99A] transition-colors flex items-center space-x-2 touch-target"
+                    className="w-full sm:w-auto px-4 py-3 bg-[#93B0C8] text-white rounded-lg hover:bg-[#A5B99A] transition-colors flex items-center justify-center space-x-2 touch-target min-h-[44px] font-medium"
                   >
                     <Plus className="w-4 h-4" />
-                    <span className="text-sm sm:text-base font-medium hidden sm:inline">Add Contact</span>
+                    <span className="text-sm sm:text-base">Add Contact</span>
                   </button>
-          </div>
-            <div className="space-y-4">
+                </div>
+                <div className="space-y-4">
                   {formData.medicalContacts.map((contact, index) => (
-                    <div key={index} className="p-3 sm:p-4 bg-[#FAF9F7] rounded-lg border border-gray-200/30 space-y-3">
-                      <div className="flex items-center justify-between mb-2">
+                    <div key={index} className="p-4 bg-[#FAF9F7] rounded-lg border border-gray-200/30 space-y-3">
+                      <div className="flex items-center justify-between">
                         <span className="text-xs sm:text-sm font-medium text-[#2C2A29] opacity-70">Contact {index + 1}</span>
                         <button
                           type="button"
                           onClick={() => removeMedicalContact(index)}
-                          className="p-1.5 text-[#2C2A29] opacity-60 hover:opacity-100 hover:bg-gray-100 rounded-lg transition-colors touch-target"
+                          className="p-2 text-[#2C2A29] opacity-60 hover:opacity-100 hover:bg-gray-100 rounded-lg transition-colors touch-target min-h-[44px] min-w-[44px] flex items-center justify-center"
+                          aria-label="Remove contact"
                         >
                           <X className="w-4 h-4" />
                         </button>
@@ -754,12 +745,12 @@ export default function MedicalContactsPage() {
                         value={contact.name}
                         onChange={(e) => updateMedicalContact(index, 'name', e.target.value)}
                         placeholder="Name"
-                        className="w-full px-3 sm:px-4 py-3 sm:py-3.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-sm sm:text-base min-h-[44px] touch-target"
+                        className="w-full px-3 sm:px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-sm sm:text-base min-h-[44px] touch-target"
                       />
                       <select
                         value={contact.specialty || ''}
                         onChange={(e) => updateMedicalContact(index, 'specialty', e.target.value)}
-                        className="w-full px-3 sm:px-4 py-3 sm:py-3.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-sm sm:text-base min-h-[44px] touch-target"
+                        className="w-full px-3 sm:px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-sm sm:text-base min-h-[44px] touch-target"
                       >
                         <option value="">Select specialty</option>
                         {MEDICAL_SPECIALTIES.map((spec) => (
@@ -771,28 +762,28 @@ export default function MedicalContactsPage() {
                         value={contact.phone}
                         onChange={(e) => updateMedicalContact(index, 'phone', e.target.value)}
                         placeholder="Phone"
-                        className="w-full px-3 sm:px-4 py-3 sm:py-3.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-sm sm:text-base min-h-[44px] touch-target"
+                        className="w-full px-3 sm:px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-sm sm:text-base min-h-[44px] touch-target"
                       />
                       <input
                         type="email"
                         value={contact.email}
                         onChange={(e) => updateMedicalContact(index, 'email', e.target.value)}
                         placeholder="Email (optional)"
-                        className="w-full px-3 sm:px-4 py-3 sm:py-3.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-sm sm:text-base min-h-[44px] touch-target"
+                        className="w-full px-3 sm:px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-sm sm:text-base min-h-[44px] touch-target"
                       />
-                <input
-                  type="text"
+                      <input
+                        type="text"
                         value={contact.address}
                         onChange={(e) => updateMedicalContact(index, 'address', e.target.value)}
                         placeholder="Address (optional)"
-                        className="w-full px-3 sm:px-4 py-3 sm:py-3.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-sm sm:text-base min-h-[44px] touch-target"
+                        className="w-full px-3 sm:px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-sm sm:text-base min-h-[44px] touch-target"
                       />
                       <textarea
                         value={contact.notes}
                         onChange={(e) => updateMedicalContact(index, 'notes', e.target.value)}
                         placeholder="Notes (optional)"
                         rows={2}
-                        className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-sm sm:text-base resize-none"
+                        className="w-full px-3 sm:px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-sm sm:text-base resize-none min-h-[80px]"
                       />
                     </div>
                   ))}
@@ -803,7 +794,7 @@ export default function MedicalContactsPage() {
                       <button
                         type="button"
                         onClick={addMedicalContact}
-                        className="mt-4 px-4 py-2 bg-[#93B0C8] text-white rounded-lg hover:bg-[#A5B99A] transition-colors touch-target"
+                        className="mt-4 px-4 py-3 bg-[#93B0C8] text-white rounded-lg hover:bg-[#A5B99A] transition-colors touch-target min-h-[44px] font-medium"
                       >
                         Add First Contact
                       </button>
@@ -817,30 +808,31 @@ export default function MedicalContactsPage() {
           {/* Legal Contacts Tab */}
           {activeTab === 'legal' && (
             <div className="space-y-4 sm:space-y-6">
-              <div className="bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-gray-200/50">
-                <div className="flex items-center justify-between mb-4">
+              <div className="bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-gray-200/50 shadow-sm">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
                   <div className="flex items-center space-x-2 sm:space-x-3">
-                    <Scale className="w-5 h-5 sm:w-6 sm:h-6 text-[#A5B99A]" />
+                    <Scale className="w-5 h-5 sm:w-6 sm:h-6 text-[#A5B99A] flex-shrink-0" />
                     <h2 className="text-base sm:text-lg font-semibold text-[#2C2A29]">Legal Contacts</h2>
                   </div>
                   <button
                     type="button"
                     onClick={addLegalContact}
-                    className="px-3 sm:px-4 py-2 bg-[#A5B99A] text-white rounded-lg hover:bg-[#93B0C8] transition-colors flex items-center space-x-2 touch-target"
+                    className="w-full sm:w-auto px-4 py-3 bg-[#A5B99A] text-white rounded-lg hover:bg-[#93B0C8] transition-colors flex items-center justify-center space-x-2 touch-target min-h-[44px] font-medium"
                   >
                     <Plus className="w-4 h-4" />
-                    <span className="text-sm sm:text-base font-medium hidden sm:inline">Add Contact</span>
+                    <span className="text-sm sm:text-base">Add Contact</span>
                   </button>
                 </div>
                 <div className="space-y-4">
                   {formData.legalContacts.map((contact, index) => (
-                    <div key={index} className="p-3 sm:p-4 bg-[#FAF9F7] rounded-lg border border-gray-200/30 space-y-3">
-                      <div className="flex items-center justify-between mb-2">
+                    <div key={index} className="p-4 bg-[#FAF9F7] rounded-lg border border-gray-200/30 space-y-3">
+                      <div className="flex items-center justify-between">
                         <span className="text-xs sm:text-sm font-medium text-[#2C2A29] opacity-70">Contact {index + 1}</span>
                         <button
                           type="button"
                           onClick={() => removeLegalContact(index)}
-                          className="p-1.5 text-[#2C2A29] opacity-60 hover:opacity-100 hover:bg-gray-100 rounded-lg transition-colors touch-target"
+                          className="p-2 text-[#2C2A29] opacity-60 hover:opacity-100 hover:bg-gray-100 rounded-lg transition-colors touch-target min-h-[44px] min-w-[44px] flex items-center justify-center"
+                          aria-label="Remove contact"
                         >
                           <X className="w-4 h-4" />
                         </button>
@@ -848,7 +840,7 @@ export default function MedicalContactsPage() {
                       <select
                         value={contact.type}
                         onChange={(e) => updateLegalContact(index, 'type', e.target.value)}
-                        className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-sm sm:text-base"
+                        className="w-full px-3 sm:px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-sm sm:text-base min-h-[44px] touch-target"
                       >
                         <option value="lawyer">Lawyer</option>
                         <option value="estate_attorney">Estate Attorney</option>
@@ -860,35 +852,35 @@ export default function MedicalContactsPage() {
                         value={contact.name}
                         onChange={(e) => updateLegalContact(index, 'name', e.target.value)}
                         placeholder="Name"
-                        className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-sm sm:text-base"
+                        className="w-full px-3 sm:px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-sm sm:text-base min-h-[44px] touch-target"
                       />
-                <input
-                  type="tel"
+                      <input
+                        type="tel"
                         value={contact.phone}
                         onChange={(e) => updateLegalContact(index, 'phone', e.target.value)}
                         placeholder="Phone"
-                        className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-sm sm:text-base"
+                        className="w-full px-3 sm:px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-sm sm:text-base min-h-[44px] touch-target"
                       />
                       <input
                         type="email"
                         value={contact.email}
                         onChange={(e) => updateLegalContact(index, 'email', e.target.value)}
                         placeholder="Email (optional)"
-                        className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-sm sm:text-base"
+                        className="w-full px-3 sm:px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-sm sm:text-base min-h-[44px] touch-target"
                       />
                       <input
                         type="text"
                         value={contact.address}
                         onChange={(e) => updateLegalContact(index, 'address', e.target.value)}
                         placeholder="Address (optional)"
-                        className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-sm sm:text-base"
+                        className="w-full px-3 sm:px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-sm sm:text-base min-h-[44px] touch-target"
                       />
                       <textarea
                         value={contact.notes}
                         onChange={(e) => updateLegalContact(index, 'notes', e.target.value)}
                         placeholder="Notes (optional)"
                         rows={2}
-                        className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-sm sm:text-base resize-none"
+                        className="w-full px-3 sm:px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-sm sm:text-base resize-none min-h-[80px]"
                       />
                     </div>
                   ))}
@@ -899,7 +891,7 @@ export default function MedicalContactsPage() {
                       <button
                         type="button"
                         onClick={addLegalContact}
-                        className="mt-4 px-4 py-2 bg-[#A5B99A] text-white rounded-lg hover:bg-[#93B0C8] transition-colors touch-target"
+                        className="mt-4 px-4 py-3 bg-[#A5B99A] text-white rounded-lg hover:bg-[#93B0C8] transition-colors touch-target min-h-[44px] font-medium"
                       >
                         Add First Contact
                       </button>
@@ -913,22 +905,22 @@ export default function MedicalContactsPage() {
           {/* Documents/Notes Tab */}
           {activeTab === 'documents' && (
             <div className="space-y-4 sm:space-y-6">
-              <div className="bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-gray-200/50">
+              <div className="bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-gray-200/50 shadow-sm">
                 <div className="flex items-center space-x-2 sm:space-x-3 mb-4">
-                  <FileText className="w-5 h-5 sm:w-6 sm:h-6 text-[#93B0C8]" />
+                  <FileText className="w-5 h-5 sm:w-6 sm:h-6 text-[#93B0C8] flex-shrink-0" />
                   <h2 className="text-base sm:text-lg font-semibold text-[#2C2A29]">Legal Notes</h2>
-          </div>
+                </div>
                 <p className="text-xs sm:text-sm text-[#2C2A29] opacity-70 mb-4">
                   Additional legal information, document locations, or important notes
                 </p>
-              <textarea
+                <textarea
                   value={formData.legalNotes}
                   onChange={(e) => setFormData(prev => ({ ...prev, legalNotes: e.target.value }))}
                   placeholder="Legal notes, document locations, or other important information..."
                   rows={8}
-                  className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-sm sm:text-base resize-none"
+                  className="w-full px-3 sm:px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A5B99A] focus:border-transparent text-sm sm:text-base resize-none min-h-[200px]"
                 />
-                <p className="mt-3 text-xs text-[#2C2A29] opacity-60">
+                <p className="mt-3 text-xs sm:text-sm text-[#2C2A29] opacity-60 break-words">
                   Note: To upload legal documents, visit the{' '}
                   <Link href="/dashboard/documents" className="text-[#93B0C8] hover:text-[#A5B99A] underline">
                     Important Documents
@@ -952,17 +944,17 @@ export default function MedicalContactsPage() {
           )}
 
           {/* Submit Button - Sticky on Mobile */}
-          <div className="sticky bottom-0 bg-white/95 backdrop-blur-sm border-t border-gray-200/50 -mx-3 sm:-mx-4 lg:-mx-8 px-3 sm:px-4 lg:px-8 py-3 sm:py-4 flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-4">
+          <div className="fixed sm:sticky bottom-0 left-0 right-0 sm:left-auto sm:right-auto bg-white/95 backdrop-blur-sm border-t border-gray-200/50 shadow-lg sm:shadow-none -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-3 sm:py-4 flex flex-col sm:flex-row justify-end gap-3 sm:gap-4 z-10">
             <Link
               href="/dashboard"
-              className="w-full sm:w-auto px-6 py-2.5 sm:py-3 border border-gray-300 text-[#2C2A29] rounded-lg hover:bg-gray-50 transition-colors text-center text-sm sm:text-base font-medium touch-target"
+              className="w-full sm:w-auto px-6 py-3 border border-gray-300 text-[#2C2A29] rounded-lg hover:bg-gray-50 transition-colors text-center text-sm sm:text-base font-medium touch-target min-h-[44px] flex items-center justify-center"
             >
               Cancel
             </Link>
             <button
               type="submit"
               disabled={saving}
-              className="w-full sm:w-auto px-6 py-2.5 sm:py-3 bg-[#A5B99A] text-white rounded-lg hover:bg-[#93B0C8] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 text-sm sm:text-base font-medium touch-target"
+              className="w-full sm:w-auto px-6 py-3 bg-[#A5B99A] text-white rounded-lg hover:bg-[#93B0C8] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 text-sm sm:text-base font-medium touch-target min-h-[44px]"
             >
               <Save className="w-4 h-4 sm:w-5 sm:h-5" />
               <span>{saving ? 'Saving...' : 'Save Changes'}</span>

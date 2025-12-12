@@ -356,6 +356,25 @@ export default function FuneralPreferencesPage() {
               </div>
             </div>
 
+            {/* Link to My Music */}
+            <div className="mb-6 p-4 bg-gradient-to-r from-[#A5B99A]/10 to-[#93B0C8]/10 rounded-lg border border-[#A5B99A]/20">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div className="flex-1">
+                  <h3 className="text-sm font-semibold text-[#2C2A29] mb-1">Manage Your Music Collection</h3>
+                  <p className="text-xs text-[#2C2A29] opacity-70">
+                    Create playlists, save your favorite songs, and organize your music library
+                  </p>
+                </div>
+                <Link
+                  href="/dashboard/my-music"
+                  className="px-4 py-2.5 bg-[#A5B99A] text-white rounded-lg hover:bg-[#93B0C8] transition-colors font-medium text-sm whitespace-nowrap touch-target min-h-[44px] flex items-center justify-center space-x-2"
+                >
+                  <Music className="w-4 h-4" />
+                  <span>Go to My Music</span>
+                </Link>
+              </div>
+            </div>
+
             {/* Spotify Integration */}
             <div className="mb-6">
               <SpotifyIntegration
