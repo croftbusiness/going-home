@@ -22,14 +22,42 @@ export async function GET() {
       return NextResponse.json({ biography: null });
     }
 
-    const biography = {
-      id: data.id,
+    // Check if life_story contains a JSON object with finalBiography
+    let finalBiography = null;
+    let uploadedDocument = null;
+    let sections = {
       lifeStory: data.life_story,
       majorAccomplishments: data.major_accomplishments,
       familyHistory: data.family_history,
       faithStory: data.faith_story,
       lessonsLearned: data.lessons_learned,
       favoriteMemories: data.favorite_memories,
+    };
+
+    try {
+      // Try to parse life_story as JSON for new format
+      if (data.life_story && data.life_story.startsWith('{')) {
+        const parsed = JSON.parse(data.life_story);
+        if (parsed.finalBiography) {
+          finalBiography = parsed.finalBiography;
+          uploadedDocument = parsed.uploadedDocument || null;
+          sections = parsed.sections || sections;
+        }
+      }
+    } catch (e) {
+      // Not JSON, use as-is
+    }
+
+    const biography = {
+      id: data.id,
+      lifeStory: sections.lifeStory,
+      majorAccomplishments: sections.majorAccomplishments,
+      familyHistory: sections.familyHistory,
+      faithStory: sections.faithStory,
+      lessonsLearned: sections.lessonsLearned,
+      favoriteMemories: sections.favoriteMemories,
+      finalBiography,
+      uploadedDocument,
       createdAt: data.created_at,
       updatedAt: data.updated_at,
     };
@@ -58,15 +86,43 @@ export async function POST(request: Request) {
       .eq('user_id', auth.userId)
       .maybeSingle();
 
-    const biographyData: any = {
-      user_id: auth.userId,
-      life_story: body.lifeStory,
-      major_accomplishments: body.majorAccomplishments,
-      family_history: body.familyHistory,
-      faith_story: body.faithStory,
-      lessons_learned: body.lessonsLearned,
-      favorite_memories: body.favoriteMemories,
-    };
+    // Store new format data in life_story as JSON, or use individual fields for backward compatibility
+    let biographyData: any;
+    
+    if (body.finalBiography || body.uploadedDocument) {
+      // New format - store as JSON in life_story
+      biographyData = {
+        user_id: auth.userId,
+        life_story: JSON.stringify({
+          sections: {
+            lifeStory: body.lifeStory || '',
+            majorAccomplishments: body.majorAccomplishments || '',
+            familyHistory: body.familyHistory || '',
+            faithStory: body.faithStory || '',
+            lessonsLearned: body.lessonsLearned || '',
+            favoriteMemories: body.favoriteMemories || '',
+          },
+          finalBiography: body.finalBiography || null,
+          uploadedDocument: body.uploadedDocument || null,
+        }),
+        major_accomplishments: body.majorAccomplishments || null,
+        family_history: body.familyHistory || null,
+        faith_story: body.faithStory || null,
+        lessons_learned: body.lessonsLearned || null,
+        favorite_memories: body.favoriteMemories || null,
+      };
+    } else {
+      // Old format - store in individual fields
+      biographyData = {
+        user_id: auth.userId,
+        life_story: body.lifeStory || null,
+        major_accomplishments: body.majorAccomplishments || null,
+        family_history: body.familyHistory || null,
+        faith_story: body.faithStory || null,
+        lessons_learned: body.lessonsLearned || null,
+        favorite_memories: body.favoriteMemories || null,
+      };
+    }
 
     let data, error;
     if (existing) {

@@ -92,18 +92,63 @@ Return the improved version.`;
         break;
 
       case 'generate':
-        if (!answers || Object.keys(answers).length === 0) {
-          return NextResponse.json({ error: 'No answers provided' }, { status: 400 });
-        }
-        // Build a comprehensive prompt from the questionnaire answers
-        const answersText = Object.entries(answers)
-          .map(([key, value]) => {
-            const question = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-            return `${question}:\n${value}`;
-          })
-          .join('\n\n');
+        const { sections, document } = body;
         
-        prompt = `The user has answered a questionnaire about their ${section} section. Based on their answers, write a comprehensive, well-written biography section that:
+        if (document) {
+          // Generate from uploaded document
+          prompt = `The user has uploaded a document containing their biography. Please format and enhance it into a complete, well-written personal biography that:
+
+- Maintains the original content and voice
+- Improves clarity, flow, and structure
+- Adds appropriate transitions and context where needed
+- Is warm, authentic, and engaging
+- Is appropriate for a personal biography that will be shared with loved ones
+- Preserves all important information and details
+
+Here is the document content:
+
+${document}
+
+Create a complete, polished biography from this content.`;
+        } else if (sections && Object.keys(sections).length > 0) {
+          // Generate from filled sections
+          const sectionsText = Object.entries(sections)
+            .filter(([_, value]) => value && value.trim().length > 0)
+            .map(([key, value]) => {
+              const sectionName = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()).trim();
+              return `${sectionName}:\n${value}`;
+            })
+            .join('\n\n');
+          
+          if (sectionsText.length === 0) {
+            return NextResponse.json({ error: 'Please fill out at least one section or upload a document' }, { status: 400 });
+          }
+          
+          prompt = `The user has filled out sections of their biography. Based on the information provided, write a comprehensive, well-written complete biography that:
+
+- Tells their story in a warm, authentic, and engaging way
+- Weaves together all the information from different sections
+- Maintains their voice and perspective
+- Is well-structured and flows naturally
+- Captures the essence of their experiences and memories
+- Is appropriate for a personal biography that will be shared with loved ones
+- Creates a cohesive narrative from the various sections
+
+Here is the information they provided:
+
+${sectionsText}
+
+Write a complete, meaningful biography that incorporates all of this information into a beautiful, flowing narrative.`;
+        } else if (answers && Object.keys(answers).length > 0) {
+          // Legacy support for questionnaire answers
+          const answersText = Object.entries(answers)
+            .map(([key, value]) => {
+              const question = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+              return `${question}:\n${value}`;
+            })
+            .join('\n\n');
+          
+          prompt = `The user has answered a questionnaire about their ${section} section. Based on their answers, write a comprehensive, well-written biography section that:
 
 - Tells their story in a warm, authentic, and engaging way
 - Weaves together all the information they provided
@@ -117,6 +162,9 @@ Here are their answers:
 ${answersText}
 
 Write the complete ${section} section based on these answers. Make it meaningful, personal, and well-written.`;
+        } else {
+          return NextResponse.json({ error: 'Please provide sections, a document, or answers' }, { status: 400 });
+        }
         break;
 
       default:
