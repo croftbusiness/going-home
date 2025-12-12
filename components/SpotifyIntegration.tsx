@@ -374,14 +374,14 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
                         {isTrackSelected(track) && (
                           <CheckCircle2 className="w-5 h-5 text-[#A5B99A] flex-shrink-0" />
                         )}
-                        {track.external_urls?.spotify && (
+                        {track.id && (
                           <a
-                            href={track.external_urls.spotify}
+                            href={track.external_urls?.spotify || `https://open.spotify.com/track/${track.id}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             onClick={(e) => e.stopPropagation()}
                             className="text-[#1DB954] hover:text-[#1ed760] p-2"
-                            title="Open in Spotify"
+                            title="Open in Spotify (click play button in Spotify)"
                           >
                             <ExternalLink className="w-4 h-4" />
                           </a>
@@ -468,14 +468,14 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
                         {isTrackSelected(track) && (
                           <CheckCircle2 className="w-5 h-5 text-[#A5B99A] flex-shrink-0" />
                         )}
-                        {track.external_urls?.spotify && (
+                        {track.id && (
                           <a
-                            href={track.external_urls.spotify}
+                            href={track.external_urls?.spotify || `https://open.spotify.com/track/${track.id}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             onClick={(e) => e.stopPropagation()}
                             className="text-[#1DB954] hover:text-[#1ed760] p-2"
-                            title="Open in Spotify"
+                            title="Open in Spotify (click play button in Spotify)"
                           >
                             <ExternalLink className="w-4 h-4" />
                           </a>

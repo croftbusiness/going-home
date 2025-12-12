@@ -256,13 +256,13 @@ export default function MyMusicPage() {
                     )}
 
                     {/* Spotify Link */}
-                    {song.spotify_url && (
+                    {song.spotify_id && (
                       <a
-                        href={song.spotify_url}
+                        href={song.spotify_url || `https://open.spotify.com/track/${song.spotify_id}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="p-3 text-[#1DB954] hover:bg-[#1DB954]/10 rounded-full transition-colors touch-target"
-                        title="Open in Spotify"
+                        title="Open in Spotify (click play button in Spotify)"
                       >
                         <ExternalLink className="w-5 h-5" />
                       </a>

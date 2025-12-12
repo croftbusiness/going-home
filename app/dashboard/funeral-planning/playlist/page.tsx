@@ -19,13 +19,21 @@ export default function PlaylistPage() {
 
   const loadPlaylist = async () => {
     try {
-      // Load saved songs from the saved_songs table
-      const response = await fetch('/api/user/saved-songs');
+      // Load playlist from funeral_playlists table
+      const response = await fetch('/api/user/playlist');
       if (response.ok) {
         const data = await response.json();
-        // Convert saved songs to string format "Song Name - Artist"
-        const songStrings = (data.songs || []).map((song: any) => `${song.name} - ${song.artist}`);
-        setSongs(songStrings);
+        if (data.playlist && data.playlist.songs) {
+          setSongs(data.playlist.songs);
+        } else {
+          // Fallback: Load from saved_songs if no playlist exists
+          const savedResponse = await fetch('/api/user/saved-songs');
+          if (savedResponse.ok) {
+            const savedData = await savedResponse.json();
+            const songStrings = (savedData.songs || []).map((song: any) => `${song.name} - ${song.artist}`);
+            setSongs(songStrings);
+          }
+        }
       }
     } catch (error) {
       console.error('Error loading playlist:', error);
@@ -35,14 +43,27 @@ export default function PlaylistPage() {
   };
 
   const handleSave = async () => {
+    if (songs.length === 0) {
+      setError('Please add at least one song to your playlist');
+      return;
+    }
+
     setSaving(true);
     setError('');
     setSuccess(false);
     
     try {
-      // Save songs to funeral preferences or a dedicated playlist table
-      // For now, we'll just save to saved_songs (already done when selecting from Spotify)
-      // This is mainly for manual entries
+      const response = await fetch('/api/user/playlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ songs }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to save playlist');
+      }
+
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
     } catch (err: any) {
