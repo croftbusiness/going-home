@@ -235,7 +235,7 @@ function PlaylistPageContent() {
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10">
+      <main className="w-full max-w-5xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-6 sm:py-8 lg:py-10 overflow-x-hidden">
         {/* Premium Intro Card */}
         <div className="relative bg-gradient-to-br from-white via-[#FCFAF7] to-white rounded-2xl p-6 sm:p-8 lg:p-10 shadow-xl shadow-gray-200/30 border border-gray-100/50 mb-6 sm:mb-8 overflow-hidden">
           {/* Decorative background elements */}
