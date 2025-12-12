@@ -50,6 +50,30 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
     checkConnection();
   }, []);
 
+  // Type guard to validate tracks and filter out error objects
+  const isValidTrack = (track: any): track is Track => {
+    if (!track || typeof track !== 'object') return false;
+    
+    // Check if it's an error object - Spotify error objects have {title, artist, reason, duration}
+    // If it has 'reason', it's definitely an error object
+    if ('reason' in track) return false;
+    // If it has 'title' but no 'id', it's likely an error object
+    if ('title' in track && !('id' in track)) return false;
+    // If it has both 'reason' and 'duration' but no 'id', it's an error
+    if ('reason' in track && 'duration' in track && !('id' in track)) return false;
+    
+    // Must have required properties for a valid track
+    if (!track.id || !track.name || !track.artist) return false;
+    
+    // Ensure name and artist are strings (not objects)
+    if (typeof track.name !== 'string' || typeof track.artist !== 'string') return false;
+    
+    // Ensure id is a string (not an object)
+    if (typeof track.id !== 'string') return false;
+    
+    return true;
+  };
+
   const checkConnection = async () => {
     try {
       const response = await fetch('/api/spotify/playlists');
@@ -116,19 +140,32 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
       if (response.ok) {
         const data = await response.json();
         // Ensure tracks is an array and filter out any invalid items
-        const validTracks = (data.tracks || []).filter((track: any) => 
-          track && track.id && track.name && track.artist && typeof track.name === 'string' && typeof track.artist === 'string'
-        );
+        const validTracks = (data.tracks || [])
+          .filter((track: any) => isValidTrack(track))
+          .map((track: any) => ({
+            ...track,
+            // Ensure all string properties are actually strings
+            name: String(track.name || 'Unknown'),
+            artist: String(track.artist || 'Unknown Artist'),
+            id: String(track.id),
+          }));
         setPlaylistTracks(validTracks);
       } else if (response.status === 401) {
         // Handle auth errors gracefully without redirecting
         const data = await response.json().catch(() => ({}));
         console.error('Authentication error:', data.error || 'Unauthorized');
+        // Clear tracks on error
+        setPlaylistTracks([]);
         // Don't redirect, just show error state
         setIsConnected(false);
+      } else {
+        // Clear tracks on other errors
+        setPlaylistTracks([]);
       }
     } catch (error) {
       console.error('Failed to load playlist tracks:', error);
+      // Clear tracks on error
+      setPlaylistTracks([]);
       // Don't redirect on network errors
     } finally {
       setLoading(false);
@@ -144,18 +181,31 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
       if (response.ok) {
         const data = await response.json();
         // Ensure tracks is an array and filter out any invalid items
-        const validTracks = (data.tracks || []).filter((track: any) => 
-          track && track.id && track.name && track.artist && typeof track.name === 'string' && typeof track.artist === 'string'
-        );
+        const validTracks = (data.tracks || [])
+          .filter((track: any) => isValidTrack(track))
+          .map((track: any) => ({
+            ...track,
+            // Ensure all string properties are actually strings
+            name: String(track.name || 'Unknown'),
+            artist: String(track.artist || 'Unknown Artist'),
+            id: String(track.id),
+          }));
         setSearchResults(validTracks);
       } else if (response.status === 401) {
         // Handle auth errors gracefully without redirecting
         const data = await response.json().catch(() => ({}));
         console.error('Authentication error:', data.error || 'Unauthorized');
+        // Clear results on error
+        setSearchResults([]);
         setIsConnected(false);
+      } else {
+        // Clear results on other errors
+        setSearchResults([]);
       }
     } catch (error) {
       console.error('Search failed:', error);
+      // Clear results on error
+      setSearchResults([]);
       // Don't redirect on network errors
     } finally {
       setSearching(false);
@@ -164,11 +214,25 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
 
   const isValidTrack = (track: any): track is Track => {
     if (!track || typeof track !== 'object') return false;
-    // Check if it's an error object (has reason property)
-    if ('reason' in track || ('title' in track && !('id' in track))) return false;
-    // Must have required properties
-    return !!(track.id && track.name && track.artist && 
-              typeof track.name === 'string' && typeof track.artist === 'string');
+    
+    // Check if it's an error object - Spotify error objects have {title, artist, reason, duration}
+    // If it has 'reason', it's definitely an error object
+    if ('reason' in track) return false;
+    // If it has 'title' but no 'id', it's likely an error object
+    if ('title' in track && !('id' in track)) return false;
+    // If it has both 'reason' and 'duration' but no 'id', it's an error
+    if ('reason' in track && 'duration' in track && !('id' in track)) return false;
+    
+    // Must have required properties for a valid track
+    if (!track.id || !track.name || !track.artist) return false;
+    
+    // Ensure name and artist are strings (not objects)
+    if (typeof track.name !== 'string' || typeof track.artist !== 'string') return false;
+    
+    // Ensure id is a string (not an object)
+    if (typeof track.id !== 'string') return false;
+    
+    return true;
   };
 
   const handleSelectTrack = async (track: Track) => {
