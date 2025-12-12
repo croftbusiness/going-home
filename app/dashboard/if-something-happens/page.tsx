@@ -614,7 +614,7 @@ export default function IfSomethingHappensPage() {
                 <div className="text-center py-4 sm:py-6">
                   <p className="text-xs sm:text-sm text-[#2C2A29] opacity-60 mb-2">No medical information available</p>
                   <Link
-                    href="/dashboard/medical-contacts"
+                    href="/dashboard/medical-legal"
                     className="text-xs sm:text-sm text-[#93B0C8] hover:text-[#A5B99A] active:text-[#A5B99A] transition-colors touch-target inline-block py-1"
                   >
                     Add medical information →

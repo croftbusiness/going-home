@@ -339,7 +339,7 @@ export default function DashboardPage() {
       title: 'Medical & Legal',
       description: 'Physician, attorney, and legal advisor information',
       icon: Heart,
-      href: '/dashboard/medical-contacts',
+      href: '/dashboard/medical-legal',
       completed: status.medicalContacts,
       color: 'bg-[#93B0C8]',
       bgColor: 'bg-[#93B0C8] bg-opacity-5',

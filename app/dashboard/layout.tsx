@@ -64,7 +64,7 @@ const navigation = [
   { name: 'Biography', href: '/dashboard/biography', icon: BookOpen, section: 'legacy' },
   
   // Health & Care
-  { name: 'Medical & Legal', href: '/dashboard/medical-contacts', icon: Stethoscope, section: 'health' },
+  { name: 'Medical & Legal', href: '/dashboard/medical-legal', icon: Stethoscope, section: 'health' },
   { name: 'Care Preferences & Directives', href: '/dashboard/end-of-life-directives', icon: Heart, section: 'health' },
   { name: 'Care Checklist', href: '/dashboard/end-of-life-checklist', icon: CheckSquare, section: 'health' },
   
