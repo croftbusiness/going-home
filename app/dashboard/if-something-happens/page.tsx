@@ -96,19 +96,29 @@ export default function IfSomethingHappensPage() {
         }
       }
 
-      const [contactsRes, medicalRes, insuranceRes, documentsRes, personalRes] = await Promise.all([
-        fetch('/api/user/trusted-contacts').catch(() => ({ ok: false })),
-        fetch('/api/user/medical-contacts').catch(() => ({ ok: false })),
-        fetch('/api/user/insurance-financial').catch(() => ({ ok: false })),
-        fetch('/api/user/documents').catch(() => ({ ok: false })),
-        fetch('/api/user/personal-details').catch(() => ({ ok: false })),
+      const [contactsRes, medicalRes, insuranceRes, documentsRes, personalRes] = await Promise.allSettled([
+        fetch('/api/user/trusted-contacts'),
+        fetch('/api/user/medical-contacts'),
+        fetch('/api/user/insurance-financial'),
+        fetch('/api/user/documents'),
+        fetch('/api/user/personal-details'),
       ]);
 
-      const trustedContacts = contactsRes.ok ? (await contactsRes.json()).trustedContacts || [] : [];
-      const medicalInfo = medicalRes.ok ? (await medicalRes.json()).medicalContacts : null;
-      const insuranceData = insuranceRes.ok ? (await insuranceRes.json()).contacts || [] : [];
-      const documentsData = documentsRes.ok ? (await documentsRes.json()).documents || [] : [];
-      const personalData = personalRes.ok ? (await personalRes.json()).personalDetails : null;
+      const trustedContacts = contactsRes.status === 'fulfilled' && contactsRes.value.ok 
+        ? (await contactsRes.value.json()).trustedContacts || [] 
+        : [];
+      const medicalInfo = medicalRes.status === 'fulfilled' && medicalRes.value.ok 
+        ? (await medicalRes.value.json()).medicalContacts 
+        : null;
+      const insuranceData = insuranceRes.status === 'fulfilled' && insuranceRes.value.ok 
+        ? (await insuranceRes.value.json()).contacts || [] 
+        : [];
+      const documentsData = documentsRes.status === 'fulfilled' && documentsRes.value.ok 
+        ? (await documentsRes.value.json()).documents || [] 
+        : [];
+      const personalData = personalRes.status === 'fulfilled' && personalRes.value.ok 
+        ? (await personalRes.value.json()).personalDetails 
+        : null;
 
       // Build critical instructions from various sources
       const criticalInstructions: Array<{ type: string; content: string }> = [];
