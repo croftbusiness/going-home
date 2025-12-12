@@ -1,12 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { useRouter } from 'next/navigation';
 import SwipeCardFlow from '@/components/cards/SwipeCardFlow';
+import { Loader2 } from 'lucide-react';
 
-export default function CardsPage() {
+// Force dynamic rendering since this page uses search params and is client-only
+export const dynamic = 'force-dynamic';
+
+function CardsPageContent() {
   const router = useRouter();
-  const [showPreferencePrompt, setShowPreferencePrompt] = useState(false);
 
   const handleComplete = () => {
     // Clear any card-related query params
@@ -19,9 +22,22 @@ export default function CardsPage() {
   };
 
   return (
-    <>
-      <SwipeCardFlow onComplete={handleComplete} onPause={handlePause} />
-    </>
+    <SwipeCardFlow onComplete={handleComplete} onPause={handlePause} />
+  );
+}
+
+export default function CardsPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 animate-spin text-[#1DB954] mx-auto mb-4" />
+          <p className="text-gray-600">Loading cards...</p>
+        </div>
+      </div>
+    }>
+      <CardsPageContent />
+    </Suspense>
   );
 }
 

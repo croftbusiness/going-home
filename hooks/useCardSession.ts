@@ -139,8 +139,10 @@ export function useCardSession() {
   }, [getOrCreateSession]);
 
   useEffect(() => {
-    // Check for existing active session on mount
-    getOrCreateSession();
+    // Only fetch on client side
+    if (typeof window !== 'undefined') {
+      getOrCreateSession();
+    }
   }, [getOrCreateSession]);
 
   return {

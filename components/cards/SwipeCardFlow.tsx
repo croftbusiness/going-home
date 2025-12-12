@@ -16,8 +16,15 @@ interface SwipeCardFlowProps {
 export default function SwipeCardFlow({ onComplete, onPause }: SwipeCardFlowProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const fromCard = searchParams.get('from_card') === 'true';
-  const cardId = searchParams.get('card_id');
+  const [mounted, setMounted] = useState(false);
+  
+  // Only access search params after mount to avoid SSR issues
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+  
+  const fromCard = mounted ? searchParams.get('from_card') === 'true' : false;
+  const cardId = mounted ? searchParams.get('card_id') : null;
   
   const {
     session,

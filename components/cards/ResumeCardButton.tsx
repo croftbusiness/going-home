@@ -12,6 +12,9 @@ export default function ResumeCardButton() {
   const [showButton, setShowButton] = useState(false);
 
   useEffect(() => {
+    // Only check on client side
+    if (typeof window === 'undefined') return;
+    
     // Only show if there's an active session with pending cards
     // And we're not already in the card flow
     const isOnCardsPage = pathname === '/dashboard/cards';
