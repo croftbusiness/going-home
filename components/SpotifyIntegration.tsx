@@ -115,7 +115,11 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
       const response = await fetch(`/api/spotify/playlist-tracks?playlistId=${playlistId}`);
       if (response.ok) {
         const data = await response.json();
-        setPlaylistTracks(data.tracks || []);
+        // Ensure tracks is an array and filter out any invalid items
+        const validTracks = (data.tracks || []).filter((track: any) => 
+          track && track.id && track.name && track.artist && typeof track.name === 'string' && typeof track.artist === 'string'
+        );
+        setPlaylistTracks(validTracks);
       } else if (response.status === 401) {
         // Handle auth errors gracefully without redirecting
         const data = await response.json().catch(() => ({}));
@@ -139,7 +143,11 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
       const response = await fetch(`/api/spotify/search?q=${encodeURIComponent(searchQuery)}`);
       if (response.ok) {
         const data = await response.json();
-        setSearchResults(data.tracks || []);
+        // Ensure tracks is an array and filter out any invalid items
+        const validTracks = (data.tracks || []).filter((track: any) => 
+          track && track.id && track.name && track.artist && typeof track.name === 'string' && typeof track.artist === 'string'
+        );
+        setSearchResults(validTracks);
       } else if (response.status === 401) {
         // Handle auth errors gracefully without redirecting
         const data = await response.json().catch(() => ({}));

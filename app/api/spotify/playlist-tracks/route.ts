@@ -43,22 +43,37 @@ export async function GET(request: Request) {
     });
 
     if (!tracksResponse.ok) {
-      throw new Error('Failed to fetch playlist tracks');
+      const errorData = await tracksResponse.json().catch(() => ({}));
+      const errorMessage = errorData.error?.message || 'Failed to fetch playlist tracks';
+      throw new Error(errorMessage);
     }
 
     const tracksData = await tracksResponse.json();
     const tracks = tracksData.items
-      .filter((item: any) => item.track && !item.track.is_local)
-      .map((item: any) => ({
-        id: item.track.id,
-        name: item.track.name,
-        artist: item.track.artists.map((a: any) => a.name).join(', '),
-        album: item.track.album.name,
-        preview_url: item.track.preview_url,
-        external_urls: item.track.external_urls,
-        album_art_url: item.track.album.images?.[0]?.url || null,
-        duration_ms: item.track.duration_ms || null,
-      }));
+      .filter((item: any) => {
+        // Filter out null tracks, local tracks, and error objects
+        if (!item || !item.track) return false;
+        if (item.track.is_local) return false;
+        // Check if it's an error object (has reason/title but not id/name)
+        if (item.track.reason || (item.track.title && !item.track.id)) return false;
+        // Ensure it has required track properties
+        return item.track.id && item.track.name && item.track.artists;
+      })
+      .map((item: any) => {
+        const track = item.track;
+        return {
+          id: track.id,
+          name: track.name || 'Unknown',
+          artist: track.artists && Array.isArray(track.artists) 
+            ? track.artists.map((a: any) => a.name || 'Unknown').join(', ')
+            : 'Unknown Artist',
+          album: track.album?.name || null,
+          preview_url: track.preview_url || null,
+          external_urls: track.external_urls || null,
+          album_art_url: track.album?.images?.[0]?.url || null,
+          duration_ms: track.duration_ms || null,
+        };
+      });
 
     return NextResponse.json({ tracks });
   } catch (error: any) {

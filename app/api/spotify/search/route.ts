@@ -51,16 +51,26 @@ export async function GET(request: Request) {
     }
 
     const searchData = await searchResponse.json();
-    const tracks = searchData.tracks.items.map((track: any) => ({
-      id: track.id,
-      name: track.name,
-      artist: track.artists.map((a: any) => a.name).join(', '),
-      album: track.album.name,
-      preview_url: track.preview_url,
-      external_urls: track.external_urls,
-      album_art_url: track.album.images?.[0]?.url || null,
-      duration_ms: track.duration_ms || null,
-    }));
+    const tracks = (searchData.tracks?.items || [])
+      .filter((track: any) => {
+        // Filter out error objects and invalid tracks
+        if (!track || !track.id || !track.name) return false;
+        // Check if it's an error object (has reason/title but shouldn't be here)
+        if (track.reason) return false;
+        return true;
+      })
+      .map((track: any) => ({
+        id: track.id,
+        name: track.name || 'Unknown',
+        artist: track.artists && Array.isArray(track.artists)
+          ? track.artists.map((a: any) => a.name || 'Unknown').join(', ')
+          : 'Unknown Artist',
+        album: track.album?.name || null,
+        preview_url: track.preview_url || null,
+        external_urls: track.external_urls || null,
+        album_art_url: track.album?.images?.[0]?.url || null,
+        duration_ms: track.duration_ms || null,
+      }));
 
     return NextResponse.json({ tracks });
   } catch (error: any) {
