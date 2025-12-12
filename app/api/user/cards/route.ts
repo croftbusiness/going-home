@@ -279,7 +279,7 @@ function selectCards(
     if (card.card_type === 'action' && card.linked_section) {
       // Extract section key from linked_section (e.g., /dashboard/personal-details -> personalDetails)
       const sectionPath = card.linked_section.replace('/dashboard/', '');
-      const sectionKey = sectionPath.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
+      const sectionKey = sectionPath.replace(/-([a-z])/g, (_: string, letter: string) => letter.toUpperCase());
       
       // If section is incomplete, prioritize it
       if (incompleteSections.includes(sectionKey)) {
