@@ -19,6 +19,7 @@ CREATE INDEX IF NOT EXISTS idx_spotify_tokens_expires_at ON spotify_tokens(expir
 ALTER TABLE spotify_tokens ENABLE ROW LEVEL SECURITY;
 
 -- Policy: Users can only access their own Spotify tokens
+DROP POLICY IF EXISTS "Users can manage own spotify tokens" ON spotify_tokens;
 CREATE POLICY "Users can manage own spotify tokens" ON spotify_tokens
   FOR ALL
   USING (user_id = auth.uid());

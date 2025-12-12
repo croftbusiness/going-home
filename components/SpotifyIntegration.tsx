@@ -393,16 +393,16 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
                 <span>Click play icon to preview songs (30-second previews)</span>
               </div>
               <div className="space-y-2 max-h-96 overflow-y-auto">
-              {searchResults.map((track) => (
-                <button
-                  key={track.id}
-                  onClick={() => handleSelectTrack(track)}
-                  className={`w-full text-left p-3 rounded-lg border transition-colors ${
-                    isTrackSelected(track)
-                      ? 'border-[#A5B99A] bg-[#A5B99A]/10'
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                >
+                {searchResults.map((track) => (
+                  <button
+                    key={track.id}
+                    onClick={() => handleSelectTrack(track)}
+                    className={`w-full text-left p-3 rounded-lg border transition-colors ${
+                      isTrackSelected(track)
+                        ? 'border-[#A5B99A] bg-[#A5B99A]/10'
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
                     <div className="flex items-center justify-between">
                       <div className="flex-1 min-w-0">
                         <div className="font-medium text-[#2C2A29] truncate">{track.name}</div>
@@ -446,8 +446,8 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
                         )}
                       </div>
                     </div>
-                </button>
-              ))}
+                  </button>
+                ))}
               </div>
             </div>
           )}
