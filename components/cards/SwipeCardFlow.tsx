@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import SwipeCard, { Card } from './SwipeCard';
 import CardPreferencePrompt from './CardPreferencePrompt';
@@ -13,7 +13,7 @@ interface SwipeCardFlowProps {
   onPause?: () => void; // Called when user navigates away
 }
 
-export default function SwipeCardFlow({ onComplete, onPause }: SwipeCardFlowProps) {
+function SwipeCardFlowContent({ onComplete, onPause }: SwipeCardFlowProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [mounted, setMounted] = useState(false);
@@ -496,6 +496,21 @@ export default function SwipeCardFlow({ onComplete, onPause }: SwipeCardFlowProp
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SwipeCardFlow({ onComplete, onPause }: SwipeCardFlowProps) {
+  return (
+    <Suspense fallback={
+      <div className="fixed inset-0 flex items-center justify-center bg-gray-50" style={{ top: 0, left: 0, right: 0, bottom: 0 }}>
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 animate-spin text-[#1DB954] mx-auto mb-4" />
+          <p className="text-gray-600">Loading cards...</p>
+        </div>
+      </div>
+    }>
+      <SwipeCardFlowContent onComplete={onComplete} onPause={onPause} />
+    </Suspense>
   );
 }
 
