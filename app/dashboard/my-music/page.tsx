@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, Music, Play, X, Loader2, ExternalLink, Trash2 } from 'lucide-react';
+import { ArrowLeft, Music, Loader2, Trash2 } from 'lucide-react';
+import SongPreviewPlayer from '@/components/SongPreviewPlayer';
 
 interface SavedSong {
   id: string;
@@ -22,8 +23,6 @@ export default function MyMusicPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [songs, setSongs] = useState<SavedSong[]>([]);
-  const [playingTrackId, setPlayingTrackId] = useState<string | null>(null);
-  const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -49,45 +48,6 @@ export default function MyMusicPage() {
     }
   };
 
-  const handlePlayPreview = (song: SavedSong) => {
-    // Stop any currently playing track
-    if (audioElement) {
-      audioElement.pause();
-      audioElement.currentTime = 0;
-    }
-
-    if (!song.preview_url) {
-      alert('No preview available for this song');
-      return;
-    }
-
-    // If clicking the same track, stop it
-    if (playingTrackId === song.id && audioElement) {
-      setPlayingTrackId(null);
-      audioElement.pause();
-      audioElement.currentTime = 0;
-      setAudioElement(null);
-      return;
-    }
-
-    // Play new track
-    const audio = new Audio(song.preview_url);
-    audio.play();
-    setAudioElement(audio);
-    setPlayingTrackId(song.id);
-
-    // Clean up when track ends
-    audio.addEventListener('ended', () => {
-      setPlayingTrackId(null);
-      setAudioElement(null);
-    });
-
-    // Clean up on error
-    audio.addEventListener('error', () => {
-      setPlayingTrackId(null);
-      setAudioElement(null);
-    });
-  };
 
   const handleDelete = async (songId: string) => {
     if (!confirm('Are you sure you want to remove this song from your saved music?')) {
@@ -108,11 +68,6 @@ export default function MyMusicPage() {
       setSongs(songs.filter(s => s.id !== songId));
       
       // Stop playback if this song was playing
-      if (playingTrackId === songId && audioElement) {
-        audioElement.pause();
-        setPlayingTrackId(null);
-        setAudioElement(null);
-      }
     } catch (error) {
       console.error('Error deleting song:', error);
       alert('Failed to delete song. Please try again.');
@@ -122,14 +77,6 @@ export default function MyMusicPage() {
   };
 
   // Cleanup audio on unmount
-  useEffect(() => {
-    return () => {
-      if (audioElement) {
-        audioElement.pause();
-        audioElement.currentTime = 0;
-      }
-    };
-  }, [audioElement]);
 
   const formatDuration = (ms?: number) => {
     if (!ms) return '';
@@ -237,43 +184,18 @@ export default function MyMusicPage() {
                   {/* Actions */}
                   <div className="flex items-center gap-2 flex-shrink-0">
                     {/* Play Preview */}
-                    {song.preview_url && (
-                      <button
-                        onClick={() => handlePlayPreview(song)}
-                        className={`p-3 rounded-full transition-colors touch-target ${
-                          playingTrackId === song.id
-                            ? 'bg-[#1DB954] text-white'
-                            : 'text-[#1DB954] hover:bg-[#1DB954]/10'
-                        }`}
-                        title={playingTrackId === song.id ? 'Stop preview' : 'Play preview'}
-                      >
-                        {playingTrackId === song.id ? (
-                          <X className="w-5 h-5" />
-                        ) : (
-                          <Play className="w-5 h-5" />
-                        )}
-                      </button>
-                    )}
-
-                    {/* Spotify Link */}
-                    {song.spotify_id && (
-                      <a
-                        href={song.spotify_url || `https://open.spotify.com/track/${song.spotify_id}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="p-3 text-[#1DB954] hover:bg-[#1DB954]/10 rounded-full transition-colors touch-target"
-                        title="Open in Spotify (click play button in Spotify)"
-                      >
-                        <ExternalLink className="w-5 h-5" />
-                      </a>
-                    )}
+                    <SongPreviewPlayer
+                      previewUrl={song.preview_url}
+                      trackId={song.id}
+                    />
 
                     {/* Delete */}
                     <button
                       onClick={() => handleDelete(song.id)}
                       disabled={deletingId === song.id}
-                      className="p-3 text-red-600 hover:bg-red-50 rounded-full transition-colors touch-target disabled:opacity-50"
+                      className="p-3 min-w-[44px] min-h-[44px] flex items-center justify-center text-red-600 hover:bg-red-50 active:bg-red-100 rounded-full transition-colors disabled:opacity-50"
                       title="Remove song"
+                      aria-label="Remove song"
                     >
                       {deletingId === song.id ? (
                         <Loader2 className="w-5 h-5 animate-spin" />
@@ -283,15 +205,6 @@ export default function MyMusicPage() {
                     </button>
                   </div>
                 </div>
-
-                {/* Note about preview */}
-                {!song.preview_url && (
-                  <div className="mt-3 pt-3 border-t border-gray-100">
-                    <p className="text-xs text-gray-500">
-                      No preview available for this song. Click the Spotify icon to listen on Spotify.
-                    </p>
-                  </div>
-                )}
               </div>
             ))}
           </div>
