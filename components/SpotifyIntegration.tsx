@@ -162,7 +162,21 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
     }
   };
 
+  const isValidTrack = (track: any): track is Track => {
+    if (!track || typeof track !== 'object') return false;
+    // Check if it's an error object (has reason property)
+    if ('reason' in track || ('title' in track && !('id' in track))) return false;
+    // Must have required properties
+    return !!(track.id && track.name && track.artist && 
+              typeof track.name === 'string' && typeof track.artist === 'string');
+  };
+
   const handleSelectTrack = async (track: Track) => {
+    if (!isValidTrack(track)) {
+      console.error('Invalid track selected:', track);
+      return;
+    }
+    
     const songString = `${track.name} - ${track.artist}`;
     if (selectedSongs.includes(songString)) {
       // Remove if already selected
@@ -180,6 +194,7 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
   };
 
   const isTrackSelected = (track: Track) => {
+    if (!isValidTrack(track)) return false;
     const songString = `${track.name} - ${track.artist}`;
     return selectedSongs.includes(songString);
   };
@@ -343,7 +358,7 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
                 </div>
               </div>
               <div className="space-y-2 max-h-64 overflow-y-auto">
-                {playlistTracks.map((track) => (
+                {playlistTracks.filter(isValidTrack).map((track) => (
                   <button
                     key={track.id}
                     onClick={() => handleSelectTrack(track)}
@@ -355,8 +370,12 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex-1 min-w-0">
-                        <div className="font-medium text-[#2C2A29] truncate">{track.name}</div>
-                        <div className="text-sm text-gray-500 truncate">{track.artist}</div>
+                        <div className="font-medium text-[#2C2A29] truncate">
+                          {typeof track.name === 'string' ? track.name : 'Unknown'}
+                        </div>
+                        <div className="text-sm text-gray-500 truncate">
+                          {typeof track.artist === 'string' ? track.artist : 'Unknown Artist'}
+                        </div>
                       </div>
                       <div className="flex items-center space-x-2 ml-2">
                         {track.preview_url && (
@@ -437,7 +456,7 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
                 <span>Click play icon to preview songs (30-second previews)</span>
               </div>
               <div className="space-y-2 max-h-96 overflow-y-auto">
-                {searchResults.map((track) => (
+                {searchResults.filter(isValidTrack).map((track) => (
                   <button
                     key={track.id}
                     onClick={() => handleSelectTrack(track)}
@@ -449,8 +468,12 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex-1 min-w-0">
-                        <div className="font-medium text-[#2C2A29] truncate">{track.name}</div>
-                        <div className="text-sm text-gray-500 truncate">{track.artist}</div>
+                        <div className="font-medium text-[#2C2A29] truncate">
+                          {typeof track.name === 'string' ? track.name : 'Unknown'}
+                        </div>
+                        <div className="text-sm text-gray-500 truncate">
+                          {typeof track.artist === 'string' ? track.artist : 'Unknown Artist'}
+                        </div>
                       </div>
                       <div className="flex items-center space-x-2 ml-2">
                         {track.preview_url && (
