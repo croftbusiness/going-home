@@ -277,7 +277,7 @@ function PlaylistPageContent() {
               </label>
               
               {/* Spotify Integration */}
-              <div className="mb-4">
+              <div className="mb-4 overflow-hidden">
                 {mounted && (
                   <SpotifyIntegration
                     selectedSongs={Array.isArray(songs) ? songs : []}

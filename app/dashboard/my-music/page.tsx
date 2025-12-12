@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Music, Loader2, Trash2 } from 'lucide-react';
-import SongPreviewPlayer from '@/components/SongPreviewPlayer';
+import TrackPlayer from '@/components/music/TrackPlayer';
 
 interface SavedSong {
   id: string;
@@ -110,7 +110,7 @@ export default function MyMusicPage() {
                 My Music
               </h1>
               <p className="text-xs sm:text-sm text-[#2C2A29] opacity-70 mt-1">
-                Your saved Spotify songs with 30-second previews
+                Your saved Spotify songs - Premium users can play in-app
               </p>
             </div>
           </div>
@@ -189,10 +189,13 @@ export default function MyMusicPage() {
 
                   {/* Actions */}
                   <div className="flex items-center gap-3 sm:gap-4 flex-shrink-0">
-                    {/* Preview Player */}
-                    <SongPreviewPlayer
-                      previewUrl={song.preview_url || null}
-                      trackId={song.id}
+                    {/* Track Player */}
+                    <TrackPlayer
+                      trackId={song.spotify_id}
+                      trackName={song.name}
+                      artistName={song.artist}
+                      albumArtUrl={song.album_art_url}
+                      spotifyUrl={song.spotify_url}
                     />
 
                     {/* Delete - Enhanced */}

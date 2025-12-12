@@ -1,17 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Loader2 } from 'lucide-react';
+import { Loader2, ExternalLink } from 'lucide-react';
 import SpotifyFullPlayer from './SpotifyFullPlayer';
-import SpotifyPreviewPlayer from './SpotifyPreviewPlayer';
-import SpotifyFallback from './SpotifyFallback';
 
 interface TrackPlayerProps {
   trackId: string;
   trackName: string;
   artistName: string;
   albumArtUrl?: string;
-  previewUrl?: string | null;
   spotifyUrl?: string;
   className?: string;
 }
@@ -21,7 +18,6 @@ export default function TrackPlayer({
   trackName,
   artistName,
   albumArtUrl,
-  previewUrl,
   spotifyUrl,
   className = '',
 }: TrackPlayerProps) {
@@ -43,14 +39,17 @@ export default function TrackPlayer({
       ]);
 
       if (premiumResponse.status === 401 || tokenResponse.status === 401) {
-        setError('Not connected to Spotify');
+        // Not connected to Spotify - show redirect button
         setIsPremium(false);
         setLoading(false);
         return;
       }
 
       if (!premiumResponse.ok || !tokenResponse.ok) {
-        throw new Error('Failed to check Spotify status');
+        // Assume free user if we can't check
+        setIsPremium(false);
+        setLoading(false);
+        return;
       }
 
       const premiumData = await premiumResponse.json();
@@ -60,7 +59,7 @@ export default function TrackPlayer({
       setAccessToken(tokenData.accessToken || null);
     } catch (err: any) {
       console.error('Error checking premium status:', err);
-      setError(err.message || 'Failed to check premium status');
+      // On error, assume free user
       setIsPremium(false);
     } finally {
       setLoading(false);
@@ -70,14 +69,9 @@ export default function TrackPlayer({
   if (loading) {
     return (
       <div className={`flex items-center justify-center py-2 ${className}`}>
-        <Loader2 className="w-4 h-4 animate-spin text-[#93B0C8]" />
+        <Loader2 className="w-5 h-5 animate-spin text-[#93B0C8]" />
       </div>
     );
-  }
-
-  if (error && !isPremium) {
-    // If there's an error and we can't verify premium, fall back to preview/fallback
-    // Continue with the logic below
   }
 
   // Premium user - use full player
@@ -94,24 +88,18 @@ export default function TrackPlayer({
     );
   }
 
-  // Free user with preview - use preview player
-  if (previewUrl) {
-    return (
-      <SpotifyPreviewPlayer
-        previewUrl={previewUrl}
-        trackId={trackId}
-        className={className}
-      />
-    );
-  }
-
-  // Free user without preview - show fallback
+  // Free user - redirect to Spotify
   const fallbackUrl = spotifyUrl || `https://open.spotify.com/track/${trackId}`;
   return (
-    <SpotifyFallback
-      spotifyUrl={fallbackUrl}
-      className={className}
-    />
+    <a
+      href={fallbackUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`inline-flex items-center gap-2 px-4 py-2.5 sm:px-5 sm:py-3 min-h-[48px] bg-gradient-to-r from-[#1DB954] to-[#1ed760] text-white rounded-xl hover:from-[#1ed760] hover:to-[#1DB954] active:scale-95 transition-all shadow-lg hover:shadow-xl font-semibold text-sm sm:text-base ${className}`}
+    >
+      <ExternalLink className="w-4 h-4 sm:w-5 sm:h-5" />
+      <span>Open in Spotify</span>
+    </a>
   );
 }
 

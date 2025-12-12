@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Music, Search, Loader2, CheckCircle2 } from 'lucide-react';
-import SongPreviewPlayer from './SongPreviewPlayer';
+import TrackPlayer from './music/TrackPlayer';
 
 interface Track {
   id: string;
@@ -277,7 +277,7 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
   }
 
   return (
-    <div className="bg-gradient-to-br from-white via-[#FAF9F7] to-white rounded-2xl border border-gray-200/40 shadow-xl shadow-gray-200/20 p-5 sm:p-6 lg:p-8 backdrop-blur-sm">
+    <div className="bg-gradient-to-br from-white via-[#FAF9F7] to-white rounded-2xl border border-gray-200/40 shadow-xl shadow-gray-200/20 p-5 sm:p-6 lg:p-8 backdrop-blur-sm overflow-hidden">
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0 mb-6 sm:mb-8">
         <div className="flex items-center space-x-4">
@@ -344,7 +344,7 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
               <p>No playlists found</p>
             </div>
           ) : (
-            <div className={`space-y-3 overflow-y-auto ${selectedPlaylist && playlistTracks.length > 0 ? 'max-h-[140px] sm:max-h-[180px]' : 'max-h-[300px] sm:max-h-[360px]'} pr-2`}>
+            <div className={`space-y-3 overflow-y-auto overscroll-contain ${selectedPlaylist && playlistTracks.length > 0 ? 'max-h-[120px] sm:max-h-[150px] md:max-h-[180px]' : 'max-h-[250px] sm:max-h-[300px] md:max-h-[340px]'} pr-2`}>
               {playlists.map((playlist) => (
                 <button
                   key={playlist.id}
@@ -374,7 +374,7 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
                   Select songs from this playlist
                 </div>
               </div>
-              <div className="space-y-3 max-h-[35vh] sm:max-h-[300px] md:max-h-[380px] overflow-y-auto pr-2">
+              <div className="space-y-3 max-h-[250px] sm:max-h-[280px] md:max-h-[320px] overflow-y-auto overscroll-contain pr-2">
                 {playlistTracks.map((track) => {
                   if (!isValidTrack(track)) return null;
                   return (
@@ -398,9 +398,12 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
                         </div>
                         <div className="flex items-center space-x-3 sm:space-x-4 flex-shrink-0">
                           <div onClick={(e) => e.stopPropagation()}>
-                            <SongPreviewPlayer
-                              previewUrl={track.preview_url || null}
+                            <TrackPlayer
                               trackId={track.id}
+                              trackName={String(track.name || 'Unknown')}
+                              artistName={String(track.artist || 'Unknown Artist')}
+                              albumArtUrl={track.album_art_url}
+                              spotifyUrl={track.external_urls?.spotify}
                             />
                           </div>
                           {isTrackSelected(track) && (
@@ -451,7 +454,7 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
 
           {searchResults.length > 0 && (
             <div>
-              <div className="space-y-3 max-h-[35vh] sm:max-h-[360px] md:max-h-[420px] overflow-y-auto pr-2">
+              <div className="space-y-3 max-h-[250px] sm:max-h-[320px] md:max-h-[380px] overflow-y-auto overscroll-contain pr-2">
                 {searchResults.map((track) => {
                   if (!isValidTrack(track)) return null;
                   return (
@@ -475,9 +478,12 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
                         </div>
                         <div className="flex items-center space-x-3 sm:space-x-4 flex-shrink-0">
                           <div onClick={(e) => e.stopPropagation()}>
-                            <SongPreviewPlayer
-                              previewUrl={track.preview_url || null}
+                            <TrackPlayer
                               trackId={track.id}
+                              trackName={String(track.name || 'Unknown')}
+                              artistName={String(track.artist || 'Unknown Artist')}
+                              albumArtUrl={track.album_art_url}
+                              spotifyUrl={track.external_urls?.spotify}
                             />
                           </div>
                           {isTrackSelected(track) && (

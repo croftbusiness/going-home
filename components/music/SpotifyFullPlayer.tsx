@@ -229,11 +229,11 @@ export default function SpotifyFullPlayer({
   }
 
   return (
-    <div className={`flex flex-col gap-3 sm:gap-4 ${className}`}>
+    <div className={`flex flex-col gap-3 sm:gap-4 max-w-full ${className}`}>
       {/* Track Info & Album Art */}
       <div className="flex items-center gap-3 sm:gap-4">
         {albumArtUrl && (
-          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden flex-shrink-0 shadow-md">
+          <div className="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-lg overflow-hidden flex-shrink-0 shadow-md">
             <img
               src={albumArtUrl}
               alt={`${trackName} album art`}
@@ -241,7 +241,7 @@ export default function SpotifyFullPlayer({
             />
           </div>
         )}
-        <div className="flex-1 min-w-0">
+        <div className="flex-1 min-w-0 overflow-hidden">
           <div className="font-semibold text-sm sm:text-base text-[#2C2A29] truncate">
             {trackName}
           </div>
