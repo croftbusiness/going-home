@@ -153,61 +153,74 @@ export default function AIChecklist() {
           </p>
         </div>
       ) : (
-        <div className="space-y-3 sm:space-y-4">
-          {checklist.items.map((item, index) => (
-            <Link
-              key={item.id}
-              href={item.actionUrl || '#'}
-              className="group flex items-start space-x-4 p-5 bg-gradient-to-r from-white to-gray-50/50 border border-gray-200 rounded-xl hover:border-[#A5B99A] hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 overflow-hidden relative"
-            >
-              {/* Number badge */}
-              <div className="absolute top-3 right-3 w-8 h-8 bg-gradient-to-br from-[#A5B99A] to-[#93B0C8] rounded-full flex items-center justify-center text-white text-xs font-bold shadow-md opacity-0 group-hover:opacity-100 transition-opacity">
-                {index + 1}
-              </div>
-
-              {/* Priority indicator bar */}
-              <div className={`w-1 rounded-full flex-shrink-0 ${
-                item.priority === 'high' ? 'bg-red-500' :
-                item.priority === 'medium' ? 'bg-yellow-500' :
-                'bg-blue-500'
-              }`}></div>
-
-              <div className="flex-1 min-w-0">
-                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-3">
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-bold text-[#2C2A29] text-base sm:text-lg mb-2 group-hover:text-[#93B0C8] transition-colors leading-tight">
-                      {item.title}
-                    </h3>
-                    {item.description && (
-                      <p className="text-sm text-[#2C2A29] opacity-70 leading-relaxed line-clamp-2">
-                        {item.description}
-                      </p>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-2 flex-shrink-0">
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap shadow-sm ${
-                        item.priority === 'high' ? 'bg-red-100 text-red-700' :
-                        item.priority === 'medium' ? 'bg-yellow-100 text-yellow-700' :
-                        'bg-blue-100 text-blue-700'
-                      }`}
-                    >
-                      {item.priority.toUpperCase()}
-                    </span>
-                  </div>
+        <div>
+          <div className="space-y-3 sm:space-y-4">
+            {checklist.items.slice(0, 4).map((item, index) => (
+              <Link
+                key={item.id}
+                href={item.actionUrl || '#'}
+                className="group flex items-start space-x-4 p-5 bg-gradient-to-r from-white to-gray-50/50 border border-gray-200 rounded-xl hover:border-[#A5B99A] hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 overflow-hidden relative"
+              >
+                {/* Number badge */}
+                <div className="absolute top-3 right-3 w-8 h-8 bg-gradient-to-br from-[#A5B99A] to-[#93B0C8] rounded-full flex items-center justify-center text-white text-xs font-bold shadow-md opacity-0 group-hover:opacity-100 transition-opacity">
+                  {index + 1}
                 </div>
-                
-                {item.actionUrl && (
-                  <div className="flex items-center justify-between pt-3 border-t border-gray-100 group-hover:border-[#A5B99A]/30 transition-colors">
-                    <span className="text-sm font-semibold text-[#A5B99A] group-hover:text-[#93B0C8] transition-colors">
-                      Get Started
-                    </span>
-                    <ArrowRight className="w-4 h-4 text-[#A5B99A] group-hover:text-[#93B0C8] group-hover:translate-x-1 transition-all" />
+
+                {/* Priority indicator bar */}
+                <div className={`w-1 rounded-full flex-shrink-0 ${
+                  item.priority === 'high' ? 'bg-red-500' :
+                  item.priority === 'medium' ? 'bg-yellow-500' :
+                  'bg-blue-500'
+                }`}></div>
+
+                <div className="flex-1 min-w-0">
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-3">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-bold text-[#2C2A29] text-base sm:text-lg mb-2 group-hover:text-[#93B0C8] transition-colors leading-tight">
+                        {item.title}
+                      </h3>
+                      {item.description && (
+                        <p className="text-sm text-[#2C2A29] opacity-70 leading-relaxed line-clamp-2">
+                          {item.description}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap shadow-sm ${
+                          item.priority === 'high' ? 'bg-red-100 text-red-700' :
+                          item.priority === 'medium' ? 'bg-yellow-100 text-yellow-700' :
+                          'bg-blue-100 text-blue-700'
+                        }`}
+                      >
+                        {item.priority.toUpperCase()}
+                      </span>
+                    </div>
                   </div>
-                )}
-              </div>
-            </Link>
-          ))}
+                  
+                  {item.actionUrl && (
+                    <div className="flex items-center justify-between pt-3 border-t border-gray-100 group-hover:border-[#A5B99A]/30 transition-colors">
+                      <span className="text-sm font-semibold text-[#A5B99A] group-hover:text-[#93B0C8] transition-colors">
+                        Get Started
+                      </span>
+                      <ArrowRight className="w-4 h-4 text-[#A5B99A] group-hover:text-[#93B0C8] group-hover:translate-x-1 transition-all" />
+                    </div>
+                  )}
+                </div>
+              </Link>
+            ))}
+          </div>
+          {checklist.items.length > 4 && (
+            <div className="mt-4 pt-4 border-t border-gray-200">
+              <Link
+                href="/dashboard"
+                className="flex items-center justify-center space-x-2 text-sm font-semibold text-[#93B0C8] hover:text-[#A5B99A] transition-colors"
+              >
+                <span>View all {checklist.items.length} suggestions</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          )}
         </div>
       )}
 
