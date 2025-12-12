@@ -47,17 +47,27 @@ export default function SwipeCardFlow({ onComplete, onPause }: SwipeCardFlowProp
   const [preferenceChecked, setPreferenceChecked] = useState(false);
   const [showCompletionState, setShowCompletionState] = useState(false);
   const [completedCardTitle, setCompletedCardTitle] = useState<string | undefined>();
+  const isMountedRef = useRef(true);
 
   useEffect(() => {
+    isMountedRef.current = true;
     initializeFlow();
+    
+    return () => {
+      isMountedRef.current = false;
+    };
   }, []);
 
   const initializeFlow = async () => {
+    if (!isMountedRef.current) return;
+    
     try {
       setLoading(true);
       
       // Wait for session to load first - get the session from the hook
       const currentSession = await getOrCreateSession();
+      
+      if (!isMountedRef.current) return;
       
       // Check if returning from a card (from_card=true)
       if (fromCard && cardId) {
@@ -70,7 +80,7 @@ export default function SwipeCardFlow({ onComplete, onPause }: SwipeCardFlowProp
             if (cardRes.ok) {
               const cardData = await cardRes.json();
               const card = cardData.cards?.find((c: Card) => c.id === cardId);
-              if (card) {
+              if (card && isMountedRef.current) {
                 setCompletedCardTitle(card.title);
               }
             }
@@ -79,8 +89,10 @@ export default function SwipeCardFlow({ onComplete, onPause }: SwipeCardFlowProp
           console.error('Error fetching card details:', err);
         }
         
-        setShowCompletionState(true);
-        setLoading(false);
+        if (isMountedRef.current) {
+          setShowCompletionState(true);
+          setLoading(false);
+        }
         return;
       }
 
@@ -88,7 +100,9 @@ export default function SwipeCardFlow({ onComplete, onPause }: SwipeCardFlowProp
       const activeSession = currentSession || session;
       if (activeSession && hasPendingCards()) {
         await loadSessionCards();
-        setLoading(false);
+        if (isMountedRef.current) {
+          setLoading(false);
+        }
         return;
       }
 
@@ -96,12 +110,16 @@ export default function SwipeCardFlow({ onComplete, onPause }: SwipeCardFlowProp
       await checkPreferenceAndFetchCards();
     } catch (error) {
       console.error('Error initializing flow:', error);
-      setError('Failed to initialize');
-      setLoading(false);
+      if (isMountedRef.current) {
+        setError('Failed to initialize');
+        setLoading(false);
+      }
     }
   };
 
   const loadSessionCards = async () => {
+    if (!isMountedRef.current) return;
+    
     const activeSession = session;
     if (!activeSession) {
       console.warn('No session available to load cards');
@@ -110,43 +128,62 @@ export default function SwipeCardFlow({ onComplete, onPause }: SwipeCardFlowProp
 
     try {
       const response = await fetch(`/api/user/cards?session_id=${activeSession.id}`);
+      if (!isMountedRef.current) return;
+      
       if (response.ok) {
         const data = await response.json();
-        setCards(data.cards || []);
-        setCurrentIndex(0);
+        if (isMountedRef.current) {
+          setCards(data.cards || []);
+          setCurrentIndex(0);
+        }
       } else {
         console.error('Failed to load session cards:', response.status);
       }
     } catch (error) {
       console.error('Error loading session cards:', error);
-      setError('Failed to load session cards');
+      if (isMountedRef.current) {
+        setError('Failed to load session cards');
+      }
     }
   };
 
   const checkPreferenceAndFetchCards = async () => {
+    if (!isMountedRef.current) return;
+    
     try {
       // Check if we should show preference prompt
       const prefRes = await fetch('/api/user/cards/preference');
+      if (!isMountedRef.current) return;
+      
       if (prefRes.ok) {
         const prefData = await prefRes.json();
         // Show prompt after 2-3 logins if preference not set
-        if (prefData.login_count >= 2 && prefData.login_count <= 3 && prefData.show_cards === true) {
+        if (isMountedRef.current && prefData.login_count >= 2 && prefData.login_count <= 3 && prefData.show_cards === true) {
           setShowPreferencePrompt(true);
         }
       }
-      setPreferenceChecked(true);
+      if (isMountedRef.current) {
+        setPreferenceChecked(true);
+      }
       await fetchCards();
     } catch (error) {
       console.error('Error checking preference:', error);
+      if (isMountedRef.current) {
+        setPreferenceChecked(true);
+      }
       await fetchCards();
     }
   };
 
   const fetchCards = async () => {
+    if (!isMountedRef.current) return;
+    
     try {
       setLoading(true);
       console.log('Fetching cards from API...');
       const response = await fetch('/api/user/cards');
+      
+      if (!isMountedRef.current) return;
       
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
@@ -160,6 +197,8 @@ export default function SwipeCardFlow({ onComplete, onPause }: SwipeCardFlowProp
       console.log('Fetched cards response:', data);
       console.log('Fetched cards count:', fetchedCards.length);
       console.log('Fetched cards data:', fetchedCards);
+      
+      if (!isMountedRef.current) return;
       
       if (fetchedCards.length === 0) {
         // No cards available, go to dashboard
@@ -177,11 +216,15 @@ export default function SwipeCardFlow({ onComplete, onPause }: SwipeCardFlowProp
         body: JSON.stringify({ card_ids: cardIds }),
       });
 
+      if (!isMountedRef.current) return;
+
       if (sessionRes.ok) {
         const sessionData = await sessionRes.json();
         console.log('Session created successfully:', sessionData);
-        setCards(fetchedCards);
-        setCurrentIndex(0);
+        if (isMountedRef.current) {
+          setCards(fetchedCards);
+          setCurrentIndex(0);
+        }
         // Refresh session hook
         await getOrCreateSession();
       } else {
@@ -189,16 +232,26 @@ export default function SwipeCardFlow({ onComplete, onPause }: SwipeCardFlowProp
         console.error('Failed to create session:', sessionRes.status, errorData);
         // Fallback: use cards without session
         console.log('Using cards without session');
-        setCards(fetchedCards);
-        setCurrentIndex(0);
+        if (isMountedRef.current) {
+          setCards(fetchedCards);
+          setCurrentIndex(0);
+        }
       }
     } catch (err) {
       console.error('Error fetching cards:', err);
-      setError('Failed to load cards');
-      // On error, go to dashboard
-      setTimeout(() => onComplete(), 2000);
+      if (isMountedRef.current) {
+        setError('Failed to load cards');
+        // On error, go to dashboard
+        setTimeout(() => {
+          if (isMountedRef.current) {
+            onComplete();
+          }
+        }, 2000);
+      }
     } finally {
-      setLoading(false);
+      if (isMountedRef.current) {
+        setLoading(false);
+      }
     }
   };
 
