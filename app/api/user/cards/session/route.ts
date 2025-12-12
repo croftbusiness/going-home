@@ -104,12 +104,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Failed to create session items' }, { status: 500 });
     }
 
-    // Update last_shown_at for cards when session is created (cards are being shown)
-    const now = new Date().toISOString();
-    await db
-      .from('user_cards')
-      .update({ last_shown_at: now })
-      .in('id', card_ids);
+    // Don't update last_shown_at here - we'll track card display via session items
+    // This allows users to resume sessions without cards being filtered out
 
     // Fetch created items with card data
     const { data: items } = await db

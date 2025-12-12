@@ -4,16 +4,14 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Heart, Sparkles, ArrowRight, CheckCircle2, User, Users } from 'lucide-react';
+import { Sparkles, ArrowRight, CheckCircle2, User } from 'lucide-react';
 
 interface OnboardingData {
-  preferredName: string;
-  hasFamily: boolean;
-  hasChildren: boolean;
-  primaryGoal: string;
-  legacyMessage?: string;
-  mostImportantValue?: string;
-  favoriteMemory?: string;
+  fullName: string;
+  preferredName?: string;
+  dateOfBirth: string;
+  phoneNumber: string;
+  email?: string;
 }
 
 export default function OnboardingPage() {
@@ -24,13 +22,11 @@ export default function OnboardingPage() {
   const [checking, setChecking] = useState(true);
   const [error, setError] = useState('');
   const [formData, setFormData] = useState<OnboardingData>({
+    fullName: '',
     preferredName: '',
-    hasFamily: false,
-    hasChildren: false,
-    primaryGoal: '',
-    legacyMessage: '',
-    mostImportantValue: '',
-    favoriteMemory: '',
+    dateOfBirth: '',
+    phoneNumber: '',
+    email: '',
   });
 
   useEffect(() => {
@@ -199,10 +195,10 @@ export default function OnboardingPage() {
               <User className="w-8 h-8 text-white" />
             </div>
             <h1 className="text-3xl sm:text-4xl font-bold text-[#2C2A29] mb-2">
-              Let's Get to Know You
+              Basic Profile Information
             </h1>
             <p className="text-[#2C2A29] opacity-70">
-              Help us personalize your experience with a few quick questions
+              Let's start with your basic information
             </p>
           </div>
 
@@ -216,165 +212,78 @@ export default function OnboardingPage() {
 
           {/* Questionnaire Form */}
           <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-xl p-6 sm:p-8 space-y-6">
+            {/* Full Name */}
+            <div>
+              <label className="block text-sm font-semibold text-[#2C2A29] mb-2">
+                Full Legal Name <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                value={formData.fullName}
+                onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                required
+                placeholder="Enter your full legal name"
+                className="w-full px-4 py-3 text-base bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#A5B99A] focus:border-[#A5B99A] transition-all"
+              />
+            </div>
+
             {/* Preferred Name */}
             <div>
               <label className="block text-sm font-semibold text-[#2C2A29] mb-2">
-                What should we call you? <span className="text-red-500">*</span>
+                Preferred Name <span className="text-[#2C2A29] opacity-50 text-xs">(Optional)</span>
               </label>
               <input
                 type="text"
                 value={formData.preferredName}
                 onChange={(e) => setFormData({ ...formData, preferredName: e.target.value })}
-                required
-                placeholder="Your preferred name or nickname"
+                placeholder="What you'd like to be called"
                 className="w-full px-4 py-3 text-base bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#A5B99A] focus:border-[#A5B99A] transition-all"
               />
             </div>
 
-            {/* Family Status */}
-            <div>
-              <label className="block text-sm font-semibold text-[#2C2A29] mb-3">
-                Do you have immediate family? <span className="text-red-500">*</span>
-              </label>
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  type="button"
-                  onClick={() => setFormData({ ...formData, hasFamily: true })}
-                  className={`p-4 rounded-xl border-2 transition-all ${
-                    formData.hasFamily
-                      ? 'border-[#A5B99A] bg-gradient-to-br from-[#A5B99A]/10 to-[#93B0C8]/10'
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                >
-                  <Users className={`w-6 h-6 mx-auto mb-2 ${formData.hasFamily ? 'text-[#A5B99A]' : 'text-gray-400'}`} />
-                  <span className={`text-sm font-medium ${formData.hasFamily ? 'text-[#2C2A29]' : 'text-gray-600'}`}>
-                    Yes
-                  </span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setFormData({ ...formData, hasFamily: false, hasChildren: false })}
-                  className={`p-4 rounded-xl border-2 transition-all ${
-                    !formData.hasFamily
-                      ? 'border-[#A5B99A] bg-gradient-to-br from-[#A5B99A]/10 to-[#93B0C8]/10'
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                >
-                  <User className={`w-6 h-6 mx-auto mb-2 ${!formData.hasFamily ? 'text-[#A5B99A]' : 'text-gray-400'}`} />
-                  <span className={`text-sm font-medium ${!formData.hasFamily ? 'text-[#2C2A29]' : 'text-gray-600'}`}>
-                    No
-                  </span>
-                </button>
-              </div>
-            </div>
-
-            {/* Children */}
-            {formData.hasFamily && (
-              <div className="animate-fadeIn">
-                <label className="block text-sm font-semibold text-[#2C2A29] mb-3">
-                  Do you have children?
-                </label>
-                <div className="grid grid-cols-2 gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setFormData({ ...formData, hasChildren: true })}
-                    className={`p-4 rounded-xl border-2 transition-all ${
-                      formData.hasChildren
-                        ? 'border-[#A5B99A] bg-gradient-to-br from-[#A5B99A]/10 to-[#93B0C8]/10'
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
-                  >
-                    <span className={`text-sm font-medium ${formData.hasChildren ? 'text-[#2C2A29]' : 'text-gray-600'}`}>
-                      Yes
-                    </span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setFormData({ ...formData, hasChildren: false })}
-                    className={`p-4 rounded-xl border-2 transition-all ${
-                      !formData.hasChildren
-                        ? 'border-[#A5B99A] bg-gradient-to-br from-[#A5B99A]/10 to-[#93B0C8]/10'
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
-                  >
-                    <span className={`text-sm font-medium ${!formData.hasChildren ? 'text-[#2C2A29]' : 'text-gray-600'}`}>
-                      No
-                    </span>
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* Primary Goal */}
+            {/* Date of Birth */}
             <div>
               <label className="block text-sm font-semibold text-[#2C2A29] mb-2">
-                What's your main goal with Going Home? <span className="text-red-500">*</span>
-              </label>
-              <select
-                value={formData.primaryGoal}
-                onChange={(e) => setFormData({ ...formData, primaryGoal: e.target.value })}
-                required
-                className="w-full px-4 py-3 text-base bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#A5B99A] focus:border-[#A5B99A] transition-all"
-              >
-                <option value="">Select your main goal...</option>
-                <option value="organize_documents">Organize important documents</option>
-                <option value="legacy_messages">Leave messages for loved ones</option>
-                <option value="funeral_planning">Plan funeral preferences</option>
-                <option value="financial_planning">Organize financial information</option>
-                <option value="peace_of_mind">Peace of mind for my family</option>
-                <option value="other">Other</option>
-              </select>
-            </div>
-
-            {/* Legacy Message */}
-            <div className="border-t border-gray-200 pt-6">
-              <label className="block text-sm font-semibold text-[#2C2A29] mb-2">
-                <Heart className="w-4 h-4 inline mr-2 text-[#A5B99A]" />
-                What's one thing you want your loved ones to always remember about you?
-              </label>
-              <textarea
-                value={formData.legacyMessage}
-                onChange={(e) => setFormData({ ...formData, legacyMessage: e.target.value })}
-                placeholder="Share something meaningful - a value, a memory, or words of wisdom..."
-                rows={4}
-                className="w-full px-4 py-3 text-base bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#A5B99A] focus:border-[#A5B99A] transition-all resize-none"
-              />
-              <p className="text-xs text-[#2C2A29] opacity-60 mt-1">
-                This will help us personalize your experience and create meaningful content for you.
-              </p>
-            </div>
-
-            {/* Most Important Value */}
-            <div>
-              <label className="block text-sm font-semibold text-[#2C2A29] mb-2">
-                What matters most to you in life?
+                Date of Birth <span className="text-red-500">*</span>
               </label>
               <input
-                type="text"
-                value={formData.mostImportantValue}
-                onChange={(e) => setFormData({ ...formData, mostImportantValue: e.target.value })}
-                placeholder="e.g., Family, Faith, Helping Others, Creativity..."
+                type="date"
+                value={formData.dateOfBirth}
+                onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value })}
+                required
+                className="w-full px-4 py-3 text-base bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#A5B99A] focus:border-[#A5B99A] transition-all"
+              />
+            </div>
+
+            {/* Phone Number */}
+            <div>
+              <label className="block text-sm font-semibold text-[#2C2A29] mb-2">
+                Primary Phone Number <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="tel"
+                value={formData.phoneNumber}
+                onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
+                required
+                placeholder="(555) 123-4567"
+                className="w-full px-4 py-3 text-base bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#A5B99A] focus:border-[#A5B99A] transition-all"
+              />
+            </div>
+
+            {/* Email */}
+            <div>
+              <label className="block text-sm font-semibold text-[#2C2A29] mb-2">
+                Email Address <span className="text-[#2C2A29] opacity-50 text-xs">(Optional)</span>
+              </label>
+              <input
+                type="email"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                placeholder="your.email@example.com"
                 className="w-full px-4 py-3 text-base bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#A5B99A] focus:border-[#A5B99A] transition-all"
               />
               <p className="text-xs text-[#2C2A29] opacity-60 mt-1">
-                This helps us understand what's truly important to you.
-              </p>
-            </div>
-
-            {/* Favorite Memory */}
-            <div>
-              <label className="block text-sm font-semibold text-[#2C2A29] mb-2">
-                Share a favorite memory you'd want to preserve (optional)
-              </label>
-              <textarea
-                value={formData.favoriteMemory}
-                onChange={(e) => setFormData({ ...formData, favoriteMemory: e.target.value })}
-                placeholder="A moment with family, an accomplishment, a simple joy..."
-                rows={3}
-                className="w-full px-4 py-3 text-base bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#A5B99A] focus:border-[#A5B99A] transition-all resize-none"
-              />
-              <p className="text-xs text-[#2C2A29] opacity-60 mt-1">
-                These memories help create a richer legacy for your loved ones.
+                Your account email is already on file. You can add a different email here if needed.
               </p>
             </div>
 

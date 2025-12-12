@@ -134,6 +134,7 @@ export default function SwipeCardFlow({ onComplete, onPause }: SwipeCardFlowProp
   const fetchCards = async () => {
     try {
       setLoading(true);
+      console.log('Fetching cards from API...');
       const response = await fetch('/api/user/cards');
       
       if (!response.ok) {
@@ -145,7 +146,9 @@ export default function SwipeCardFlow({ onComplete, onPause }: SwipeCardFlowProp
       const data = await response.json();
       const fetchedCards = data.cards || [];
       
-      console.log('Fetched cards:', fetchedCards.length, fetchedCards);
+      console.log('Fetched cards response:', data);
+      console.log('Fetched cards count:', fetchedCards.length);
+      console.log('Fetched cards data:', fetchedCards);
       
       if (fetchedCards.length === 0) {
         // No cards available, go to dashboard
@@ -155,6 +158,7 @@ export default function SwipeCardFlow({ onComplete, onPause }: SwipeCardFlowProp
       }
 
       // Create session with these cards
+      console.log('Creating session with cards:', fetchedCards.map((c: Card) => c.id));
       const cardIds = fetchedCards.map((card: Card) => card.id);
       const sessionRes = await fetch('/api/user/cards/session', {
         method: 'POST',
@@ -164,12 +168,18 @@ export default function SwipeCardFlow({ onComplete, onPause }: SwipeCardFlowProp
 
       if (sessionRes.ok) {
         const sessionData = await sessionRes.json();
+        console.log('Session created successfully:', sessionData);
         setCards(fetchedCards);
+        setCurrentIndex(0);
         // Refresh session hook
         await getOrCreateSession();
       } else {
+        const errorData = await sessionRes.json().catch(() => ({}));
+        console.error('Failed to create session:', sessionRes.status, errorData);
         // Fallback: use cards without session
+        console.log('Using cards without session');
         setCards(fetchedCards);
+        setCurrentIndex(0);
       }
     } catch (err) {
       console.error('Error fetching cards:', err);
@@ -334,7 +344,7 @@ export default function SwipeCardFlow({ onComplete, onPause }: SwipeCardFlowProp
 
   if (loading || sessionLoading || !preferenceChecked) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="fixed inset-0 flex items-center justify-center bg-gray-50" style={{ top: 0, left: 0, right: 0, bottom: 0 }}>
         <div className="text-center">
           <Loader2 className="w-8 h-8 animate-spin text-[#1DB954] mx-auto mb-4" />
           <p className="text-gray-600">Loading your cards...</p>
@@ -365,7 +375,7 @@ export default function SwipeCardFlow({ onComplete, onPause }: SwipeCardFlowProp
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="fixed inset-0 flex items-center justify-center bg-gray-50" style={{ top: 0, left: 0, right: 0, bottom: 0 }}>
         <div className="text-center">
           <p className="text-red-600 mb-4">{error}</p>
           <button
@@ -379,13 +389,31 @@ export default function SwipeCardFlow({ onComplete, onPause }: SwipeCardFlowProp
     );
   }
 
-  if (cards.length === 0) {
-    return null; // Will redirect via onComplete
+  // Redirect to dashboard if no cards after everything is loaded
+  useEffect(() => {
+    if (cards.length === 0 && !loading && preferenceChecked && !showPreferencePrompt && !showCompletionState && !error) {
+      console.log('No cards available, redirecting to dashboard');
+      const timer = setTimeout(() => {
+        onComplete();
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [cards.length, loading, preferenceChecked, showPreferencePrompt, showCompletionState, error]);
+
+  if (cards.length === 0 && !loading && preferenceChecked && !showPreferencePrompt && !showCompletionState) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-gray-50" style={{ top: 0, left: 0, right: 0, bottom: 0 }}>
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 animate-spin text-[#1DB954] mx-auto mb-4" />
+          <p className="text-gray-600">Redirecting to dashboard...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
-      <div className="w-full max-w-sm relative" style={{ height: '480px' }}>
+    <div className="fixed inset-0 bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4 overflow-hidden" style={{ top: 0, left: 0, right: 0, bottom: 0 }}>
+      <div className="w-full max-w-sm relative" style={{ height: '480px', maxHeight: '85vh' }}>
         {cards.map((card, index) => (
           <SwipeCard
             key={card.id}

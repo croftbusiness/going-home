@@ -27,25 +27,34 @@ export async function POST(request: Request) {
 
     const personalDetailsData: any = {
       user_id: auth.userId,
-      preferred_name: body.preferredName,
-      full_name: body.preferredName || 'User', // Use preferred name as full name initially
-      date_of_birth: '1900-01-01', // Placeholder date, user can update later
-      address: 'To be completed', // Placeholder, user can update later
-      city: 'To be completed',
-      state: 'To be completed',
-      zip_code: '00000',
-      phone: '000-000-0000', // Placeholder
-      email: userData?.email || '', // Use actual user email
-      emergency_contact_name: 'To be completed', // User can add this later in their profile
-      emergency_contact_phone: '000-000-0000',
-      emergency_contact_relationship: 'To be completed',
+      full_name: body.fullName || 'User',
+      preferred_name: body.preferredName || null,
+      date_of_birth: body.dateOfBirth || null,
+      phone: body.phoneNumber || null,
+      email: body.email || userData?.email || null,
+      // Set placeholder values for required fields that aren't collected in onboarding
+      address: '',
+      city: '',
+      state: '',
+      zip_code: '',
+      emergency_contact_name: '',
+      emergency_contact_phone: '',
+      emergency_contact_relationship: '',
     };
 
     if (existingDetails) {
-      // Update existing record - only update the fields we have from onboarding
+      // Update existing record with onboarding data
       const updateData: any = {
+        full_name: body.fullName || undefined,
         preferred_name: body.preferredName || undefined,
+        date_of_birth: body.dateOfBirth || undefined,
+        phone: body.phoneNumber || undefined,
       };
+      
+      // Only update email if provided
+      if (body.email) {
+        updateData.email = body.email;
+      }
 
       const { error } = await supabase
         .from('personal_details')
@@ -57,7 +66,7 @@ export async function POST(request: Request) {
         throw error;
       }
     } else {
-      // Create new record with all required fields
+      // Create new record with onboarding data
       const { error } = await supabase
         .from('personal_details')
         .insert(personalDetailsData);
@@ -65,43 +74,6 @@ export async function POST(request: Request) {
       if (error) {
         console.error('Error creating personal_details:', error);
         throw error;
-      }
-    }
-
-    // Optionally save emotional responses to personal_biography if provided
-    if (body.legacyMessage || body.favoriteMemory || body.mostImportantValue) {
-      const { data: existingBiography } = await supabase
-        .from('personal_biography')
-        .select('id')
-        .eq('user_id', auth.userId)
-        .maybeSingle();
-
-      const biographyData: any = {
-        user_id: auth.userId,
-      };
-
-      // Save onboarding responses to appropriate fields
-      if (body.legacyMessage) {
-        biographyData.lessons_learned = body.legacyMessage;
-      }
-      if (body.favoriteMemory) {
-        biographyData.favorite_memories = body.favoriteMemory;
-      }
-      if (body.mostImportantValue) {
-        biographyData.life_story = body.mostImportantValue;
-      }
-
-      if (existingBiography) {
-        // Update existing biography with onboarding data
-        await supabase
-          .from('personal_biography')
-          .update(biographyData)
-          .eq('id', existingBiography.id);
-      } else {
-        // Create new biography record
-        await supabase
-          .from('personal_biography')
-          .insert(biographyData);
       }
     }
 

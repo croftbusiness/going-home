@@ -90,6 +90,11 @@ export async function GET(request: Request) {
     // Filter and select cards based on logic
     const selectedCards = selectCards(availableCards, incompleteSections, userPrefs?.login_count || 0);
 
+    // Add debug logging
+    console.log('Available cards:', availableCards.length);
+    console.log('Selected cards:', selectedCards.length);
+    console.log('Incomplete sections:', incompleteSections);
+
     // Don't update last_shown_at here - it should be updated when cards are actually shown/displayed
     // This prevents cards from being filtered out before they're actually shown to the user
 
@@ -242,6 +247,8 @@ function selectCards(
   const maxCards = 7;
 
   // Sort by priority and filter
+  // Note: We're NOT filtering by last_shown_at here because cards might be shown in a session
+  // that was never completed. Instead, we'll rely on session-based tracking.
   const sortedCards = availableCards
     .filter(card => {
       // Don't show if snoozed
@@ -249,14 +256,8 @@ function selectCards(
         return false;
       }
       
-      // Don't show if shown recently (within last 24 hours)
-      if (card.last_shown_at) {
-        const lastShown = new Date(card.last_shown_at);
-        const hoursSinceShown = (Date.now() - lastShown.getTime()) / (1000 * 60 * 60);
-        if (hoursSinceShown < 24) {
-          return false;
-        }
-      }
+      // Removed last_shown_at filter - cards should be available if they're in an active session
+      // or if they haven't been shown in a completed session
 
       return true;
     })

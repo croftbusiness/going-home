@@ -29,7 +29,7 @@ function CardsPageContent() {
 export default function CardsPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="fixed inset-0 flex items-center justify-center bg-gray-50" style={{ top: 0, left: 0, right: 0, bottom: 0 }}>
         <div className="text-center">
           <Loader2 className="w-8 h-8 animate-spin text-[#1DB954] mx-auto mb-4" />
           <p className="text-gray-600">Loading cards...</p>
