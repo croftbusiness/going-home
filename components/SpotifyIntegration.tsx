@@ -68,11 +68,24 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
     try {
       const response = await fetch('/api/spotify/auth?action=authorize');
       const data = await response.json();
+      
+      if (!response.ok) {
+        if (data.error) {
+          alert(`Spotify connection error: ${data.error}\n\n${data.details || 'Please check your Spotify app configuration.'}`);
+        } else {
+          alert('Failed to connect to Spotify. Please try again.');
+        }
+        return;
+      }
+      
       if (data.authUrl) {
         window.location.href = data.authUrl;
+      } else {
+        alert('Failed to get Spotify authorization URL. Please try again.');
       }
     } catch (error) {
       console.error('Failed to connect to Spotify:', error);
+      alert('Failed to connect to Spotify. Please check your internet connection and try again.');
     }
   };
 

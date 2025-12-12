@@ -28,6 +28,43 @@ export default function FuneralPreferencesPage() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const [showAIGenerator, setShowAIGenerator] = useState(false);
+  
+  // Check for Spotify connection status from URL params
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const spotifyError = params.get('spotify_error');
+    const spotifyConnected = params.get('spotify_connected');
+    
+    if (spotifyError) {
+      let errorMessage = 'Spotify connection failed. ';
+      switch (spotifyError) {
+        case 'invalid_client':
+          errorMessage += 'Invalid Spotify app credentials. Please check your SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET environment variables, and ensure the redirect URI matches your Spotify app settings.';
+          break;
+        case 'not_configured':
+          errorMessage += 'Spotify integration is not configured. Please contact support.';
+          break;
+        case 'missing_params':
+          errorMessage += 'Missing required parameters. Please try again.';
+          break;
+        case 'connection_failed':
+          errorMessage += 'Could not complete connection. Please try again.';
+          break;
+        default:
+          errorMessage += `Error: ${spotifyError}`;
+      }
+      setError(errorMessage);
+      // Clean up URL
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+    
+    if (spotifyConnected) {
+      setSuccess(true);
+      setTimeout(() => setSuccess(false), 5000);
+      // Clean up URL
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  }, []);
   const [formData, setFormData] = useState<FuneralPreferences>({
     burialOrCremation: '',
     funeralHome: '',

@@ -12,6 +12,18 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: auth.error }, { status: auth.status });
     }
 
+    // Validate Spotify credentials
+    if (!SPOTIFY_CLIENT_ID || !SPOTIFY_CLIENT_SECRET) {
+      console.error('Spotify credentials missing:', {
+        hasClientId: !!SPOTIFY_CLIENT_ID,
+        hasClientSecret: !!SPOTIFY_CLIENT_SECRET,
+      });
+      return NextResponse.json({ 
+        error: 'Spotify integration is not configured. Please contact support or check your environment variables.',
+        details: 'SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET must be set in environment variables'
+      }, { status: 503 });
+    }
+
     const { searchParams } = new URL(request.url);
     const action = searchParams.get('action');
 

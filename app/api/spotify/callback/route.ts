@@ -20,6 +20,12 @@ export async function GET(request: Request) {
       return NextResponse.redirect(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/dashboard/funeral-preferences?spotify_error=missing_params`);
     }
 
+    // Validate credentials
+    if (!SPOTIFY_CLIENT_ID || !SPOTIFY_CLIENT_SECRET) {
+      console.error('Spotify credentials missing in callback');
+      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/dashboard/funeral-preferences?spotify_error=not_configured`);
+    }
+
     // Exchange code for access token
     const tokenResponse = await fetch('https://accounts.spotify.com/api/token', {
       method: 'POST',
@@ -35,7 +41,21 @@ export async function GET(request: Request) {
     });
 
     if (!tokenResponse.ok) {
-      throw new Error('Failed to exchange code for token');
+      const errorData = await tokenResponse.json().catch(() => ({}));
+      console.error('Spotify token exchange error:', {
+        status: tokenResponse.status,
+        statusText: tokenResponse.statusText,
+        error: errorData,
+        redirectUri: SPOTIFY_REDIRECT_URI,
+        hasClientId: !!SPOTIFY_CLIENT_ID,
+      });
+      
+      // Provide more specific error messages
+      if (tokenResponse.status === 400 && errorData.error === 'invalid_client') {
+        return NextResponse.redirect(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/dashboard/funeral-preferences?spotify_error=invalid_client`);
+      }
+      
+      throw new Error(`Failed to exchange code for token: ${errorData.error || tokenResponse.statusText}`);
     }
 
     const tokenData = await tokenResponse.json();
