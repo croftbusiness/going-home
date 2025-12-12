@@ -212,29 +212,6 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
     }
   };
 
-  const isValidTrack = (track: any): track is Track => {
-    if (!track || typeof track !== 'object') return false;
-    
-    // Check if it's an error object - Spotify error objects have {title, artist, reason, duration}
-    // If it has 'reason', it's definitely an error object
-    if ('reason' in track) return false;
-    // If it has 'title' but no 'id', it's likely an error object
-    if ('title' in track && !('id' in track)) return false;
-    // If it has both 'reason' and 'duration' but no 'id', it's an error
-    if ('reason' in track && 'duration' in track && !('id' in track)) return false;
-    
-    // Must have required properties for a valid track
-    if (!track.id || !track.name || !track.artist) return false;
-    
-    // Ensure name and artist are strings (not objects)
-    if (typeof track.name !== 'string' || typeof track.artist !== 'string') return false;
-    
-    // Ensure id is a string (not an object)
-    if (typeof track.id !== 'string') return false;
-    
-    return true;
-  };
-
   const handleSelectTrack = async (track: Track) => {
     if (!isValidTrack(track)) {
       console.error('Invalid track selected:', track);
