@@ -68,7 +68,22 @@ function PlaylistPageContent() {
         if (!mountedRef.current) return;
         
         if (data.playlist && data.playlist.songs && Array.isArray(data.playlist.songs)) {
-          setSongs(data.playlist.songs);
+          // Ensure all songs are strings - filter out any objects or invalid values
+          const validSongs = data.playlist.songs
+            .map((song: any) => {
+              // If it's already a string, use it
+              if (typeof song === 'string' && song.trim()) {
+                return song.trim();
+              }
+              // If it's an object with name and artist, convert to string
+              if (song && typeof song === 'object' && song.name && song.artist) {
+                return `${String(song.name)} - ${String(song.artist)}`;
+              }
+              // Skip invalid entries
+              return null;
+            })
+            .filter((song: string | null): song is string => song !== null && typeof song === 'string');
+          setSongs(validSongs);
         } else {
           // Fallback: Load from saved_songs if no playlist exists
           try {
@@ -86,12 +101,17 @@ function PlaylistPageContent() {
               if (!mountedRef.current) return;
               
               if (savedData.songs && Array.isArray(savedData.songs)) {
-                const songStrings = savedData.songs.map((song: any) => {
-                  if (song && typeof song === 'object' && song.name && song.artist) {
-                    return `${song.name} - ${song.artist}`;
-                  }
-                  return null;
-                }).filter((str: string | null) => str !== null) as string[];
+                const songStrings = savedData.songs
+                  .map((song: any) => {
+                    // Ensure we only create strings from valid song objects
+                    if (song && typeof song === 'object' && song.name && song.artist) {
+                      const name = typeof song.name === 'string' ? song.name : String(song.name || 'Unknown');
+                      const artist = typeof song.artist === 'string' ? song.artist : String(song.artist || 'Unknown');
+                      return `${name} - ${artist}`;
+                    }
+                    return null;
+                  })
+                  .filter((str: string | null): str is string => str !== null && typeof str === 'string');
                 setSongs(songStrings);
               }
             }
@@ -264,7 +284,24 @@ function PlaylistPageContent() {
                     onSongsChange={(newSongs) => {
                       try {
                         if (mounted && Array.isArray(newSongs)) {
-                          setSongs(newSongs);
+                          // Ensure all songs are strings - never allow objects
+                          const validSongs = newSongs
+                            .map((song: any) => {
+                              if (typeof song === 'string' && song.trim()) {
+                                return song.trim();
+                              }
+                              // If it's an object, convert to string
+                              if (song && typeof song === 'object') {
+                                if (song.name && song.artist) {
+                                  return `${String(song.name)} - ${String(song.artist)}`;
+                                }
+                                // Skip error objects or invalid objects
+                                return null;
+                              }
+                              return null;
+                            })
+                            .filter((song: string | null): song is string => song !== null && typeof song === 'string');
+                          setSongs(validSongs);
                         }
                       } catch (error) {
                         console.error('Error updating songs:', error);
@@ -335,20 +372,24 @@ function PlaylistPageContent() {
                 </div>
                 {songs.length > 0 && (
                   <div className="flex flex-wrap gap-2 mt-4">
-                    {songs.map((song, idx) => (
-                      <span
-                        key={idx}
-                        className="inline-flex items-center px-3 py-1 bg-[#A5B99A] bg-opacity-10 text-[#2C2A29] rounded-full text-sm"
-                      >
-                        {song}
-                        <button
-                          onClick={() => handleRemoveSong(idx)}
-                          className="ml-2 hover:text-red-600 touch-target"
+                    {songs.map((song, idx) => {
+                      // Double-check that song is a string before rendering
+                      const songString = typeof song === 'string' ? song : String(song || 'Unknown');
+                      return (
+                        <span
+                          key={idx}
+                          className="inline-flex items-center px-3 py-1 bg-[#A5B99A] bg-opacity-10 text-[#2C2A29] rounded-full text-sm"
                         >
-                          <X className="w-3 h-3" />
-                        </button>
-                      </span>
-                    ))}
+                          {songString}
+                          <button
+                            onClick={() => handleRemoveSong(idx)}
+                            className="ml-2 hover:text-red-600 touch-target"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </span>
+                      );
+                    })}
                   </div>
                 )}
               </div>
@@ -380,17 +421,21 @@ function PlaylistPageContent() {
           <div className="bg-white rounded-xl p-4 sm:p-6 lg:p-8 shadow-sm border border-gray-200">
             <h3 className="text-lg font-semibold text-[#2C2A29] mb-4">Your Playlist ({songs.length} songs)</h3>
             <div className="space-y-2">
-              {songs.map((song, idx) => (
-                <div key={idx} className="p-3 bg-gray-50 rounded-lg flex items-center justify-between">
-                  <span className="text-[#2C2A29]">{song}</span>
-                  <button
-                    onClick={() => handleRemoveSong(idx)}
-                    className="text-red-600 hover:text-red-800 touch-target"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
-              ))}
+              {songs.map((song, idx) => {
+                  // Double-check that song is a string before rendering
+                  const songString = typeof song === 'string' ? song : String(song || 'Unknown');
+                  return (
+                    <div key={idx} className="p-3 bg-gray-50 rounded-lg flex items-center justify-between">
+                      <span className="text-[#2C2A29]">{songString}</span>
+                      <button
+                        onClick={() => handleRemoveSong(idx)}
+                        className="text-red-600 hover:text-red-800 touch-target"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  );
+                })}
             </div>
           </div>
         )}

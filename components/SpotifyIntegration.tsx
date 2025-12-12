@@ -30,10 +30,38 @@ interface SpotifyIntegrationProps {
   selectedSongs: string[];
   onSongsChange: (songs: string[]) => void;
   maxSongs?: number;
-  onTrackSave?: (track: Track) => void; // Optional callback to save full track data
+  onTrackSave?: (track: Track) => void;
 }
 
-export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSongs = 3, onTrackSave }: SpotifyIntegrationProps) {
+// Helper function to safely convert track to string
+const trackToString = (track: any): string | null => {
+  if (!track || typeof track !== 'object') return null;
+  
+  // Check if it's an error object (has reason property)
+  if ('reason' in track) return null;
+  
+  // Must have name and artist
+  if (!track.name || !track.artist) return null;
+  
+  // Ensure name and artist are strings
+  const name = typeof track.name === 'string' ? track.name : String(track.name || '');
+  const artist = typeof track.artist === 'string' ? track.artist : String(track.artist || '');
+  
+  if (!name || !artist) return null;
+  
+  return `${name} - ${artist}`;
+};
+
+// Helper to validate track object
+const isValidTrack = (track: any): track is Track => {
+  if (!track || typeof track !== 'object') return false;
+  if ('reason' in track) return false; // Error object
+  if (!track.id || !track.name || !track.artist) return false;
+  if (typeof track.id !== 'string' || typeof track.name !== 'string' || typeof track.artist !== 'string') return false;
+  return true;
+};
+
+export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSongs = 100, onTrackSave }: SpotifyIntegrationProps) {
   const [isConnected, setIsConnected] = useState(false);
   const [loading, setLoading] = useState(true);
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
@@ -46,38 +74,9 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
   const [playingTrackId, setPlayingTrackId] = useState<string | null>(null);
   const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(null);
 
-  // Type guard to validate tracks and filter out error objects
-  // MUST be defined before it's used in computed values
-  const isValidTrack = (track: any): track is Track => {
-    if (!track || typeof track !== 'object') return false;
-    
-    // Check if it's an error object - Spotify error objects have {title, artist, reason, duration}
-    // If it has 'reason', it's definitely an error object
-    if ('reason' in track) return false;
-    // If it has 'title' but no 'id', it's likely an error object
-    if ('title' in track && !('id' in track)) return false;
-    // If it has both 'reason' and 'duration' but no 'id', it's an error
-    if ('reason' in track && 'duration' in track && !('id' in track)) return false;
-    
-    // Must have required properties for a valid track
-    if (!track.id || !track.name || !track.artist) return false;
-    
-    // Ensure name and artist are strings (not objects)
-    if (typeof track.name !== 'string' || typeof track.artist !== 'string') return false;
-    
-    // Ensure id is a string (not an object)
-    if (typeof track.id !== 'string') return false;
-    
-    return true;
-  };
-
   useEffect(() => {
     checkConnection();
   }, []);
-
-  // Memoize filtered tracks to ensure we never render invalid ones
-  const safePlaylistTracks = playlistTracks.filter(isValidTrack);
-  const safeSearchResults = searchResults.filter(isValidTrack);
 
   const checkConnection = async () => {
     try {
@@ -87,24 +86,17 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
         setIsConnected(true);
         setPlaylists(data.playlists || []);
       } else {
-        // Only set disconnected if it's not an auth error (401)
-        // Auth errors might be temporary session issues, don't treat as disconnected
         if (response.status === 401) {
-          // Check if it's an auth error (user not logged in) vs not connected to Spotify
           const data = await response.json().catch(() => ({}));
           if (data.error === 'Not connected to Spotify') {
             setIsConnected(false);
           }
-          // If it's a session/auth error, don't change connection state
-          // This prevents redirects when session is temporarily unavailable
         } else {
           setIsConnected(false);
         }
       }
     } catch (error) {
-      // Network errors shouldn't change connection state
       console.error('Error checking Spotify connection:', error);
-      // Don't set isConnected to false on network errors
     } finally {
       setLoading(false);
     }
@@ -112,7 +104,6 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
 
   const handleConnect = async () => {
     try {
-      // Get current page URL to return to after auth
       const returnUrl = window.location.pathname + window.location.search;
       const response = await fetch(`/api/spotify/auth?action=authorize&returnUrl=${encodeURIComponent(returnUrl)}`);
       const data = await response.json();
@@ -144,34 +135,31 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
       const response = await fetch(`/api/spotify/playlist-tracks?playlistId=${playlistId}`);
       if (response.ok) {
         const data = await response.json();
-        // Ensure tracks is an array and filter out any invalid items
+        // Filter and validate all tracks
         const validTracks = (data.tracks || [])
-          .filter((track: any) => isValidTrack(track))
+          .filter(isValidTrack)
           .map((track: any) => ({
-            ...track,
-            // Ensure all string properties are actually strings
+            id: String(track.id),
             name: String(track.name || 'Unknown'),
             artist: String(track.artist || 'Unknown Artist'),
-            id: String(track.id),
+            album: track.album ? String(track.album) : undefined,
+            preview_url: track.preview_url ? String(track.preview_url) : undefined,
+            external_urls: track.external_urls || undefined,
+            album_art_url: track.album_art_url ? String(track.album_art_url) : undefined,
+            duration_ms: typeof track.duration_ms === 'number' ? track.duration_ms : undefined,
           }));
         setPlaylistTracks(validTracks);
       } else if (response.status === 401) {
-        // Handle auth errors gracefully without redirecting
         const data = await response.json().catch(() => ({}));
         console.error('Authentication error:', data.error || 'Unauthorized');
-        // Clear tracks on error
         setPlaylistTracks([]);
-        // Don't redirect, just show error state
         setIsConnected(false);
       } else {
-        // Clear tracks on other errors
         setPlaylistTracks([]);
       }
     } catch (error) {
       console.error('Failed to load playlist tracks:', error);
-      // Clear tracks on error
       setPlaylistTracks([]);
-      // Don't redirect on network errors
     } finally {
       setLoading(false);
     }
@@ -185,33 +173,31 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
       const response = await fetch(`/api/spotify/search?q=${encodeURIComponent(searchQuery)}`);
       if (response.ok) {
         const data = await response.json();
-        // Ensure tracks is an array and filter out any invalid items
+        // Filter and validate all tracks
         const validTracks = (data.tracks || [])
-          .filter((track: any) => isValidTrack(track))
+          .filter(isValidTrack)
           .map((track: any) => ({
-            ...track,
-            // Ensure all string properties are actually strings
+            id: String(track.id),
             name: String(track.name || 'Unknown'),
             artist: String(track.artist || 'Unknown Artist'),
-            id: String(track.id),
+            album: track.album ? String(track.album) : undefined,
+            preview_url: track.preview_url ? String(track.preview_url) : undefined,
+            external_urls: track.external_urls || undefined,
+            album_art_url: track.album_art_url ? String(track.album_art_url) : undefined,
+            duration_ms: typeof track.duration_ms === 'number' ? track.duration_ms : undefined,
           }));
         setSearchResults(validTracks);
       } else if (response.status === 401) {
-        // Handle auth errors gracefully without redirecting
         const data = await response.json().catch(() => ({}));
         console.error('Authentication error:', data.error || 'Unauthorized');
-        // Clear results on error
         setSearchResults([]);
         setIsConnected(false);
       } else {
-        // Clear results on other errors
         setSearchResults([]);
       }
     } catch (error) {
       console.error('Search failed:', error);
-      // Clear results on error
       setSearchResults([]);
-      // Don't redirect on network errors
     } finally {
       setSearching(false);
     }
@@ -219,18 +205,25 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
 
   const handleSelectTrack = async (track: Track) => {
     if (!isValidTrack(track)) {
-      console.error('Invalid track selected:', track);
+      console.error('Invalid track selected');
       return;
     }
     
-    const songString = `${track.name} - ${track.artist}`;
+    const songString = trackToString(track);
+    if (!songString) {
+      console.error('Could not convert track to string');
+      return;
+    }
+    
     if (selectedSongs.includes(songString)) {
       // Remove if already selected
-      onSongsChange(selectedSongs.filter(s => s !== songString));
+      const newSongs = selectedSongs.filter(s => s !== songString);
+      onSongsChange(newSongs);
     } else {
       // Add if not at max
       if (selectedSongs.length < maxSongs) {
-        onSongsChange([...selectedSongs, songString]);
+        const newSongs = [...selectedSongs, songString];
+        onSongsChange(newSongs);
         // Save full track data if callback provided
         if (onTrackSave) {
           onTrackSave(track);
@@ -241,22 +234,20 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
 
   const isTrackSelected = (track: Track) => {
     if (!isValidTrack(track)) return false;
-    const songString = `${track.name} - ${track.artist}`;
-    return selectedSongs.includes(songString);
+    const songString = trackToString(track);
+    return songString ? selectedSongs.includes(songString) : false;
   };
 
   const handlePlayPreview = (track: Track) => {
-    // Stop any currently playing track
     if (audioElement) {
       audioElement.pause();
       audioElement.currentTime = 0;
     }
 
     if (!track.preview_url) {
-      return; // No preview available
+      return;
     }
 
-    // If clicking the same track, stop it
     if (playingTrackId === track.id && audioElement) {
       setPlayingTrackId(null);
       audioElement.pause();
@@ -265,26 +256,22 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
       return;
     }
 
-    // Play new track
     const audio = new Audio(track.preview_url);
     audio.play();
     setAudioElement(audio);
     setPlayingTrackId(track.id);
 
-    // Clean up when track ends
     audio.addEventListener('ended', () => {
       setPlayingTrackId(null);
       setAudioElement(null);
     });
 
-    // Clean up on error
     audio.addEventListener('error', () => {
       setPlayingTrackId(null);
       setAudioElement(null);
     });
   };
 
-  // Cleanup audio on unmount
   useEffect(() => {
     return () => {
       if (audioElement) {
@@ -382,7 +369,7 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
                 >
-                  <div className="font-medium text-[#2C2A29]">{playlist.name}</div>
+                  <div className="font-medium text-[#2C2A29]">{String(playlist.name || 'Unknown Playlist')}</div>
                   {playlist.tracks && (
                     <div className="text-xs text-gray-500 mt-1">
                       {playlist.tracks.total} tracks
@@ -394,7 +381,7 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
           )}
 
           {/* Playlist Tracks */}
-          {selectedPlaylist && safePlaylistTracks.length > 0 && (
+          {selectedPlaylist && playlistTracks.length > 0 && (
             <div className="mt-4 pt-4 border-t border-gray-200">
               <div className="flex items-center justify-between mb-3">
                 <div className="text-sm font-medium text-[#2C2A29]">Select songs:</div>
@@ -404,67 +391,66 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
                 </div>
               </div>
               <div className="space-y-2 max-h-64 overflow-y-auto">
-                {safePlaylistTracks.map((track) => {
-                  // Double-check validity before rendering
+                {playlistTracks.map((track) => {
                   if (!isValidTrack(track)) return null;
                   return (
                     <button
                       key={track.id}
                       onClick={() => handleSelectTrack(track)}
-                    className={`w-full text-left p-3 rounded-lg border transition-colors ${
-                      isTrackSelected(track)
-                        ? 'border-[#A5B99A] bg-[#A5B99A]/10'
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex-1 min-w-0">
-                        <div className="font-medium text-[#2C2A29] truncate">
-                          {typeof track.name === 'string' ? track.name : 'Unknown'}
+                      className={`w-full text-left p-3 rounded-lg border transition-colors ${
+                        isTrackSelected(track)
+                          ? 'border-[#A5B99A] bg-[#A5B99A]/10'
+                          : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1 min-w-0">
+                          <div className="font-medium text-[#2C2A29] truncate">
+                            {String(track.name || 'Unknown')}
+                          </div>
+                          <div className="text-sm text-gray-500 truncate">
+                            {String(track.artist || 'Unknown Artist')}
+                          </div>
                         </div>
-                        <div className="text-sm text-gray-500 truncate">
-                          {typeof track.artist === 'string' ? track.artist : 'Unknown Artist'}
+                        <div className="flex items-center space-x-2 ml-2">
+                          {track.preview_url && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handlePlayPreview(track);
+                              }}
+                              className={`p-2 rounded-full transition-colors ${
+                                playingTrackId === track.id
+                                  ? 'bg-[#1DB954] text-white'
+                                  : 'text-[#1DB954] hover:bg-[#1DB954]/10'
+                              }`}
+                              title={playingTrackId === track.id ? 'Stop preview' : 'Play preview'}
+                            >
+                              {playingTrackId === track.id ? (
+                                <X className="w-4 h-4" />
+                              ) : (
+                                <Play className="w-4 h-4" />
+                              )}
+                            </button>
+                          )}
+                          {isTrackSelected(track) && (
+                            <CheckCircle2 className="w-5 h-5 text-[#A5B99A] flex-shrink-0" />
+                          )}
+                          {track.id && (
+                            <a
+                              href={track.external_urls?.spotify || `https://open.spotify.com/track/${track.id}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                              className="text-[#1DB954] hover:text-[#1ed760] p-2"
+                              title="Open in Spotify"
+                            >
+                              <ExternalLink className="w-4 h-4" />
+                            </a>
+                          )}
                         </div>
                       </div>
-                      <div className="flex items-center space-x-2 ml-2">
-                        {track.preview_url && (
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handlePlayPreview(track);
-                            }}
-                            className={`p-2 rounded-full transition-colors ${
-                              playingTrackId === track.id
-                                ? 'bg-[#1DB954] text-white'
-                                : 'text-[#1DB954] hover:bg-[#1DB954]/10'
-                            }`}
-                            title={playingTrackId === track.id ? 'Stop preview' : 'Play preview'}
-                          >
-                            {playingTrackId === track.id ? (
-                              <X className="w-4 h-4" />
-                            ) : (
-                              <Play className="w-4 h-4" />
-                            )}
-                          </button>
-                        )}
-                        {isTrackSelected(track) && (
-                          <CheckCircle2 className="w-5 h-5 text-[#A5B99A] flex-shrink-0" />
-                        )}
-                        {track.id && (
-                          <a
-                            href={track.external_urls?.spotify || `https://open.spotify.com/track/${track.id}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onClick={(e) => e.stopPropagation()}
-                            className="text-[#1DB954] hover:text-[#1ed760] p-2"
-                            title="Open in Spotify (click play button in Spotify)"
-                          >
-                            <ExternalLink className="w-4 h-4" />
-                          </a>
-                        )}
-                      </div>
-                    </div>
-                  </button>
+                    </button>
                   );
                 })}
               </div>
@@ -499,74 +485,73 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
             </button>
           </div>
 
-          {safeSearchResults.length > 0 && (
+          {searchResults.length > 0 && (
             <div>
               <div className="text-xs text-gray-500 mb-3 flex items-center space-x-1">
                 <Play className="w-3 h-3" />
                 <span>Click play icon to preview songs (30-second previews)</span>
               </div>
               <div className="space-y-2 max-h-96 overflow-y-auto">
-                {safeSearchResults.map((track) => {
-                  // Double-check validity before rendering
+                {searchResults.map((track) => {
                   if (!isValidTrack(track)) return null;
                   return (
-                  <button
-                    key={track.id}
-                    onClick={() => handleSelectTrack(track)}
-                    className={`w-full text-left p-3 rounded-lg border transition-colors ${
-                      isTrackSelected(track)
-                        ? 'border-[#A5B99A] bg-[#A5B99A]/10'
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex-1 min-w-0">
-                        <div className="font-medium text-[#2C2A29] truncate">
-                          {typeof track.name === 'string' ? track.name : 'Unknown'}
+                    <button
+                      key={track.id}
+                      onClick={() => handleSelectTrack(track)}
+                      className={`w-full text-left p-3 rounded-lg border transition-colors ${
+                        isTrackSelected(track)
+                          ? 'border-[#A5B99A] bg-[#A5B99A]/10'
+                          : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1 min-w-0">
+                          <div className="font-medium text-[#2C2A29] truncate">
+                            {String(track.name || 'Unknown')}
+                          </div>
+                          <div className="text-sm text-gray-500 truncate">
+                            {String(track.artist || 'Unknown Artist')}
+                          </div>
                         </div>
-                        <div className="text-sm text-gray-500 truncate">
-                          {typeof track.artist === 'string' ? track.artist : 'Unknown Artist'}
+                        <div className="flex items-center space-x-2 ml-2">
+                          {track.preview_url && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handlePlayPreview(track);
+                              }}
+                              className={`p-2 rounded-full transition-colors ${
+                                playingTrackId === track.id
+                                  ? 'bg-[#1DB954] text-white'
+                                  : 'text-[#1DB954] hover:bg-[#1DB954]/10'
+                              }`}
+                              title={playingTrackId === track.id ? 'Stop preview' : 'Play preview'}
+                            >
+                              {playingTrackId === track.id ? (
+                                <X className="w-4 h-4" />
+                              ) : (
+                                <Play className="w-4 h-4" />
+                              )}
+                            </button>
+                          )}
+                          {isTrackSelected(track) && (
+                            <CheckCircle2 className="w-5 h-5 text-[#A5B99A] flex-shrink-0" />
+                          )}
+                          {track.id && (
+                            <a
+                              href={track.external_urls?.spotify || `https://open.spotify.com/track/${track.id}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                              className="text-[#1DB954] hover:text-[#1ed760] p-2"
+                              title="Open in Spotify"
+                            >
+                              <ExternalLink className="w-4 h-4" />
+                            </a>
+                          )}
                         </div>
                       </div>
-                      <div className="flex items-center space-x-2 ml-2">
-                        {track.preview_url && (
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handlePlayPreview(track);
-                            }}
-                            className={`p-2 rounded-full transition-colors ${
-                              playingTrackId === track.id
-                                ? 'bg-[#1DB954] text-white'
-                                : 'text-[#1DB954] hover:bg-[#1DB954]/10'
-                            }`}
-                            title={playingTrackId === track.id ? 'Stop preview' : 'Play preview'}
-                          >
-                            {playingTrackId === track.id ? (
-                              <X className="w-4 h-4" />
-                            ) : (
-                              <Play className="w-4 h-4" />
-                            )}
-                          </button>
-                        )}
-                        {isTrackSelected(track) && (
-                          <CheckCircle2 className="w-5 h-5 text-[#A5B99A] flex-shrink-0" />
-                        )}
-                        {track.id && (
-                          <a
-                            href={track.external_urls?.spotify || `https://open.spotify.com/track/${track.id}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onClick={(e) => e.stopPropagation()}
-                            className="text-[#1DB954] hover:text-[#1ed760] p-2"
-                            title="Open in Spotify (click play button in Spotify)"
-                          >
-                            <ExternalLink className="w-4 h-4" />
-                          </a>
-                        )}
-                      </div>
-                    </div>
-                  </button>
+                    </button>
                   );
                 })}
               </div>
@@ -577,4 +562,3 @@ export default function SpotifyIntegration({ selectedSongs, onSongsChange, maxSo
     </div>
   );
 }
-
