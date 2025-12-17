@@ -45,18 +45,38 @@ export async function GET() {
       .single();
 
     if (error) {
-      // If column doesn't exist, assume onboarding not complete
+      // If column doesn't exist, check if personal details exist as a fallback
       if (error.code === '42703' || error.message.includes('column') || error.message.includes('does not exist')) {
-        console.warn('onboarding_complete column may not exist, defaulting to false');
+        const { data: personalData } = await supabase
+          .from('personal_details')
+          .select('id')
+          .eq('user_id', auth.userId)
+          .single();
+
         return NextResponse.json({ 
-          onboardingComplete: false 
+          onboardingComplete: !!personalData 
         });
       }
       throw error;
     }
 
+    let onboardingComplete = data?.onboarding_complete === true;
+
+    // Fallback: if flag is false, check if they've at least filled out personal details
+    if (!onboardingComplete) {
+      const { data: personalData } = await supabase
+        .from('personal_details')
+        .select('id')
+        .eq('user_id', auth.userId)
+        .single();
+      
+      if (personalData) {
+        onboardingComplete = true;
+      }
+    }
+
     return NextResponse.json({ 
-      onboardingComplete: data?.onboarding_complete === true
+      onboardingComplete
     });
   } catch (error: any) {
     console.error('Check onboarding error:', error);

@@ -97,19 +97,19 @@ export default function DashboardPage() {
   const checkAuthAndLoadData = async () => {
     try {
       // Check onboarding status first
-      const onboardingRes = await fetch('/api/user/onboarding/complete');
-      if (onboardingRes.ok) {
-        const onboardingData = await onboardingRes.json();
-        // If onboarding is not complete (or if field doesn't exist and defaults to false), redirect
-        if (!onboardingData.onboardingComplete) {
-          router.push('/onboarding');
-          return;
+      try {
+        const onboardingRes = await fetch('/api/user/onboarding/complete');
+        if (onboardingRes.ok) {
+          const onboardingData = await onboardingRes.json();
+          // If onboarding is not complete, redirect
+          if (!onboardingData.onboardingComplete) {
+            router.push('/onboarding');
+            return;
+          }
         }
-      } else {
-        // If check fails, log but continue (might be new user)
-        console.warn('Onboarding check failed, assuming needs onboarding');
-        router.push('/onboarding');
-        return;
+      } catch (error) {
+        console.error('Onboarding check failed:', error);
+        // On failure, we'll continue to load the dashboard anyway to be safe
       }
 
       const [statusRes, personalRes, grantedAccessRes] = await Promise.all([
