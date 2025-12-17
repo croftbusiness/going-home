@@ -1,7 +1,5 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { 
@@ -29,24 +27,6 @@ import {
 } from 'lucide-react';
 
 export default function HomePage() {
-  const router = useRouter();
-
-  useEffect(() => {
-    // Check if user is already logged in
-    checkAuthStatus();
-  }, []);
-
-  const checkAuthStatus = async () => {
-    try {
-      const response = await fetch('/api/auth/status');
-      if (response.ok) {
-        router.push('/dashboard');
-      }
-    } catch (error) {
-      // User not logged in, stay on home page
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#FAF9F7] to-white">
       {/* Navigation - Simplified */}

@@ -37,3 +37,4 @@ CREATE POLICY "Users can manage own funeral cost calculations" ON funeral_cost_c
 
 
 
+
